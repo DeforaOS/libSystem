@@ -12,6 +12,8 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. */
+/* TODO:
+ * - add string_new_format(), string_rtrim(), string_ltrim()... */
 
 
 
@@ -87,10 +89,27 @@ void string_delete(String * string)
 
 
 /* accessors */
+/* string_get_length */
+size_t string_get_length(String const * string)
+{
+	size_t length;
+
+	for(length = 0; string[length] != '\0'; length++);
+	return length;
+}
+
+
+/* string_get_size */
+size_t string_get_size(String const * string)
+{
+	return string_get_length(string) + 1;
+}
+
+
 /* string_set */
 int string_set(String ** string, String const * string2)
 {
-	size_t len = string_length(string2);
+	size_t len = string_get_length(string2);
 
 	if(object_resize((Object**)string, len + 1) != 0)
 		return 1;
@@ -100,27 +119,16 @@ int string_set(String ** string, String const * string2)
 }
 
 
-/* returns */
-/* string_length */
-size_t string_length(String const * string)
-{
-	size_t length;
-
-	for(length = 0; string[length] != '\0'; length++);
-	return length;
-}
-
-
 /* useful */
 /* string_append */
 int string_append(String ** string, String const * append)
 {
-	size_t slength = (*string != NULL) ? string_length(*string) : 0;
+	size_t slength = (*string != NULL) ? string_get_length(*string) : 0;
 	size_t alength;
 
 	if(append == NULL)
 		return error_set_code(1, "%s", strerror(EINVAL));
-	if((alength = string_length(append)) == 0)
+	if((alength = string_get_length(append)) == 0)
 		return 0;
 	if(object_resize((Object**)string, slength + alength + 1) != 0)
 		return 1;
@@ -199,7 +207,7 @@ String ** string_explode(String const * string, String const * separator)
 	fprintf(stderr, "DEBUG: %s(\"%s\", \"%s\")\n", __func__, string,
 			separator);
 #endif
-	if(separator == NULL || (l = string_length(separator)) == 0)
+	if(separator == NULL || (l = string_get_length(separator)) == 0)
 	{
 		error_set_code(1, "%s", strerror(EINVAL));
 		return NULL;
@@ -257,7 +265,7 @@ ssize_t string_index(String const * string, String const * key)
 	size_t len;
 	ssize_t i;
 
-	len = string_length(key);
+	len = string_get_length(key);
 	for(i = 0; string[i] != '\0' && string_compare_length(&string[i], key,
 				len) != 0; i++);
 	if(string[i] == '\0')
@@ -271,7 +279,7 @@ int string_replace(String ** string, String const * what, String const * by)
 {
 	String * ret = NULL;
 	String const * p;
-	size_t len = string_length(what);
+	size_t len = string_get_length(what);
 	ssize_t index;
 	String * q;
 

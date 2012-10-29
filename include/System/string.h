@@ -1,5 +1,5 @@
 /* $Id$ */
-/* Copyright (c) 2011 Pierre Pronchery <khorben@defora.org> */
+/* Copyright (c) 2011-2012 Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS System libSystem */
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,11 @@
 typedef char String;
 
 
+/* macros */
+/* XXX for compatibility */
+#define string_length(a) string_get_length(a)
+
+
 /* functions */
 String * string_new(String const * string);
 String * string_new_append(String const * string, ...);
@@ -33,10 +38,10 @@ String * string_new_length(String const * string, size_t length);
 void string_delete(String * string);
 
 /* accessors */
-int string_set(String ** string, String const * string2);
+size_t string_get_length(String const * string);
+size_t string_get_size(String const * string);
 
-/* returns */
-size_t string_length(String const * string);
+int string_set(String ** string, String const * string2);
 
 /* useful */
 int string_append(String ** string, String const * append);

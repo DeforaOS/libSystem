@@ -147,9 +147,9 @@ int event_loop(Event * event)
 	while(event->loop && (timeout != NULL || event->fdmax != -1))
 	{
 		if(select(event->fdmax + 1, &rfds, &wfds, NULL, timeout) < 0)
-			return error_set_code(1, "%s", strerror(errno));
+			return -error_set_code(1, "%s", strerror(errno));
 		if(_loop_timeout(event) != 0)
-			return 1;
+			return -1;
 		_loop_io(event, event->reads, &rfds);
 		_loop_io(event, event->writes, &wfds);
 		if(event->timeout.tv_sec == (time_t)LONG_MAX
@@ -193,7 +193,8 @@ static int _loop_timeout(Event * event)
 			et->timeout.tv_sec = et->initial.tv_sec + now.tv_sec;
 			et->timeout.tv_usec = et->initial.tv_usec + now.tv_usec;
 			if(et->initial.tv_sec < event->timeout.tv_sec
-					|| (et->initial.tv_sec == event->timeout.tv_sec
+					|| (et->initial.tv_sec
+						== event->timeout.tv_sec
 						&& et->initial.tv_usec
 						< event->timeout.tv_usec))
 			{
@@ -269,6 +270,17 @@ void event_loop_quit(Event * event)
 }
 
 
+/* event_register_idle */
+int event_register_idle(Event * event, EventTimeoutFunc func, void * data)
+{
+	struct timeval tv;
+
+	tv.tv_sec = 0;
+	tv.tv_usec = 0;
+	return event_register_timeout(event, &tv, func, data);
+}
+
+
 /* event_register_io_read */
 int event_register_io_read(Event * event, int fd, EventIOFunc func,
 		void * userdata)
@@ -315,9 +327,9 @@ int event_register_timeout(Event * event, struct timeval * timeout,
 	struct timeval now;
 
 	if(gettimeofday(&now, NULL) != 0)
-		return error_set_code(1, "%s", strerror(errno));
+		return -error_set_code(1, "%s", strerror(errno));
 	if((eventtimeout = object_new(sizeof(*eventtimeout))) == NULL)
-		return 1;
+		return -1;
 	eventtimeout->initial.tv_sec = timeout->tv_sec;
 	eventtimeout->initial.tv_usec = timeout->tv_usec;
 	eventtimeout->timeout.tv_sec = now.tv_sec + timeout->tv_sec;

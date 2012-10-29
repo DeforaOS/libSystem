@@ -1,5 +1,5 @@
 /* $Id$ */
-/* Copyright (c) 2007 Pierre Pronchery <khorben@defora.org> */
+/* Copyright (c) 2007-2012 Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS System libSystem */
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@ void event_delete(Event * event);
 /* useful */
 int event_loop(Event * event);
 void event_loop_quit(Event * event);
+int event_register_idle(Event * event, EventTimeoutFunc func, void * userdata);
 int event_register_io_read(Event * event, int fd, EventIOFunc func,
 		void * userdata);
 int event_register_io_write(Event * event, int fd, EventIOFunc func,
