@@ -80,6 +80,7 @@ dist:
 		$(PACKAGE)-$(VERSION)/src/token.h \
 		$(PACKAGE)-$(VERSION)/src/project.conf \
 		$(PACKAGE)-$(VERSION)/tests/string.c \
+		$(PACKAGE)-$(VERSION)/tests/COPYING \
 		$(PACKAGE)-$(VERSION)/tests/Makefile \
 		$(PACKAGE)-$(VERSION)/tests/tests.sh \
 		$(PACKAGE)-$(VERSION)/tests/project.conf \
