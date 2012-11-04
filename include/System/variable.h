@@ -18,7 +18,7 @@
 #ifndef LIBSYSTEM_VARIABLE_H
 # define LIBSYSTEM_VARIABLE_H
 
-# include <sys/types.h>
+# include <stdint.h>
 # include "buffer.h"
 # include "string.h"
 
