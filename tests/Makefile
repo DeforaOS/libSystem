@@ -1,4 +1,4 @@
-TARGETS	= string tests.txt
+TARGETS	= string tests.log
 PREFIX	= /usr/local
 DESTDIR	=
 BINDIR	= $(PREFIX)/bin
@@ -25,14 +25,14 @@ string_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 string: $(string_OBJS)
 	$(CC) -o string $(string_OBJS) $(string_LDFLAGS)
 
-tests.txt: string
-	./tests.sh -P "$(PREFIX)" -- "tests.txt"
+tests.log: string
+	./tests.sh -P "$(PREFIX)" -- "tests.log"
 
 string.o: string.c ../src/string.c
 	$(CC) $(string_CFLAGS) -c string.c
 
 clean:
-	$(RM) -- $(string_OBJS) $(tests.txt_OBJS)
+	$(RM) -- $(string_OBJS) $(tests.log_OBJS)
 
 distclean: clean
 	$(RM) -- $(TARGETS)
