@@ -43,17 +43,16 @@ typedef enum _VariableType
 
 
 /* functions */
-Variable * variable_new(VariableType type);
+Variable * variable_new(VariableType type, void * value);
 void variable_delete(Variable * variable);
 
 
 /* accessors */
-int variable_get_as_integer(Variable * variable, int64_t integer);
-int variable_get_as_uinteger(Variable * variable, uint64_t integer);
-String * variable_get_as_string(Variable * variable);
+int variable_get_as(Variable * variable, VariableType type, void * result);
+int variable_get_as(Variable * variable, VariableType type, void * result);
 
-int variable_set_from_integer(Variable * variable, int64_t integer);
-int variable_set_from_uinteger(Variable * variable, uint64_t integer);
+int variable_set_from(Variable * variable, VariableType type, void * value);
+int variable_set_from(Variable * variable, VariableType type, void * value);
 
 /* useful */
 int variable_serialize(Variable * variable, Buffer * buffer);
