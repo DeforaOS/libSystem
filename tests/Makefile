@@ -1,4 +1,4 @@
-TARGETS	= string tests.log
+TARGETS	= string variable tests.log
 PREFIX	= /usr/local
 DESTDIR	=
 BINDIR	= $(PREFIX)/bin
@@ -25,14 +25,24 @@ string_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 string: $(string_OBJS)
 	$(CC) -o string $(string_OBJS) $(string_LDFLAGS)
 
-tests.log: string
+variable_OBJS = variable.o
+variable_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
+variable_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
+
+variable: $(variable_OBJS)
+	$(CC) -o variable $(variable_OBJS) $(variable_LDFLAGS)
+
+tests.log: string variable
 	./tests.sh -P "$(PREFIX)" -- "tests.log"
 
 string.o: string.c ../src/string.c
 	$(CC) $(string_CFLAGS) -c string.c
 
+variable.o: variable.c ../src/variable.c
+	$(CC) $(variable_CFLAGS) -c variable.c
+
 clean:
-	$(RM) -- $(string_OBJS) $(tests.log_OBJS)
+	$(RM) -- $(string_OBJS) $(variable_OBJS) $(tests.log_OBJS)
 
 distclean: clean
 	$(RM) -- $(TARGETS)

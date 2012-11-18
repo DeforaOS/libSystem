@@ -248,6 +248,14 @@ void variable_delete(Variable * variable)
 }
 
 
+/* variable_get_as */
+int variable_get_as(Variable * variable, VariableType type, void * result)
+{
+	/* FIXME implement */
+	return -1;
+}
+
+
 /* useful */
 /* variable_serialize */
 int variable_serialize(Variable * variable, Buffer * buffer, int type)
