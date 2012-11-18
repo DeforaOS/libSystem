@@ -16,18 +16,22 @@
 
 
 #include <stdlib.h>
+#include <stdio.h>
 #include "System/string.h"
 
 
 /* test */
-static int _test(String * s)
+static int _test(char const * progname, String * s)
 {
 	size_t len;
 	size_t i;
 
-	if((len = string_length(s)) == 0)
+	/* string_get_length */
+	printf("%s: Testing %s\n", progname, "string_get_length()");
+	if((len = string_get_length(s)) == 0)
 		return 2;
 	/* string_clear */
+	printf("%s: Testing %s\n", progname, "string_clear()");
 	string_clear(s);
 	for(i = 0; i <= len; i++)
 		if(s[i] != '\0')
@@ -44,7 +48,7 @@ int main(int argc, char * argv[])
 
 	if((s = string_new(argv[0])) == NULL)
 		return 2;
-	ret |= _test(s);
+	ret |= _test(argv[0], s);
 	string_delete(s);
 	return 0;
 }
