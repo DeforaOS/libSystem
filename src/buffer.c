@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 /* TODO
- * - use one malloc() for a buffer */
+ * - use a single allocation for each buffer */
 
 
 
@@ -79,12 +79,22 @@ size_t buffer_get_size(Buffer const * buffer)
 }
 
 
+/* buffer_set */
+int buffer_set(Buffer * buffer, size_t size, char * data)
+{
+	if(buffer_set_size(buffer, size) != 0)
+		return -1;
+	memcpy(buffer->data, data, size);
+	return 0;
+}
+
+
 /* buffer_set_data */
 int buffer_set_data(Buffer * buffer, size_t offset, char * data, size_t size)
 {
 	if(offset + size > buffer->size) /* FIXME integer overflow */
 		if(buffer_set_size(buffer, offset + size) != 0)
-			return 1;
+			return -1;
 	memcpy(&buffer->data[offset], data, size);
 	return 0;
 }
@@ -96,7 +106,7 @@ int buffer_set_size(Buffer * buffer, size_t size)
 	char * p;
 
 	if((p = realloc(buffer->data, size)) == NULL && size != 0)
-		return error_set_code(1, "%s", strerror(errno));
+		return -error_set_code(1, "%s", strerror(errno));
 	buffer->data = p;
 	if(size > buffer->size)
 		memset(&buffer->data[buffer->size], 0, size - buffer->size);
