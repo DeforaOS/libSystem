@@ -111,6 +111,48 @@ Variable * variable_new(VariableType type, void * value)
 }
 
 
+/* variable_new_copy */
+Variable * variable_new_copy(Variable * variable)
+{
+	return variable_new(variable->type, &variable->u);
+}
+
+
+/* variable_new_deserialize */
+Variable * variable_new_deserialize(size_t * size, char const * data)
+{
+	Variable * variable;
+	unsigned char u;
+	size_t s;
+
+	/* obtain the type from the data */
+	if(*size < sizeof(u))
+	{
+		*size = 1;
+		return NULL;
+	}
+	u = data[0];
+	s = *size - sizeof(u);
+	/* deserialize according to the type */
+	if((variable = variable_new_deserialize_type(u, &s, &data[sizeof(u)]))
+			== NULL)
+	{
+		*size = s + sizeof(u);
+		return NULL;
+	}
+	return variable;
+}
+
+
+/* variable_new_deserialize_type */
+Variable * variable_new_deserialize_type(VariableType type, size_t * size,
+		char const * data)
+{
+	/* FIXME implement */
+	return NULL;
+}
+
+
 /* variable_delete */
 void variable_delete(Variable * variable)
 {
@@ -131,4 +173,57 @@ void variable_delete(Variable * variable)
 			break;
 	}
 	object_delete(variable);
+}
+
+
+/* useful */
+/* variable_serialize */
+int variable_serialize(Variable * variable, Buffer * buffer, int type)
+{
+	size_t size = 0;
+	void * p;
+	unsigned char u;
+
+	/* FIXME set everything in network endian */
+	switch(variable->type)
+	{
+		case VT_NULL:
+			p = NULL;
+			break;
+		case VT_INT8:
+		case VT_UINT8:
+			size = sizeof(variable->u.int8);
+			p = &variable->u.int8;
+			break;
+		case VT_INT16:
+		case VT_UINT16:
+			size = sizeof(variable->u.int16);
+			p = &variable->u.int16;
+			break;
+		case VT_INT32:
+		case VT_UINT32:
+			size = sizeof(variable->u.int32);
+			p = &variable->u.int32;
+			break;
+		case VT_INT64:
+		case VT_UINT64:
+			size = sizeof(variable->u.int64);
+			p = &variable->u.int64;
+			break;
+		case VT_STRING:
+			size = string_get_length(variable->u.string);
+			p = variable->u.string;
+			break;
+	}
+	if(size == 0 && type != VT_NULL)
+		return -error_set_code(1, "Unable to serialize type %u", type);
+	if(type)
+	{
+		u = variable->type;
+		if(buffer_set(buffer, sizeof(u), (char *)&u) != 0)
+			return -1;
+		return buffer_set_data(buffer, sizeof(u), p, size);
+	}
+	else
+		return buffer_set(buffer, size, p);
 }

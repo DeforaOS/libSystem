@@ -44,6 +44,10 @@ typedef enum _VariableType
 
 /* functions */
 Variable * variable_new(VariableType type, void * value);
+Variable * variable_new_copy(Variable * variable);
+Variable * variable_new_deserialize(size_t * size, char const * data);
+Variable * variable_new_deserialize_type(VariableType type, size_t * size,
+		char const * data);
 void variable_delete(Variable * variable);
 
 
@@ -55,6 +59,6 @@ int variable_set_from(Variable * variable, VariableType type, void * value);
 int variable_set_from(Variable * variable, VariableType type, void * value);
 
 /* useful */
-int variable_serialize(Variable * variable, Buffer * buffer);
+int variable_serialize(Variable * variable, Buffer * buffer, int type);
 
 #endif /* !LIBSYSTEM_VARIABLE_H */
