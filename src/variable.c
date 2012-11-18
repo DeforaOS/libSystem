@@ -16,6 +16,7 @@
 
 
 #include <string.h>
+#include <arpa/inet.h>
 #include "System.h"
 
 
@@ -148,8 +149,79 @@ Variable * variable_new_deserialize(size_t * size, char const * data)
 Variable * variable_new_deserialize_type(VariableType type, size_t * size,
 		char const * data)
 {
-	/* FIXME implement */
-	return NULL;
+	size_t s;
+	int16_t i16;
+	int32_t i32;
+	int64_t i64;
+	void * p = (char *)data;
+
+	/* estimate the size required */
+	switch(type)
+	{
+		case VT_NULL:
+			s = 0;
+			break;
+		case VT_INT8:
+		case VT_UINT8:
+			s = sizeof(int8_t);
+			break;
+		case VT_INT16:
+		case VT_UINT16:
+			s = sizeof(int16_t);
+			data = (char *)&i16;
+			break;
+		case VT_INT32:
+		case VT_UINT32:
+			s = sizeof(int32_t);
+			data = (char *)&i32;
+			break;
+		case VT_INT64:
+		case VT_UINT64:
+			s = sizeof(int64_t);
+			data = (char *)&i64;
+			break;
+		case VT_STRING:
+			/* FIXME implement */
+		default:
+			error_set_code(1, "Unable to deserialize type %u",
+					type);
+			return NULL;
+	}
+	if(*size < s)
+	{
+		*size = s;
+		error_set_code(1, "More data needed to deserialize type %u",
+				type);
+		return NULL;
+	}
+	*size = s;
+	if(p != data)
+		memcpy(p, data, s);
+	/* convert the data if necessary */
+	switch(type)
+	{
+		case VT_NULL:
+		case VT_INT8:
+		case VT_UINT8:
+			break;
+		case VT_INT16:
+		case VT_UINT16:
+			i16 = ntohs(i16);
+			break;
+		case VT_INT32:
+		case VT_UINT32:
+			i32 = ntohl(i32);
+			break;
+		case VT_INT64:
+		case VT_UINT64:
+		case VT_STRING:
+			/* FIXME implement */
+		default:
+			error_set_code(1, "Unable to deserialize type %u",
+					type);
+			return NULL;
+	}
+	return variable_new(type, p);
 }
 
 
