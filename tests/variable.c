@@ -16,6 +16,7 @@
 
 
 #include <stdio.h>
+#include "System/error.h"
 #include "System/variable.h"
 
 
@@ -42,7 +43,7 @@ static int _variable(char const * progname)
 		if((variable = variable_new_deserialize_type(VT_INT8, &s, p))
 				== NULL)
 		{
-			printf("%s: %d: Test failed\n", progname, samples[i]);
+			error_print(progname);
 			ret += 1;
 			continue;
 		}
@@ -50,7 +51,7 @@ static int _variable(char const * progname)
 		if(variable_get_as(variable, VT_INT32, p) != 0
 				|| j != samples[i])
 		{
-			printf("%s: %d: Test failed\n", progname, samples[i]);
+			error_print(progname);
 			ret += 1;
 		}
 		variable_delete(variable);

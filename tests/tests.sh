@@ -45,8 +45,8 @@ target="$1"
 
 > "$target"
 FAILED=
-./string		>> "$target"	|| FAILED="$FAILED string"
-./variable		>> "$target"	|| FAILED="$FAILED variable"
+./string		>> "$target" 2>&1	|| FAILED="$FAILED string"
+./variable		>> "$target" 2>&1	|| FAILED="$FAILED variable"
 [ -z "$FAILED" ]			&& exit 0
 echo "Failed tests:$FAILED" 1>&2
 exit 2

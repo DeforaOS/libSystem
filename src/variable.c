@@ -251,8 +251,190 @@ void variable_delete(Variable * variable)
 /* variable_get_as */
 int variable_get_as(Variable * variable, VariableType type, void * result)
 {
-	/* FIXME implement */
-	return -1;
+	size_t size = 0;
+	void * p = NULL;
+	int8_t i8;
+	uint8_t u8;
+	int16_t i16;
+	uint16_t u16;
+	int32_t i32;
+	uint32_t u32;
+
+	switch(type)
+	{
+		case VT_NULL:
+			if(variable->type == VT_NULL)
+				return 0;
+			break;
+		case VT_INT8:
+			size = sizeof(i8);
+			if(variable->type == VT_INT8)
+			{
+				p = &variable->u.int8;
+				break;
+			}
+			if(variable->type == VT_UINT8
+					&& variable->u.uint8 < (1 << 7))
+				i8 = variable->u.uint8;
+			else if(variable->type == VT_INT16
+					&& variable->u.int16 >= -128
+					&& variable->u.int16 < (1 << 7))
+				i8 = variable->u.int16;
+			else if(variable->type == VT_UINT16
+					&& variable->u.uint16 < (1 << 7))
+				i8 = variable->u.uint16;
+			else if(variable->type == VT_INT32
+					&& variable->u.int32 >= -128
+					&& variable->u.int32 < (1 << 7))
+				i8 = variable->u.int32;
+			else if(variable->type == VT_UINT32
+					&& variable->u.uint32 < (1 << 7))
+				i8 = variable->u.uint32;
+			else
+				/* FIXME implement more conversions */
+				break;
+			p = &i8;
+			break;
+		case VT_UINT8:
+			size = sizeof(u8);
+			if(variable->type == VT_UINT8)
+			{
+				p = &variable->u.uint8;
+				break;
+			}
+			if(variable->type == VT_INT8
+					&& variable->u.int8 >= 0)
+				u8 = variable->u.int8;
+			else if(variable->type == VT_INT16
+					&& variable->u.int16 >= 0
+					&& variable->u.int16 < (1 << 8))
+				u8 = variable->u.int16;
+			else if(variable->type == VT_UINT16
+					&& variable->u.uint16 < (1 << 8))
+				u8 = variable->u.uint16;
+			else if(variable->type == VT_INT32
+					&& variable->u.int32 >= 0
+					&& variable->u.int32 < (1 << 8))
+				u8 = variable->u.int32;
+			else if(variable->type == VT_UINT32
+					&& variable->u.uint32
+					< (1 << 8))
+				u8 = variable->u.uint32;
+			else
+				/* FIXME implement more conversions */
+				break;
+			p = &u8;
+			break;
+		case VT_INT16:
+			size = sizeof(i16);
+			if(variable->type == VT_INT16)
+			{
+				p = &variable->u.int16;
+				break;
+			}
+			if(variable->type == VT_UINT16
+					&& variable->u.uint16 < (1 << 15))
+				i16 = variable->u.uint16;
+			else if(variable->type == VT_INT8)
+				i16 = variable->u.int8;
+			else if(variable->type == VT_UINT8)
+				i16 = variable->u.uint8;
+			else
+				/* FIXME implement more conversions */
+				break;
+			p = &i16;
+			break;
+		case VT_UINT16:
+			size = sizeof(u16);
+			if(variable->type == VT_UINT16)
+			{
+				p = &variable->u.uint16;
+				break;
+			}
+			if(variable->type == VT_INT16 && variable->u.int16 >= 0)
+				u16 = variable->u.int16;
+			else if(variable->type == VT_INT8
+					&& variable->u.int8 >= 0)
+				u16 = variable->u.int8;
+			else if(variable->type == VT_UINT8)
+				u16 = variable->u.uint8;
+			else
+				/* FIXME implement more conversions */
+				break;
+			p = &u16;
+			break;
+		case VT_INT32:
+			size = sizeof(i32);
+			if(variable->type == VT_INT32)
+			{
+				p = &variable->u.int32;
+				break;
+			}
+			if(variable->type == VT_UINT32
+					&& variable->u.uint32
+					< (uint32_t)1 << 31)
+				i32 = variable->u.uint32;
+			else if(variable->type == VT_INT8)
+				i32 = variable->u.int8;
+			else if(variable->type == VT_UINT8)
+				i32 = variable->u.uint8;
+			else if(variable->type == VT_INT16)
+				i32 = variable->u.int16;
+			else if(variable->type == VT_UINT16)
+				i32 = variable->u.uint16;
+			else
+				/* FIXME implement more conversions */
+				break;
+			p = &i32;
+			break;
+		case VT_UINT32:
+			size = sizeof(u32);
+			if(variable->type == VT_UINT32)
+			{
+				p = &variable->u.uint32;
+				break;
+			}
+			if(variable->type == VT_INT32
+					&& variable->u.int32 >= 0)
+				u32 = variable->u.int32;
+			else if(variable->type == VT_INT8
+					&& variable->u.int8 >= 0)
+				u32 = variable->u.int8;
+			else if(variable->type == VT_UINT8)
+				u32 = variable->u.uint8;
+			else if(variable->type == VT_INT16
+					&& variable->u.int16 >= 0)
+				u32 = variable->u.int16;
+			else if(variable->type == VT_UINT16)
+				u32 = variable->u.uint16;
+			else
+				/* FIXME implement more conversions */
+				break;
+			size = sizeof(u32);
+			p = &u32;
+			break;
+		case VT_INT64:
+		case VT_UINT64:
+			/* FIXME consider signedness */
+			if(variable->type == VT_INT64
+					|| variable->type == VT_UINT64)
+			{
+				size = sizeof(variable->u.uint64);
+				p = &variable->u.uint64;
+				break;
+			}
+			break;
+		case VT_STRING:
+			/* FIXME implement */
+			break;
+	}
+	if(size != 0 && p != NULL)
+	{
+		memcpy(result, p, size);
+		return 0;
+	}
+	return -error_set_code(1, "Unable to convert from type %u to %u",
+			variable->type, type);
 }
 
 
