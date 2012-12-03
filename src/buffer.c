@@ -56,6 +56,13 @@ Buffer * buffer_new(size_t size, char const * data)
 }
 
 
+/* buffer_new_copy */
+Buffer * buffer_new_copy(Buffer * buffer)
+{
+	return buffer_new(buffer->size, buffer->data);
+}
+
+
 /* buffer_delete */
 void buffer_delete(Buffer * buffer)
 {

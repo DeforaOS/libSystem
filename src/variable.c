@@ -15,7 +15,9 @@
 
 
 
+#include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 #include <arpa/inet.h>
 #include "System.h"
 
@@ -37,6 +39,7 @@ struct _Variable
 		uint32_t uint32;
 		int64_t int64;
 		uint64_t uint64;
+		Buffer * buffer;
 		String * string;
 	} u;
 };
@@ -55,6 +58,7 @@ Variable * variable_new(VariableType type, void * value)
 	uint32_t * u32;
 	int64_t * i64;
 	uint64_t * u64;
+	Buffer * b;
 	char const * s;
 
 	if((variable = object_new(sizeof(*variable))) == NULL)
@@ -98,6 +102,14 @@ Variable * variable_new(VariableType type, void * value)
 			case VT_UINT64:
 				u64 = value;
 				variable->u.uint64 = *u64;
+				break;
+			case VT_BUFFER:
+				if((b = buffer_new_copy(value)) == NULL)
+				{
+					object_delete(variable);
+					return NULL;
+				}
+				variable->u.buffer = b;
 				break;
 			case VT_STRING:
 				s = value;
@@ -152,6 +164,7 @@ Variable * variable_new_deserialize_type(VariableType type, size_t * size,
 	size_t s;
 	int16_t i16;
 	int32_t i32;
+	uint32_t u32;
 	int64_t i64;
 	void * p = (char *)data;
 
@@ -168,20 +181,39 @@ Variable * variable_new_deserialize_type(VariableType type, size_t * size,
 		case VT_INT16:
 		case VT_UINT16:
 			s = sizeof(int16_t);
-			data = (char *)&i16;
+			p = (char *)&i16;
 			break;
 		case VT_INT32:
 		case VT_UINT32:
 			s = sizeof(int32_t);
-			data = (char *)&i32;
+			p = (char *)&i32;
 			break;
 		case VT_INT64:
 		case VT_UINT64:
 			s = sizeof(int64_t);
-			data = (char *)&i64;
+			p = (char *)&i64;
+			break;
+		case VT_BUFFER:
+			s = sizeof(uint32_t);
+			if(*size < s)
+				break;
+			memcpy(&u32, data, s);
+			u32 = ntohl(u32);
+			s += u32;
 			break;
 		case VT_STRING:
-			/* FIXME implement */
+			for(s = 0; s < *size;)
+				if(data[s++] != '\0')
+					continue;
+				else if((p = malloc(s)) == NULL)
+				{
+					error_set_code(1, "%s",
+							strerror(errno));
+					return NULL;
+				}
+				else
+					break;
+			break;
 		default:
 			error_set_code(1, "Unable to deserialize type %u",
 					type);
@@ -212,10 +244,15 @@ Variable * variable_new_deserialize_type(VariableType type, size_t * size,
 		case VT_UINT32:
 			i32 = ntohl(i32);
 			break;
+		case VT_STRING:
+			break;
 		case VT_INT64:
 		case VT_UINT64:
-		case VT_STRING:
-			/* FIXME implement */
+		case VT_BUFFER:
+			if((p = buffer_new(s - sizeof(u32), &data[sizeof(u32)]))
+					== NULL)
+				return NULL;
+			break;
 		default:
 			error_set_code(1, "Unable to deserialize type %u",
 					type);
@@ -240,6 +277,8 @@ void variable_delete(Variable * variable)
 		case VT_INT64:
 		case VT_UINT64:
 			break;
+		case VT_BUFFER:
+			buffer_delete(variable->u.buffer);
 		case VT_STRING:
 			string_delete(variable->u.string);
 			break;
@@ -424,6 +463,7 @@ int variable_get_as(Variable * variable, VariableType type, void * result)
 				break;
 			}
 			break;
+		case VT_BUFFER:
 		case VT_STRING:
 			/* FIXME implement */
 			break;
@@ -445,6 +485,7 @@ int variable_serialize(Variable * variable, Buffer * buffer, int type)
 	size_t size = 0;
 	void * p;
 	unsigned char u;
+	uint32_t u32;
 
 	/* FIXME set everything in network endian */
 	switch(variable->type)
@@ -472,6 +513,13 @@ int variable_serialize(Variable * variable, Buffer * buffer, int type)
 			size = sizeof(variable->u.int64);
 			p = &variable->u.int64;
 			break;
+		case VT_BUFFER:
+			size = sizeof(variable->u.int32)
+				+ buffer_get_size(variable->u.buffer);
+			u32 = buffer_get_size(variable->u.buffer);
+			u32 = htonl(u32);
+			p = buffer_get_data(variable->u.buffer);
+			break;
 		case VT_STRING:
 			size = string_get_length(variable->u.string);
 			p = variable->u.string;
@@ -484,6 +532,12 @@ int variable_serialize(Variable * variable, Buffer * buffer, int type)
 		u = variable->type;
 		if(buffer_set(buffer, sizeof(u), (char *)&u) != 0)
 			return -1;
+		if(type == VT_BUFFER)
+			return (buffer_set_data(buffer, sizeof(u), (char *)&u32,
+						sizeof(u32)) == 0
+					&& buffer_set_data(buffer,
+						sizeof(u) + sizeof(u32), p,
+						u32) == 0) ? 0 : -1;
 		return buffer_set_data(buffer, sizeof(u), p, size);
 	}
 	else

@@ -28,6 +28,7 @@ typedef struct _Buffer Buffer;
 
 /* functions */
 Buffer * buffer_new(size_t size, char const * data);
+Buffer * buffer_new_copy(Buffer * buffer);
 void buffer_delete(Buffer * buffer);
 
 /* accessors */
