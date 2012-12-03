@@ -483,6 +483,7 @@ int variable_get_as(Variable * variable, VariableType type, void * result)
 int variable_serialize(Variable * variable, Buffer * buffer, int type)
 {
 	size_t size = 0;
+	size_t offset;
 	void * p;
 	unsigned char u;
 	uint32_t u32;
@@ -525,21 +526,29 @@ int variable_serialize(Variable * variable, Buffer * buffer, int type)
 			p = variable->u.string;
 			break;
 	}
-	if(size == 0 && type != VT_NULL)
+	if(size == 0 && variable->type != VT_NULL)
 		return -error_set_code(1, "Unable to serialize type %u", type);
 	if(type)
 	{
 		u = variable->type;
 		if(buffer_set(buffer, sizeof(u), (char *)&u) != 0)
 			return -1;
-		if(type == VT_BUFFER)
-			return (buffer_set_data(buffer, sizeof(u), (char *)&u32,
-						sizeof(u32)) == 0
-					&& buffer_set_data(buffer,
-						sizeof(u) + sizeof(u32), p,
-						u32) == 0) ? 0 : -1;
-		return buffer_set_data(buffer, sizeof(u), p, size);
+		offset = sizeof(u);
+		if(variable->type == VT_BUFFER)
+		{
+			if(buffer_set_data(buffer, offset, (char *)&u32,
+						sizeof(u32)) != 0)
+				return -1;
+			offset += sizeof(u32);
+		}
+		return buffer_set_data(buffer, offset, p, size);
 	}
-	else
-		return buffer_set(buffer, size, p);
+	offset = 0;
+	if(variable->type == VT_BUFFER)
+	{
+		if(buffer_set(buffer, sizeof(u32), (char *)&u32) != 0)
+			return -1;
+		offset += sizeof(u32);
+	}
+	return buffer_set_data(buffer, offset, p, size);
 }
