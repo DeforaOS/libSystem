@@ -530,6 +530,7 @@ int variable_serialize(Variable * variable, Buffer * buffer, int type)
 		return -error_set_code(1, "Unable to serialize type %u", type);
 	if(type)
 	{
+		/* prefix with the type */
 		u = variable->type;
 		if(buffer_set(buffer, sizeof(u), (char *)&u) != 0)
 			return -1;
@@ -543,12 +544,11 @@ int variable_serialize(Variable * variable, Buffer * buffer, int type)
 		}
 		return buffer_set_data(buffer, offset, p, size);
 	}
-	offset = 0;
 	if(variable->type == VT_BUFFER)
 	{
 		if(buffer_set(buffer, sizeof(u32), (char *)&u32) != 0)
 			return -1;
-		offset += sizeof(u32);
+		return buffer_set_data(buffer, sizeof(u32), p, size);
 	}
-	return buffer_set_data(buffer, offset, p, size);
+	return buffer_set(buffer, size, p);
 }
