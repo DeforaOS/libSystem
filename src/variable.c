@@ -137,6 +137,10 @@ Variable * variable_new(VariableType type, void * value)
 					return NULL;
 				}
 				variable->u.buffer = b;
+#ifdef DEBUG
+				fprintf(stderr, "DEBUG: %s(%p)\n", __func__,
+						(void *)b);
+#endif
 				break;
 			case VT_STRING:
 				s = value;
