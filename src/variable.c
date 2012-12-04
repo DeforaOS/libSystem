@@ -16,6 +16,9 @@
 
 
 #include <stdlib.h>
+#ifdef DEBUG
+# include <stdio.h>
+#endif
 #include <string.h>
 #include <errno.h>
 #include <arpa/inet.h>
@@ -74,26 +77,50 @@ Variable * variable_new(VariableType type, void * value)
 			case VT_INT8:
 				i8 = value;
 				variable->u.int8 = *i8;
+#ifdef DEBUG
+				fprintf(stderr, "DEBUG: %s(%d)\n", __func__,
+						*i8);
+#endif
 				break;
 			case VT_UINT8:
 				u8 = value;
 				variable->u.uint8 = *u8;
+#ifdef DEBUG
+				fprintf(stderr, "DEBUG: %s(%u)\n", __func__,
+						*u8);
+#endif
 				break;
 			case VT_INT16:
 				i16 = value;
 				variable->u.int16 = *i16;
+#ifdef DEBUG
+				fprintf(stderr, "DEBUG: %s(%d)\n", __func__,
+						*i16);
+#endif
 				break;
 			case VT_UINT16:
 				u16 = value;
 				variable->u.uint16 = *u16;
+#ifdef DEBUG
+				fprintf(stderr, "DEBUG: %s(%u)\n", __func__,
+						*u16);
+#endif
 				break;
 			case VT_INT32:
 				i32 = value;
 				variable->u.int32 = *i32;
+#ifdef DEBUG
+				fprintf(stderr, "DEBUG: %s(%d)\n", __func__,
+						*i32);
+#endif
 				break;
 			case VT_UINT32:
 				u32 = value;
 				variable->u.uint32 = *u32;
+#ifdef DEBUG
+				fprintf(stderr, "DEBUG: %s(%u)\n", __func__,
+						*u32);
+#endif
 				break;
 			case VT_INT64:
 				i64 = value;
@@ -118,6 +145,10 @@ Variable * variable_new(VariableType type, void * value)
 					object_delete(variable);
 					return NULL;
 				}
+#ifdef DEBUG
+				fprintf(stderr, "DEBUG: %s(\"%s\")\n", __func__,
+						s);
+#endif
 				break;
 		}
 	return variable;
