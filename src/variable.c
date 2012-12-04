@@ -567,8 +567,7 @@ int variable_serialize(Variable * variable, Buffer * buffer, int type)
 			p = &variable->u.int64;
 			break;
 		case VT_BUFFER:
-			size = sizeof(variable->u.int32)
-				+ buffer_get_size(variable->u.buffer);
+			size = buffer_get_size(variable->u.buffer);
 			u32 = buffer_get_size(variable->u.buffer);
 			u32 = htonl(u32);
 			p = buffer_get_data(variable->u.buffer);
@@ -596,7 +595,6 @@ int variable_serialize(Variable * variable, Buffer * buffer, int type)
 						sizeof(u32)) != 0)
 				return -1;
 			offset += sizeof(u32);
-			size -= sizeof(u32);
 		}
 		return buffer_set_data(buffer, offset, p, size);
 	}
