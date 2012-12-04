@@ -487,9 +487,11 @@ int variable_serialize(Variable * variable, Buffer * buffer, int type)
 	size_t offset;
 	void * p;
 	unsigned char u;
+	int16_t i16;
+	uint16_t u16;
+	int32_t i32;
 	uint32_t u32;
 
-	/* FIXME set everything in network endian */
 	switch(variable->type)
 	{
 		case VT_NULL:
@@ -501,17 +503,28 @@ int variable_serialize(Variable * variable, Buffer * buffer, int type)
 			p = &variable->u.int8;
 			break;
 		case VT_INT16:
+			size = sizeof(i16);
+			i16 = htons(variable->u.int16);
+			p = &i16;
+			break;
 		case VT_UINT16:
-			size = sizeof(variable->u.int16);
-			p = &variable->u.int16;
+			size = sizeof(u16);
+			u16 = htons(variable->u.uint16);
+			p = &u16;
 			break;
 		case VT_INT32:
+			size = sizeof(i32);
+			i32 = htonl(variable->u.int32);
+			p = &i32;
+			break;
 		case VT_UINT32:
-			size = sizeof(variable->u.int32);
-			p = &variable->u.int32;
+			size = sizeof(u32);
+			u32 = htonl(variable->u.uint32);
+			p = &u32;
 			break;
 		case VT_INT64:
 		case VT_UINT64:
+			/* FIXME convert to network endian */
 			size = sizeof(variable->u.int64);
 			p = &variable->u.int64;
 			break;
