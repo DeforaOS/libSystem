@@ -527,6 +527,9 @@ int variable_serialize(Variable * variable, Buffer * buffer, int type)
 	int32_t i32;
 	uint32_t u32;
 
+#ifdef DEBUG
+	fprintf(stderr, "DEBUG: %s(%u)\n", __func__, variable->type);
+#endif
 	switch(variable->type)
 	{
 		case VT_NULL:
@@ -575,6 +578,9 @@ int variable_serialize(Variable * variable, Buffer * buffer, int type)
 			p = variable->u.string;
 			break;
 	}
+#ifdef DEBUG
+	fprintf(stderr, "DEBUG: %s() %lu\n", __func__, size);
+#endif
 	if(size == 0 && variable->type != VT_NULL)
 		return -error_set_code(1, "Unable to serialize type %u", type);
 	if(type)
