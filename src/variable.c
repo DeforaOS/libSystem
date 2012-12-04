@@ -279,6 +279,7 @@ void variable_delete(Variable * variable)
 			break;
 		case VT_BUFFER:
 			buffer_delete(variable->u.buffer);
+			break;
 		case VT_STRING:
 			string_delete(variable->u.string);
 			break;
