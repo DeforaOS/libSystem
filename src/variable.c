@@ -596,6 +596,7 @@ int variable_serialize(Variable * variable, Buffer * buffer, int type)
 						sizeof(u32)) != 0)
 				return -1;
 			offset += sizeof(u32);
+			size -= sizeof(u32);
 		}
 		return buffer_set_data(buffer, offset, p, size);
 	}
