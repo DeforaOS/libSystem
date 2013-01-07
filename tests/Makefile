@@ -43,6 +43,7 @@ variable.o: variable.c ../src/variable.c
 
 clean:
 	$(RM) -- $(string_OBJS) $(variable_OBJS) $(tests.log_OBJS)
+	./tests.sh -c -P "$(PREFIX)" -- "tests.log"
 
 distclean: clean
 	$(RM) -- $(TARGETS)
