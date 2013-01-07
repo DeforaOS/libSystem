@@ -25,9 +25,13 @@ _usage()
 
 
 #main
-while getopts "cP:" "name"; do
+clean=0
+while getopts "cP:" name; do
 	case "$name" in
-		c|P)
+		c)
+			clean=1
+			;;
+		P)
 			#XXX ignored
 			;;
 		?)
@@ -42,6 +46,8 @@ if [ $# -ne 1 ]; then
 	exit $?
 fi
 target="$1"
+
+[ "$clean" -ne 0 ]			&& exit 0
 
 > "$target"
 FAILED=
