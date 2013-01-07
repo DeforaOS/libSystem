@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 #$Id$
-#Copyright (c) 2011-2012 Pierre Pronchery <khorben@defora.org>
+#Copyright (c) 2011-2013 Pierre Pronchery <khorben@defora.org>
 #This file is part of DeforaOS System libSystem
 #This program is free software: you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -25,9 +25,9 @@ _usage()
 
 
 #main
-while getopts "P:" "name"; do
+while getopts "cP:" "name"; do
 	case "$name" in
-		P)
+		c|P)
 			#XXX ignored
 			;;
 		?)
