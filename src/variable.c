@@ -338,6 +338,7 @@ int variable_get_as(Variable * variable, VariableType type, void * result)
 	uint16_t u16;
 	int32_t i32;
 	uint32_t u32;
+	Buffer ** b;
 
 	switch(type)
 	{
@@ -504,6 +505,13 @@ int variable_get_as(Variable * variable, VariableType type, void * result)
 			}
 			break;
 		case VT_BUFFER:
+			if(variable->type == VT_BUFFER)
+			{
+				b = result;
+				*b = buffer_new_copy(variable->u.buffer);
+				return 0;
+			}
+			break;
 		case VT_STRING:
 			/* FIXME implement */
 			break;
