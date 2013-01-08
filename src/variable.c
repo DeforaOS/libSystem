@@ -1,5 +1,5 @@
 /* $Id$ */
-/* Copyright (c) 2012 Pierre Pronchery <khorben@defora.org> */
+/* Copyright (c) 2012-2013 Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS System libSystem */
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -203,6 +203,10 @@ Variable * variable_new_deserialize_type(VariableType type, size_t * size,
 	int64_t i64;
 	void * p = (char *)data;
 
+#ifdef DEBUG
+	fprintf(stderr, "DEBUG: %s(%u, %lu, %p)\n", __func__, type, *size,
+			(void *)data);
+#endif
 	/* estimate the size required */
 	switch(type)
 	{
