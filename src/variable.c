@@ -339,6 +339,7 @@ int variable_get_as(Variable * variable, VariableType type, void * result)
 	int32_t i32;
 	uint32_t u32;
 	Buffer ** b;
+	String ** s;
 
 	switch(type)
 	{
@@ -513,7 +514,12 @@ int variable_get_as(Variable * variable, VariableType type, void * result)
 			}
 			break;
 		case VT_STRING:
-			/* FIXME implement */
+			if(variable->type == VT_STRING)
+			{
+				s = result;
+				*s = string_new(variable->u.string);
+				return 0;
+			}
 			break;
 	}
 	if(size != 0 && p != NULL)
