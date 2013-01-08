@@ -1,5 +1,5 @@
 /* $Id$ */
-/* Copyright (c) 2012 Pierre Pronchery <khorben@defora.org> */
+/* Copyright (c) 2012-2013 Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS System libSystem */
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -54,9 +54,8 @@ void variable_delete(Variable * variable);
 
 /* accessors */
 int variable_get_as(Variable * variable, VariableType type, void * result);
-int variable_get_as(Variable * variable, VariableType type, void * result);
+VariableType variable_get_type(Variable * variable);
 
-int variable_set_from(Variable * variable, VariableType type, void * value);
 int variable_set_from(Variable * variable, VariableType type, void * value);
 
 /* useful */

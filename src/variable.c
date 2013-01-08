@@ -532,6 +532,13 @@ int variable_get_as(Variable * variable, VariableType type, void * result)
 }
 
 
+/* variable_get_type */
+VariableType variable_get_type(Variable * variable)
+{
+	return variable->type;
+}
+
+
 /* useful */
 /* variable_serialize */
 int variable_serialize(Variable * variable, Buffer * buffer, int type)
