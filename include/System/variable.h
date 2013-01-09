@@ -30,6 +30,7 @@ typedef struct _Variable Variable;
 typedef enum _VariableType
 {
 	VT_NULL = 0,
+	VT_BOOL,
 	VT_INT8,
 	VT_UINT8,
 	VT_INT16,

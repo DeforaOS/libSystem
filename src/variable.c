@@ -74,12 +74,20 @@ Variable * variable_new(VariableType type, void * value)
 		{
 			case VT_NULL:
 				break;
+			case VT_BOOL:
+				u8 = value;
+				variable->u.uint8 = (*u8 != 0) ? 1 : 0;
+#ifdef DEBUG
+				fprintf(stderr, "DEBUG: %s(%u)\n", __func__,
+						variable->u.uint8);
+#endif
+				break;
 			case VT_INT8:
 				i8 = value;
 				variable->u.int8 = *i8;
 #ifdef DEBUG
 				fprintf(stderr, "DEBUG: %s(%d)\n", __func__,
-						*i8);
+						variable->u.int8);
 #endif
 				break;
 			case VT_UINT8:
@@ -87,7 +95,7 @@ Variable * variable_new(VariableType type, void * value)
 				variable->u.uint8 = *u8;
 #ifdef DEBUG
 				fprintf(stderr, "DEBUG: %s(%u)\n", __func__,
-						*u8);
+						variable->u.uint8);
 #endif
 				break;
 			case VT_INT16:
@@ -307,6 +315,7 @@ void variable_delete(Variable * variable)
 	switch(variable->type)
 	{
 		case VT_NULL:
+		case VT_BOOL:
 		case VT_INT8:
 		case VT_UINT8:
 		case VT_INT16:
@@ -376,6 +385,7 @@ int variable_get_as(Variable * variable, VariableType type, void * result)
 				break;
 			p = &i8;
 			break;
+		case VT_BOOL:
 		case VT_UINT8:
 			size = sizeof(u8);
 			if(variable->type == VT_UINT8)
@@ -560,6 +570,7 @@ int variable_serialize(Variable * variable, Buffer * buffer, int type)
 		case VT_NULL:
 			p = NULL;
 			break;
+		case VT_BOOL:
 		case VT_INT8:
 		case VT_UINT8:
 			size = sizeof(variable->u.int8);
