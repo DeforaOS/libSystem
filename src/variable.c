@@ -220,6 +220,8 @@ Variable * variable_new_deserialize_type(VariableType type, size_t * size,
 	int32_t i32;
 	uint32_t u32;
 	int64_t i64;
+	float f;
+	double d;
 	void * p = (char *)data;
 
 #ifdef DEBUG
@@ -263,6 +265,8 @@ Variable * variable_new_deserialize_type(VariableType type, size_t * size,
 			u32 = ntohl(u32);
 			s += u32;
 			break;
+		case VT_FLOAT:
+		case VT_DOUBLE:
 		case VT_STRING:
 			for(s = 0; s < *size;)
 				if(data[s++] != '\0')
@@ -309,6 +313,26 @@ Variable * variable_new_deserialize_type(VariableType type, size_t * size,
 		case VT_INT32:
 		case VT_UINT32:
 			i32 = ntohl(i32);
+			break;
+		case VT_FLOAT:
+			i32 = sscanf(p, "%e", &f);
+			free(p);
+			if(i32 != 1)
+			{
+				error_set_code(1, "Invalid float value", type);
+				return NULL;
+			}
+			p = &f;
+			break;
+		case VT_DOUBLE:
+			i32 = sscanf(p, "%le", &d);
+			free(p);
+			if(i32 != 1)
+			{
+				error_set_code(1, "Invalid double value", type);
+				return NULL;
+			}
+			p = &d;
 			break;
 		case VT_STRING:
 			break;
