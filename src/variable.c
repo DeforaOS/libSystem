@@ -42,6 +42,8 @@ struct _Variable
 		uint32_t uint32;
 		int64_t int64;
 		uint64_t uint64;
+		float f;
+		double d;
 		Buffer * buffer;
 		String * string;
 	} u;
@@ -61,6 +63,8 @@ Variable * variable_new(VariableType type, void * value)
 	uint32_t * u32;
 	int64_t * i64;
 	uint64_t * u64;
+	float * f;
+	double * d;
 	Buffer * b;
 	char const * s;
 
@@ -137,6 +141,14 @@ Variable * variable_new(VariableType type, void * value)
 			case VT_UINT64:
 				u64 = value;
 				variable->u.uint64 = *u64;
+				break;
+			case VT_FLOAT:
+				f = value;
+				variable->u.f = *f;
+				break;
+			case VT_DOUBLE:
+				d = value;
+				variable->u.d = *d;
 				break;
 			case VT_BUFFER:
 				if((b = buffer_new_copy(value)) == NULL)
@@ -324,6 +336,8 @@ void variable_delete(Variable * variable)
 		case VT_UINT32:
 		case VT_INT64:
 		case VT_UINT64:
+		case VT_FLOAT:
+		case VT_DOUBLE:
 			break;
 		case VT_BUFFER:
 			buffer_delete(variable->u.buffer);
@@ -512,6 +526,22 @@ int variable_get_as(Variable * variable, VariableType type, void * result)
 			{
 				size = sizeof(variable->u.uint64);
 				p = &variable->u.uint64;
+				break;
+			}
+			break;
+		case VT_FLOAT:
+			if(variable->type == VT_FLOAT)
+			{
+				size = sizeof(variable->u.f);
+				p = &variable->u.f;
+				break;
+			}
+			break;
+		case VT_DOUBLE:
+			if(variable->type == VT_DOUBLE)
+			{
+				size = sizeof(variable->u.d);
+				p = &variable->u.d;
 				break;
 			}
 			break;

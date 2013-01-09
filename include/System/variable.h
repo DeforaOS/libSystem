@@ -39,6 +39,8 @@ typedef enum _VariableType
 	VT_UINT32,
 	VT_INT64,
 	VT_UINT64,
+	VT_FLOAT,
+	VT_DOUBLE,
 	VT_BUFFER,
 	VT_STRING
 } VariableType;
