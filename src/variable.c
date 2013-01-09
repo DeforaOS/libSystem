@@ -217,6 +217,7 @@ Variable * variable_new_deserialize_type(VariableType type, size_t * size,
 		char const * data)
 {
 	size_t s;
+	uint8_t u8;
 	int16_t i16;
 	int32_t i32;
 	uint32_t u32;
@@ -232,6 +233,10 @@ Variable * variable_new_deserialize_type(VariableType type, size_t * size,
 	{
 		case VT_NULL:
 			s = 0;
+			break;
+		case VT_BOOL:
+			s = sizeof(uint8_t);
+			p = (char *)&u8;
 			break;
 		case VT_INT8:
 		case VT_UINT8:
@@ -292,6 +297,10 @@ Variable * variable_new_deserialize_type(VariableType type, size_t * size,
 	switch(type)
 	{
 		case VT_NULL:
+			break;
+		case VT_BOOL:
+			u8 = u8 ? 1 : 0;
+			break;
 		case VT_INT8:
 		case VT_UINT8:
 			break;
