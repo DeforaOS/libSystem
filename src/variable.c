@@ -16,9 +16,7 @@
 
 
 #include <stdlib.h>
-#ifdef DEBUG
-# include <stdio.h>
-#endif
+#include <stdio.h>
 #include <string.h>
 #include <errno.h>
 #include <arpa/inet.h>
@@ -600,6 +598,7 @@ int variable_serialize(Variable * variable, Buffer * buffer, int type)
 	uint16_t u16;
 	int32_t i32;
 	uint32_t u32;
+	char buf[16];
 
 #ifdef DEBUG
 	fprintf(stderr, "DEBUG: %s(%u)\n", __func__, variable->type);
@@ -640,6 +639,14 @@ int variable_serialize(Variable * variable, Buffer * buffer, int type)
 			/* FIXME convert to network endian */
 			size = sizeof(variable->u.int64);
 			p = &variable->u.int64;
+			break;
+		case VT_FLOAT:
+			size = snprintf(buf, sizeof(buf), "%.e", variable->u.f);
+			p = buf;
+			break;
+		case VT_DOUBLE:
+			size = snprintf(buf, sizeof(buf), "%.e", variable->u.d);
+			p = buf;
 			break;
 		case VT_BUFFER:
 			size = buffer_get_size(variable->u.buffer);
