@@ -268,10 +268,10 @@ Variable * variable_new_deserialize_type(VariableType type, size_t * size,
 		case VT_FLOAT:
 		case VT_DOUBLE:
 		case VT_STRING:
-			for(s = 0; s < *size;)
-				if(data[s++] != '\0')
+			for(s = 0; s < *size; s++)
+				if(data[s] != '\0')
 					continue;
-				else if((p = malloc(s)) == NULL)
+				else if((p = malloc(++s)) == NULL)
 				{
 					error_set_code(1, "%s",
 							strerror(errno));
@@ -679,7 +679,7 @@ int variable_serialize(Variable * variable, Buffer * buffer, int type)
 			p = buffer_get_data(variable->u.buffer);
 			break;
 		case VT_STRING:
-			size = string_get_length(variable->u.string);
+			size = string_get_length(variable->u.string) + 1;
 			p = variable->u.string;
 			break;
 	}
