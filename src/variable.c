@@ -221,12 +221,8 @@ Variable * variable_new_deserialize(size_t * size, char const * data)
 	u8 = data[0];
 	s = *size - sizeof(u8);
 	/* deserialize according to the type */
-	if((variable = variable_new_deserialize_type(u8, &s,
-					&data[sizeof(u8)])) == NULL)
-	{
-		*size = s + sizeof(u8);
-		return NULL;
-	}
+	variable = variable_new_deserialize_type(u8, &s, &data[sizeof(u8)]);
+	*size = s + sizeof(u8);
 	return variable;
 }
 
