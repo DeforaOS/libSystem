@@ -180,7 +180,28 @@ Variable * variable_new(VariableType type, void * value)
 /* variable_new_copy */
 Variable * variable_new_copy(Variable * variable)
 {
-	return variable_new(variable->type, &variable->u);
+	switch(variable->type)
+	{
+		case VT_NULL:
+		case VT_BOOL:
+		case VT_INT8:
+		case VT_UINT8:
+		case VT_INT16:
+		case VT_UINT16:
+		case VT_INT32:
+		case VT_UINT32:
+		case VT_INT64:
+		case VT_UINT64:
+		case VT_FLOAT:
+		case VT_DOUBLE:
+			return variable_new(variable->type, &variable->u);
+		case VT_STRING:
+			return variable_new(variable->type, variable->u.string);
+		case VT_BUFFER:
+			return variable_new(variable->type, variable->u.buffer);
+	}
+	error_set_code(1, "%s", "Unable to copy this type of variable");
+	return NULL;
 }
 
 
@@ -188,22 +209,22 @@ Variable * variable_new_copy(Variable * variable)
 Variable * variable_new_deserialize(size_t * size, char const * data)
 {
 	Variable * variable;
-	unsigned char u;
+	uint8_t u8;
 	size_t s;
 
 	/* obtain the type from the data */
-	if(*size < sizeof(u))
+	if(*size < sizeof(u8))
 	{
 		*size = 1;
 		return NULL;
 	}
-	u = data[0];
-	s = *size - sizeof(u);
+	u8 = data[0];
+	s = *size - sizeof(u8);
 	/* deserialize according to the type */
-	if((variable = variable_new_deserialize_type(u, &s, &data[sizeof(u)]))
-			== NULL)
+	if((variable = variable_new_deserialize_type(u8, &s,
+					&data[sizeof(u8)])) == NULL)
 	{
-		*size = s + sizeof(u);
+		*size = s + sizeof(u8);
 		return NULL;
 	}
 	return variable;
@@ -617,7 +638,7 @@ int variable_serialize(Variable * variable, Buffer * buffer, int type)
 	size_t size = 0;
 	size_t offset;
 	void * p;
-	unsigned char u;
+	uint8_t u8;
 	int16_t i16;
 	uint16_t u16;
 	int32_t i32;
@@ -691,10 +712,10 @@ int variable_serialize(Variable * variable, Buffer * buffer, int type)
 	if(type)
 	{
 		/* prefix with the type */
-		u = variable->type;
-		if(buffer_set(buffer, sizeof(u), (char *)&u) != 0)
+		u8 = variable->type;
+		if(buffer_set(buffer, sizeof(u8), (char *)&u8) != 0)
 			return -1;
-		offset = sizeof(u);
+		offset = sizeof(u8);
 		if(variable->type == VT_BUFFER)
 		{
 			if(buffer_set_data(buffer, offset, (char *)&u32,
