@@ -79,6 +79,10 @@ dist:
 		$(PACKAGE)-$(VERSION)/src/variable.c \
 		$(PACKAGE)-$(VERSION)/src/Makefile \
 		$(PACKAGE)-$(VERSION)/src/token.h \
+		$(PACKAGE)-$(VERSION)/src/python/project.conf \
+		$(PACKAGE)-$(VERSION)/src/python/Makefile \
+		$(PACKAGE)-$(VERSION)/src/python/libSystem.c \
+		$(PACKAGE)-$(VERSION)/src/python/libSystem.py \
 		$(PACKAGE)-$(VERSION)/src/project.conf \
 		$(PACKAGE)-$(VERSION)/tests/string.c \
 		$(PACKAGE)-$(VERSION)/tests/variable.c \
