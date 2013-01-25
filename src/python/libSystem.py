@@ -19,6 +19,17 @@
 import _libSystem
 
 
+#Config
+class Config:
+	def __init__(self):
+		self.config = _libSystem.config_new()
+
+	def get(self, section, variable):
+		return _libSystem.config_get(self.config, section, variable)
+
+	def set(self, section, variable, value):
+		return _libSystem.config_set(self.config, section, variable,
+				value)
 #Event
 class Event:
 	def __init__(self):
