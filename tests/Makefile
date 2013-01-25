@@ -12,7 +12,7 @@ LDFLAGSF= -L ../src -lSystem
 LDFLAGS	= -L$(PREFIX)/lib -Wl,-rpath,"$(PWD)/../src"
 RM	= rm -f
 LN	= ln -f
-MKDIR	= mkdir -p
+MKDIR	= mkdir -m 0755 -p
 INSTALL	= install
 
 
