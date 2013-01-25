@@ -34,9 +34,13 @@ static void _libsystem_config_delete(PyObject * self);
 static PyObject * _libsystem_config_get(PyObject * self, PyObject * args);
 static PyObject * _libsystem_config_set(PyObject * self, PyObject * args);
 
+static PyObject * _libsystem_config_load(PyObject * self, PyObject * args);
+static PyObject * _libsystem_config_save(PyObject * self, PyObject * args);
+
 /* Event */
 static PyObject * _libsystem_event_new(PyObject * self, PyObject * args);
 static void _libsystem_event_delete(PyObject * self);
+
 static PyObject * _libsystem_event_loop(PyObject * self, PyObject * args);
 
 
@@ -49,6 +53,10 @@ static PyMethodDef _libsystem_methods[] =
 		"Obtains a value from the Config object." },
 	{ "config_set", _libsystem_config_set, METH_VARARGS,
 		"Sets a value in the Config object." },
+	{ "config_load", _libsystem_config_load, METH_VARARGS,
+		"Load values in the Config object from a file." },
+	{ "config_save", _libsystem_config_save, METH_VARARGS,
+		"Save values in the Config object to a file." },
 	{ "event_new", _libsystem_event_new, METH_VARARGS,
 		"Instantiates an Event object." },
 	{ "event_loop", _libsystem_event_loop, METH_VARARGS,
@@ -132,6 +140,40 @@ static PyObject * _libsystem_config_set(PyObject * self, PyObject * args)
 	if(!PyArg_ParseTuple(args, "sss", &section, &variable, &value))
 		return NULL;
 	ret = config_set(config, section, variable, value);
+	return Py_BuildValue("i", ret);
+}
+
+
+/* libsystem_config_load */
+static PyObject * _libsystem_config_load(PyObject * self, PyObject * args)
+{
+	Config * config;
+	int ret;
+	char const * filename;
+
+	if((config = PyCapsule_GetPointer(self, _libsystem_config_name))
+			== NULL)
+		return NULL;
+	if(!PyArg_ParseTuple(args, "s", &filename))
+		return NULL;
+	ret = config_load(config, filename);
+	return Py_BuildValue("i", ret);
+}
+
+
+/* libsystem_config_save */
+static PyObject * _libsystem_config_save(PyObject * self, PyObject * args)
+{
+	Config * config;
+	int ret;
+	char const * filename;
+
+	if((config = PyCapsule_GetPointer(self, _libsystem_config_name))
+			== NULL)
+		return NULL;
+	if(!PyArg_ParseTuple(args, "s", &filename))
+		return NULL;
+	ret = config_save(config, filename);
 	return Py_BuildValue("i", ret);
 }
 

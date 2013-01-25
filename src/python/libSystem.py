@@ -30,6 +30,14 @@ class Config:
 	def set(self, section, variable, value):
 		return _libSystem.config_set(self.config, section, variable,
 				value)
+
+	def load(self, filename):
+		return _libSystem.config_load(self.config, filename)
+
+	def save(self, filename):
+		return _libSystem.config_save(self.config, filename)
+
+
 #Event
 class Event:
 	def __init__(self):
