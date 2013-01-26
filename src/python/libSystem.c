@@ -38,6 +38,12 @@ static PyObject * _libsystem_config_load(PyObject * self, PyObject * args);
 static PyObject * _libsystem_config_reset(PyObject * self, PyObject * args);
 static PyObject * _libsystem_config_save(PyObject * self, PyObject * args);
 
+/* Error */
+static PyObject * _libsystem_error_get(PyObject * self, PyObject * args);
+static PyObject * _libsystem_error_get_code(PyObject * self, PyObject * args);
+
+static PyObject * _libsystem_error_print(PyObject * self, PyObject * args);
+
 /* Event */
 static PyObject * _libsystem_event_new(PyObject * self, PyObject * args);
 static void _libsystem_event_delete(PyObject * self);
@@ -60,6 +66,12 @@ static PyMethodDef _libsystem_methods[] =
 		"Reset the Config object." },
 	{ "config_save", _libsystem_config_save, METH_VARARGS,
 		"Save values in the Config object to a file." },
+	{ "error_get", _libsystem_error_get, METH_VARARGS,
+		"Get the last error." },
+	{ "error_get_code", _libsystem_error_get_code, METH_VARARGS,
+		"Get the last error code." },
+	{ "error_print", _libsystem_error_print, METH_VARARGS,
+		"Print the last error message." },
 	{ "event_new", _libsystem_event_new, METH_VARARGS,
 		"Instantiates an Event object." },
 	{ "event_loop", _libsystem_event_loop, METH_VARARGS,
@@ -193,6 +205,45 @@ static PyObject * _libsystem_config_save(PyObject * self, PyObject * args)
 	if(!PyArg_ParseTuple(args, "s", &filename))
 		return NULL;
 	ret = config_save(config, filename);
+	return Py_BuildValue("i", ret);
+}
+
+
+/* Error */
+/* libsystem_error_get */
+static PyObject * _libsystem_error_get(PyObject * self, PyObject * args)
+{
+	char const * ret;
+
+	if(!PyArg_ParseTuple(args, ""))
+		return NULL;
+	ret = error_get();
+	return Py_BuildValue("s", ret);
+}
+
+
+/* libsystem_error_get_code */
+static PyObject * _libsystem_error_get_code(PyObject * self, PyObject * args)
+{
+	int ret;
+
+	/* XXX doesn't match the original prototype */
+	if(!PyArg_ParseTuple(args, ""))
+		return NULL;
+	error_get_code(&ret);
+	return Py_BuildValue("i", ret);
+}
+
+
+/* libsystem_error_print */
+static PyObject * _libsystem_error_print(PyObject * self, PyObject * args)
+{
+	int ret;
+	char const * program;
+
+	if(!PyArg_ParseTuple(args, "s", &program))
+		return NULL;
+	ret = error_print(program);
 	return Py_BuildValue("i", ret);
 }
 
