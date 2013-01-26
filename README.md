@@ -9,6 +9,7 @@ a complete C runtime (thus obsoleting the libc and replacing its API).
 Regardless of its progress in this regard, libSystem is intended to be portable
 and work on any system, using any POSIX-compliant runtime provided instead.
 
+
 Compiling libSystem
 -------------------
 
@@ -20,3 +21,17 @@ To install libSystem in a dedicated directory, like `/path/to/libSystem`:
 
     $ make PREFIX="/path/to/libSystem" install
 
+
+Python bindings
+---------------
+
+Part of libSystem's API can also be accessed from within the Python programming
+language. This binding is not compiled or installed by default though. After
+installing libSystem as documented above, the Python interface can be built and
+installed as follows:
+
+    $ (cd src/python && make install)
+
+Likewise, an alternate installation directory may be specified:
+
+    $ (cd src/python && make PREFIX="/path/to/libSystem" install)
