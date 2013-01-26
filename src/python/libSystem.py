@@ -34,6 +34,9 @@ class Config:
 	def load(self, filename):
 		return _libSystem.config_load(self.config, filename)
 
+	def reset(self):
+		return _libSystem.config_reset(self.config)
+
 	def save(self, filename):
 		return _libSystem.config_save(self.config, filename)
 

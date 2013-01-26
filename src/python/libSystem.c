@@ -35,6 +35,7 @@ static PyObject * _libsystem_config_get(PyObject * self, PyObject * args);
 static PyObject * _libsystem_config_set(PyObject * self, PyObject * args);
 
 static PyObject * _libsystem_config_load(PyObject * self, PyObject * args);
+static PyObject * _libsystem_config_reset(PyObject * self, PyObject * args);
 static PyObject * _libsystem_config_save(PyObject * self, PyObject * args);
 
 /* Event */
@@ -55,6 +56,8 @@ static PyMethodDef _libsystem_methods[] =
 		"Sets a value in the Config object." },
 	{ "config_load", _libsystem_config_load, METH_VARARGS,
 		"Load values in the Config object from a file." },
+	{ "config_reset", _libsystem_config_reset, METH_VARARGS,
+		"Reset the Config object." },
 	{ "config_save", _libsystem_config_save, METH_VARARGS,
 		"Save values in the Config object to a file." },
 	{ "event_new", _libsystem_event_new, METH_VARARGS,
@@ -157,6 +160,22 @@ static PyObject * _libsystem_config_load(PyObject * self, PyObject * args)
 	if(!PyArg_ParseTuple(args, "s", &filename))
 		return NULL;
 	ret = config_load(config, filename);
+	return Py_BuildValue("i", ret);
+}
+
+
+/* libsystem_config_reset */
+static PyObject * _libsystem_config_reset(PyObject * self, PyObject * args)
+{
+	Config * config;
+	int ret;
+
+	if((config = PyCapsule_GetPointer(self, _libsystem_config_name))
+			== NULL)
+		return NULL;
+	if(!PyArg_ParseTuple(args, ""))
+		return NULL;
+	ret = config_reset(config);
 	return Py_BuildValue("i", ret);
 }
 
