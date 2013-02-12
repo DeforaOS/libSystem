@@ -24,6 +24,7 @@
 /* constants */
 static char const _libsystem_config_name[] = "libSystem::Config";
 static char const _libsystem_event_name[] = "libSystem::Event";
+static char const _libsystem_plugin_name[] = "libSystem::Plugin";
 
 
 /* prototypes */
@@ -49,6 +50,12 @@ static PyObject * _libsystem_event_new(PyObject * self, PyObject * args);
 static void _libsystem_event_delete(PyObject * self);
 
 static PyObject * _libsystem_event_loop(PyObject * self, PyObject * args);
+
+/* Plugin */
+static PyObject * _libsystem_plugin_new(PyObject * self, PyObject * args);
+static void _libsystem_plugin_delete(PyObject * self);
+
+static PyObject * _libsystem_plugin_lookup(PyObject * self, PyObject * args);
 
 
 /* variables */
@@ -76,6 +83,10 @@ static PyMethodDef _libsystem_methods[] =
 		"Instantiates an Event object." },
 	{ "event_loop", _libsystem_event_loop, METH_VARARGS,
 		"Loops an Event object." },
+	{ "plugin_new", _libsystem_plugin_new, METH_VARARGS,
+		"Opens a plug-in (or the current process)." },
+	{ "plugin_lookup", _libsystem_plugin_lookup, METH_VARARGS,
+		"Looks for a particular symbol with the Plugin object." },
 	{ NULL, NULL, 0, NULL }
 };
 
@@ -285,4 +296,56 @@ static PyObject * _libsystem_event_loop(PyObject * self, PyObject * args)
 		return NULL;
 	ret = event_loop(event);
 	return Py_BuildValue("i", ret);
+}
+
+
+/* Plugin */
+/* libsystem_plugin_new */
+static PyObject * _libsystem_plugin_new(PyObject * self, PyObject * args)
+{
+	Plugin * plugin;
+	char const * libdir;
+	char const * package;
+	char const * type;
+	char const * name;
+
+	if(PyArg_ParseTuple(args, ""))
+		plugin = plugin_new_self();
+	else if(PyArg_ParseTuple(args, "ssss", &libdir, &package, &type, &name))
+		plugin = plugin_new(libdir, package, type, name);
+	else
+		plugin = NULL;
+	if(plugin == NULL)
+		return NULL;
+	return PyCapsule_New(plugin, _libsystem_plugin_name,
+			_libsystem_plugin_delete);
+}
+
+
+/* libsystem_plugin_delete */
+static void _libsystem_plugin_delete(PyObject * self)
+{
+	Plugin * plugin;
+
+	if((plugin = PyCapsule_GetPointer(self, _libsystem_plugin_name))
+			== NULL)
+		return;
+	plugin_delete(plugin);
+}
+
+
+/* libsystem_plugin_lookup */
+static PyObject * _libsystem_plugin_lookup(PyObject * self, PyObject * args)
+{
+	Plugin * plugin;
+	char const * symbol;
+	void * ret;
+
+	if((plugin = PyCapsule_GetPointer(self, _libsystem_plugin_name))
+			== NULL)
+		return NULL;
+	if(!PyArg_ParseTuple(args, "s", &symbol))
+		return NULL;
+	ret = plugin_lookup(plugin, symbol);
+	return Py_BuildValue("p", ret);
 }
