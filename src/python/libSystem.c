@@ -292,7 +292,9 @@ static PyObject * _libsystem_event_loop(PyObject * self, PyObject * args)
 	int ret;
 	Event * event;
 
-	if(!PyArg_ParseTuple(args, "O:event", &event))
+	if((event = PyCapsule_GetPointer(self, _libsystem_event_name)) == NULL)
+		return NULL;
+	if(!PyArg_ParseTuple(args, ""))
 		return NULL;
 	ret = event_loop(event);
 	return Py_BuildValue("i", ret);
