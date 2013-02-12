@@ -25,6 +25,7 @@
 static char const _libsystem_config_name[] = "libSystem::Config";
 static char const _libsystem_event_name[] = "libSystem::Event";
 static char const _libsystem_plugin_name[] = "libSystem::Plugin";
+static char const _libsystem_plugin_symbol_name[] = "libSystem::Plugin::symbol";
 
 
 /* prototypes */
@@ -343,11 +344,13 @@ static PyObject * _libsystem_plugin_lookup(PyObject * self, PyObject * args)
 	char const * symbol;
 	void * ret;
 
+	if(!PyArg_ParseTuple(args, "Os", &self, &symbol))
+		return NULL;
 	if((plugin = PyCapsule_GetPointer(self, _libsystem_plugin_name))
 			== NULL)
 		return NULL;
-	if(!PyArg_ParseTuple(args, "s", &symbol))
+	if((ret = plugin_lookup(plugin, symbol)) == NULL)
+		/* XXX differentiate from a real error */
 		return NULL;
-	ret = plugin_lookup(plugin, symbol);
-	return Py_BuildValue("p", ret);
+	return PyCapsule_New(ret, _libsystem_plugin_symbol_name, NULL);
 }
