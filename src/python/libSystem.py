@@ -48,3 +48,12 @@ class Event:
 
 	def loop(self):
 		return _libSystem.event_loop(self.event)
+
+
+#Plugin
+class Plugin:
+	def __init__(self):
+		self.plugin = _libSystem.plugin_new()
+
+	def lookup(self, symbol):
+		return _libSystem.plugin_lookup(self.plugin, symbol)
