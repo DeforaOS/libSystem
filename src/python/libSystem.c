@@ -142,10 +142,10 @@ static PyObject * _libsystem_config_get(PyObject * self, PyObject * args)
 	char const * section;
 	char const * variable;
 
+	if(!PyArg_ParseTuple(args, "Oss", &self, &section, &variable))
+		return NULL;
 	if((config = PyCapsule_GetPointer(self, _libsystem_config_name))
 			== NULL)
-		return NULL;
-	if(!PyArg_ParseTuple(args, "ss", &section, &variable))
 		return NULL;
 	ret = config_get(config, section, variable);
 	return Py_BuildValue("s", ret);
@@ -161,10 +161,10 @@ static PyObject * _libsystem_config_set(PyObject * self, PyObject * args)
 	char const * variable;
 	char const * value;
 
+	if(!PyArg_ParseTuple(args, "Osss", &self, &section, &variable, &value))
+		return NULL;
 	if((config = PyCapsule_GetPointer(self, _libsystem_config_name))
 			== NULL)
-		return NULL;
-	if(!PyArg_ParseTuple(args, "sss", &section, &variable, &value))
 		return NULL;
 	ret = config_set(config, section, variable, value);
 	return Py_BuildValue("i", ret);
@@ -178,10 +178,10 @@ static PyObject * _libsystem_config_load(PyObject * self, PyObject * args)
 	int ret;
 	char const * filename;
 
+	if(!PyArg_ParseTuple(args, "Os", &self, &filename))
+		return NULL;
 	if((config = PyCapsule_GetPointer(self, _libsystem_config_name))
 			== NULL)
-		return NULL;
-	if(!PyArg_ParseTuple(args, "s", &filename))
 		return NULL;
 	ret = config_load(config, filename);
 	return Py_BuildValue("i", ret);
@@ -194,10 +194,10 @@ static PyObject * _libsystem_config_reset(PyObject * self, PyObject * args)
 	Config * config;
 	int ret;
 
+	if(!PyArg_ParseTuple(args, "O", &self))
+		return NULL;
 	if((config = PyCapsule_GetPointer(self, _libsystem_config_name))
 			== NULL)
-		return NULL;
-	if(!PyArg_ParseTuple(args, ""))
 		return NULL;
 	ret = config_reset(config);
 	return Py_BuildValue("i", ret);
@@ -211,10 +211,10 @@ static PyObject * _libsystem_config_save(PyObject * self, PyObject * args)
 	int ret;
 	char const * filename;
 
+	if(!PyArg_ParseTuple(args, "Os", &self, &filename))
+		return NULL;
 	if((config = PyCapsule_GetPointer(self, _libsystem_config_name))
 			== NULL)
-		return NULL;
-	if(!PyArg_ParseTuple(args, "s", &filename))
 		return NULL;
 	ret = config_save(config, filename);
 	return Py_BuildValue("i", ret);
@@ -293,9 +293,9 @@ static PyObject * _libsystem_event_loop(PyObject * self, PyObject * args)
 	int ret;
 	Event * event;
 
-	if((event = PyCapsule_GetPointer(self, _libsystem_event_name)) == NULL)
+	if(!PyArg_ParseTuple(args, "O", &self))
 		return NULL;
-	if(!PyArg_ParseTuple(args, ""))
+	if((event = PyCapsule_GetPointer(self, _libsystem_event_name)) == NULL)
 		return NULL;
 	ret = event_loop(event);
 	return Py_BuildValue("i", ret);
