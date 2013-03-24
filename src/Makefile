@@ -75,8 +75,8 @@ distclean: clean
 
 install: $(TARGETS)
 	$(MKDIR) $(DESTDIR)$(LIBDIR)
-	$(INSTALL) -m 0644 -- libSystem.a $(DESTDIR)$(LIBDIR)/libSystem.a
-	$(INSTALL) -m 0755 -- libSystem.so.0.0 $(DESTDIR)$(LIBDIR)/libSystem.so.0.0
+	$(INSTALL) -m 0644 libSystem.a $(DESTDIR)$(LIBDIR)/libSystem.a
+	$(INSTALL) -m 0755 libSystem.so.0.0 $(DESTDIR)$(LIBDIR)/libSystem.so.0.0
 	$(LN) -s -- libSystem.so.0.0 $(DESTDIR)$(LIBDIR)/libSystem.so.0
 	$(LN) -s -- libSystem.so.0.0 $(DESTDIR)$(LIBDIR)/libSystem.so
 

@@ -15,31 +15,31 @@ distclean: clean
 
 install:
 	$(MKDIR) $(DESTDIR)$(INCLUDEDIR)/System
-	$(INSTALL) -m 0644 -- array.h $(DESTDIR)$(INCLUDEDIR)/System/array.h
+	$(INSTALL) -m 0644 array.h $(DESTDIR)$(INCLUDEDIR)/System/array.h
 	$(MKDIR) $(DESTDIR)$(INCLUDEDIR)/System
-	$(INSTALL) -m 0644 -- buffer.h $(DESTDIR)$(INCLUDEDIR)/System/buffer.h
+	$(INSTALL) -m 0644 buffer.h $(DESTDIR)$(INCLUDEDIR)/System/buffer.h
 	$(MKDIR) $(DESTDIR)$(INCLUDEDIR)/System
-	$(INSTALL) -m 0644 -- config.h $(DESTDIR)$(INCLUDEDIR)/System/config.h
+	$(INSTALL) -m 0644 config.h $(DESTDIR)$(INCLUDEDIR)/System/config.h
 	$(MKDIR) $(DESTDIR)$(INCLUDEDIR)/System
-	$(INSTALL) -m 0644 -- error.h $(DESTDIR)$(INCLUDEDIR)/System/error.h
+	$(INSTALL) -m 0644 error.h $(DESTDIR)$(INCLUDEDIR)/System/error.h
 	$(MKDIR) $(DESTDIR)$(INCLUDEDIR)/System
-	$(INSTALL) -m 0644 -- event.h $(DESTDIR)$(INCLUDEDIR)/System/event.h
+	$(INSTALL) -m 0644 event.h $(DESTDIR)$(INCLUDEDIR)/System/event.h
 	$(MKDIR) $(DESTDIR)$(INCLUDEDIR)/System
-	$(INSTALL) -m 0644 -- file.h $(DESTDIR)$(INCLUDEDIR)/System/file.h
+	$(INSTALL) -m 0644 file.h $(DESTDIR)$(INCLUDEDIR)/System/file.h
 	$(MKDIR) $(DESTDIR)$(INCLUDEDIR)/System
-	$(INSTALL) -m 0644 -- hash.h $(DESTDIR)$(INCLUDEDIR)/System/hash.h
+	$(INSTALL) -m 0644 hash.h $(DESTDIR)$(INCLUDEDIR)/System/hash.h
 	$(MKDIR) $(DESTDIR)$(INCLUDEDIR)/System
-	$(INSTALL) -m 0644 -- object.h $(DESTDIR)$(INCLUDEDIR)/System/object.h
+	$(INSTALL) -m 0644 object.h $(DESTDIR)$(INCLUDEDIR)/System/object.h
 	$(MKDIR) $(DESTDIR)$(INCLUDEDIR)/System
-	$(INSTALL) -m 0644 -- parser.h $(DESTDIR)$(INCLUDEDIR)/System/parser.h
+	$(INSTALL) -m 0644 parser.h $(DESTDIR)$(INCLUDEDIR)/System/parser.h
 	$(MKDIR) $(DESTDIR)$(INCLUDEDIR)/System
-	$(INSTALL) -m 0644 -- plugin.h $(DESTDIR)$(INCLUDEDIR)/System/plugin.h
+	$(INSTALL) -m 0644 plugin.h $(DESTDIR)$(INCLUDEDIR)/System/plugin.h
 	$(MKDIR) $(DESTDIR)$(INCLUDEDIR)/System
-	$(INSTALL) -m 0644 -- string.h $(DESTDIR)$(INCLUDEDIR)/System/string.h
+	$(INSTALL) -m 0644 string.h $(DESTDIR)$(INCLUDEDIR)/System/string.h
 	$(MKDIR) $(DESTDIR)$(INCLUDEDIR)/System
-	$(INSTALL) -m 0644 -- token.h $(DESTDIR)$(INCLUDEDIR)/System/token.h
+	$(INSTALL) -m 0644 token.h $(DESTDIR)$(INCLUDEDIR)/System/token.h
 	$(MKDIR) $(DESTDIR)$(INCLUDEDIR)/System
-	$(INSTALL) -m 0644 -- variable.h $(DESTDIR)$(INCLUDEDIR)/System/variable.h
+	$(INSTALL) -m 0644 variable.h $(DESTDIR)$(INCLUDEDIR)/System/variable.h
 
 uninstall:
 	$(RM) -- $(DESTDIR)$(INCLUDEDIR)/System/array.h
