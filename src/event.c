@@ -1,5 +1,5 @@
 /* $Id$ */
-/* Copyright (c) 2005-2012 Pierre Pronchery <khorben@defora.org> */
+/* Copyright (c) 2005-2013 Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS System libSystem */
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -137,9 +137,9 @@ static void _loop_io(Event * event, eventioArray * eios, fd_set * fds);
 
 int event_loop(Event * event)
 {
-	struct timeval * timeout = (event->timeout.tv_sec == (time_t)LONG_MAX
-			&& event->timeout.tv_usec == (suseconds_t)LONG_MAX)
-		? NULL : &event->timeout;
+	struct timeval tv = event->timeout;
+	struct timeval * timeout = (tv.tv_sec == (time_t)LONG_MAX
+			&& tv.tv_usec == (suseconds_t)LONG_MAX) ? NULL : &tv;
 	fd_set rfds = event->rfds;
 	fd_set wfds = event->wfds;
 
