@@ -1,5 +1,5 @@
 /* $Id$ */
-/* Copyright (c) 2008-2012 Pierre Pronchery <khorben@defora.org> */
+/* Copyright (c) 2008-2013 Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS System libSystem */
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -21,7 +21,10 @@
 #ifdef DEBUG
 # include <stdio.h>
 #endif
-#include "System.h"
+#include "System/error.h"
+#include "System/object.h"
+#include "System/string.h"
+#include "System/token.h"
 #include "token.h"
 
 

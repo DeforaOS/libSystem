@@ -20,7 +20,9 @@
 #include <string.h>
 #include <errno.h>
 #include <arpa/inet.h>
-#include "System.h"
+#include "System/error.h"
+#include "System/object.h"
+#include "System/variable.h"
 
 
 /* Variable */

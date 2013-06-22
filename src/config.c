@@ -1,5 +1,5 @@
 /* $Id$ */
-/* Copyright (c) 2005-2012 Pierre Pronchery <khorben@defora.org> */
+/* Copyright (c) 2005-2013 Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS System libSystem */
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -22,7 +22,8 @@
 #include <string.h>
 #include <ctype.h>
 #include <errno.h>
-#include "System.h"
+#include "System/error.h"
+#include "System/config.h"
 
 
 /* Config */

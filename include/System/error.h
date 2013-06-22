@@ -1,5 +1,5 @@
 /* $Id$ */
-/* Copyright (c) 2007-2012 Pierre Pronchery <khorben@defora.org> */
+/* Copyright (c) 2007-2013 Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS System libSystem */
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -18,17 +18,20 @@
 #ifndef LIBSYSTEM_ERROR_H
 # define LIBSYSTEM_ERROR_H
 
+# include "string.h"
+
 
 /* functions */
 /* accessors */
-char const * error_get(void);
-char const * error_get_code(int * code);
+String const * error_get(void);
+String const * error_get_code(int * code);
 
-void error_set(char const * format, ...);
-int error_set_code(int code, char const * format, ...);
-int error_set_print(char const * program, int code, char const * format, ...);
+void error_set(String const * format, ...);
+int error_set_code(int code, String const * format, ...);
+int error_set_print(String const * program, int code,
+		String const * format, ...);
 
 /* useful */
-int error_print(char const * program);
+int error_print(String const * program);
 
 #endif /* !LIBSYSTEM_ERROR_H */

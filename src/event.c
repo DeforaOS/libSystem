@@ -32,7 +32,10 @@ typedef int suseconds_t; /* XXX */
 # include <stdio.h>
 #endif
 #include <errno.h>
-#include "System.h"
+#include "System/array.h"
+#include "System/error.h"
+#include "System/object.h"
+#include "System/event.h"
 
 /* macros */
 #ifndef max

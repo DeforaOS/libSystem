@@ -1,5 +1,5 @@
 /* $Id$ */
-/* Copyright (c) 2007-2012 Pierre Pronchery <khorben@defora.org> */
+/* Copyright (c) 2007-2013 Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS System libSystem */
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -17,44 +17,30 @@
 
 #include <stdarg.h>
 #include <stdio.h>
-#include <string.h>
-#include "System.h"
+#include "System/error.h"
 
 
+/* Error */
 /* private */
-/* error_do */
-static char const * _error_do(int * codeptr, char const * format, va_list args)
-{
-	static char buf[256] = "";
-	static int code = 0;
-
-	if(format != NULL) /* setting the error */
-	{
-		vsnprintf(buf, sizeof(buf), format, args);
-		if(codeptr != NULL)
-			code = *codeptr;
-		return buf;
-	}
-	if(codeptr != NULL)
-		*codeptr = code;
-	return buf;
-}
+/* prototypes */
+static String const * _error_do(int * codeptr, String const * format,
+		va_list args);
 
 
 /* public */
 /* accessors */
 /* error_get */
-static char const * _get_do(char const * null, ...);
+static String const * _get_do(String const * null, ...);
 
-char const * error_get(void)
+String const * error_get(void)
 {
 	/* XXX workaround for portability */
 	return _get_do(NULL);
 }
 
-static char const * _get_do(char const * null, ...)
+static String const * _get_do(String const * null, ...)
 {
-	char const * ret;
+	String const * ret;
 	va_list args;
 
 	va_start(args, null);
@@ -65,17 +51,17 @@ static char const * _get_do(char const * null, ...)
 
 
 /* error_get_code */
-static char const * _get_code_do(int * code, ...);
+static String const * _get_code_do(int * code, ...);
 
-char const * error_get_code(int * code)
+String const * error_get_code(int * code)
 {
 	/* XXX workaround for portability */
 	return _get_code_do(code);
 }
 
-static char const * _get_code_do(int * code, ...)
+static String const * _get_code_do(int * code, ...)
 {
-	char const * ret;
+	String const * ret;
 	va_list args;
 
 	va_start(args, code);
@@ -86,7 +72,7 @@ static char const * _get_code_do(int * code, ...)
 
 
 /* error_set */
-void error_set(char const * format, ...)
+void error_set(String const * format, ...)
 {
 	va_list args;
 
@@ -97,7 +83,7 @@ void error_set(char const * format, ...)
 
 
 /* error_set_code */
-int error_set_code(int code, char const * format, ...)
+int error_set_code(int code, String const * format, ...)
 {
 	va_list args;
 
@@ -109,7 +95,7 @@ int error_set_code(int code, char const * format, ...)
 
 
 /* error_set_print */
-int error_set_print(char const * program, int code, char const * format, ...)
+int error_set_print(String const * program, int code, String const * format, ...)
 {
 	va_list args;
 
@@ -122,15 +108,15 @@ int error_set_print(char const * program, int code, char const * format, ...)
 
 /* useful */
 /* error_print */
-static int _print_do(char const * program, ...);
+static int _print_do(String const * program, ...);
 
-int error_print(char const * program)
+int error_print(String const * program)
 {
 	/* XXX workaround for portability */
 	return _print_do(program);
 }
 
-static int _print_do(char const * program, ...)
+static int _print_do(String const * program, ...)
 {
 	int ret = 0;
 	va_list args;
@@ -145,4 +131,26 @@ static int _print_do(char const * program, ...)
 	fputc('\n', stderr);
 	va_end(args);
 	return ret;
+}
+
+
+/* private */
+/* functions */
+/* error_do */
+static String const * _error_do(int * codeptr, String const * format,
+		va_list args)
+{
+	static String buf[256] = "";
+	static int code = 0;
+
+	if(format != NULL) /* setting the error */
+	{
+		vsnprintf(buf, sizeof(buf), format, args);
+		if(codeptr != NULL)
+			code = *codeptr;
+		return buf;
+	}
+	if(codeptr != NULL)
+		*codeptr = code;
+	return buf;
 }

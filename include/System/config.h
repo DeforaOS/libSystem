@@ -1,5 +1,5 @@
 /* $Id$ */
-/* Copyright (c) 2006-2012 Pierre Pronchery <khorben@defora.org> */
+/* Copyright (c) 2006-2013 Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS System libSystem */
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,15 +19,16 @@
 # define LIBSYSTEM_CONFIG_H
 
 # include "hash.h"
+# include "string.h"
 
 
 /* Config */
 /* types */
 typedef Hash Config;
 
-typedef void (*ConfigForeachCallback)(char const * section, void * priv);
-typedef void (*ConfigForeachSectionCallback)(char const * variable,
-		char const * value, void * priv);
+typedef void (*ConfigForeachCallback)(String const * section, void * priv);
+typedef void (*ConfigForeachSectionCallback)(String const * variable,
+		String const * value, void * priv);
 
 
 /* functions */
@@ -35,19 +36,19 @@ Config * config_new(void);
 void config_delete(Config * config);
 
 /* accessors */
-char const * config_get(Config * config, char const * section,
-		char const * variable);
-int config_set(Config * config, char const * section, char const * variable,
-		char const * value);
+String const * config_get(Config * config, String const * section,
+		String const * variable);
+int config_set(Config * config, String const * section, String const * variable,
+		String const * value);
 
 /* useful */
 void config_foreach(Config * config, ConfigForeachCallback callback,
 		void * priv);
-void config_foreach_section(Config * config, char const * section,
+void config_foreach_section(Config * config, String const * section,
 		ConfigForeachSectionCallback callback, void * priv);
 
-int config_load(Config * config, char const * filename);
+int config_load(Config * config, String const * filename);
 int config_reset(Config * config);
-int config_save(Config * config, char const * filename);
+int config_save(Config * config, String const * filename);
 
 #endif /* !LIBSYSTEM_CONFIG_H */
