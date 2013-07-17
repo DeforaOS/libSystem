@@ -7,6 +7,7 @@ CPPFLAGSF= -I ../include
 CPPFLAGS=
 CFLAGSF	= -W -fPIC
 CFLAGS	= -g -Wall -O2 -pedantic
+LDFLAGS	= 
 AR	= ar
 RANLIB	= ranlib
 CCSHARED= $(CC) -shared
