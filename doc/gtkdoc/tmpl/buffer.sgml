@@ -62,6 +62,26 @@ Buffer
 @Returns: 
 
 
+<!-- ##### FUNCTION buffer_new_copy ##### -->
+<para>
+
+</para>
+
+@buffer: 
+@Returns: 
+
+
+<!-- ##### FUNCTION buffer_set ##### -->
+<para>
+
+</para>
+
+@buffer: 
+@size: 
+@data: 
+@Returns: 
+
+
 <!-- ##### FUNCTION buffer_set_data ##### -->
 <para>
 

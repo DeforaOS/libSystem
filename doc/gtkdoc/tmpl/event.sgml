@@ -79,6 +79,17 @@ Event
 @Returns: 
 
 
+<!-- ##### FUNCTION event_register_idle ##### -->
+<para>
+
+</para>
+
+@event: 
+@func: 
+@userdata: 
+@Returns: 
+
+
 <!-- ##### FUNCTION event_register_io_read ##### -->
 <para>
 

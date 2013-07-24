@@ -102,6 +102,24 @@ String
 @Returns: 
 
 
+<!-- ##### FUNCTION string_get_length ##### -->
+<para>
+
+</para>
+
+@string: 
+@Returns: 
+
+
+<!-- ##### FUNCTION string_get_size ##### -->
+<para>
+
+</para>
+
+@string: 
+@Returns: 
+
+
 <!-- ##### FUNCTION string_index ##### -->
 <para>
 
@@ -112,12 +130,12 @@ String
 @Returns: 
 
 
-<!-- ##### FUNCTION string_length ##### -->
+<!-- ##### MACRO string_length ##### -->
 <para>
 
 </para>
 
-@string: 
+@a: 
 @Returns: 
 
 
