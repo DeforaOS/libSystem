@@ -32,7 +32,7 @@ variable_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 variable: $(variable_OBJS)
 	$(CC) -o variable $(variable_OBJS) $(variable_LDFLAGS)
 
-tests.log: string variable
+tests.log: string tests.sh variable
 	./tests.sh -P "$(PREFIX)" -- "tests.log"
 
 string.o: string.c ../src/string.c

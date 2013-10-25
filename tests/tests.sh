@@ -16,6 +16,43 @@
 
 
 #functions
+#fail
+_fail()
+{
+	test="$1"
+
+	shift
+	echo -n "$test:" 1>&2
+	"./$test" "$@" >> "$target"
+	res=$?
+	if [ $res -ne 0 ]; then
+		echo " FAILED (expected, error $res)" 1>&2
+	else
+		echo " PASS (unexpected)" 1>&2
+	fi
+}
+
+
+#test
+_test()
+{
+	test="$1"
+
+	shift
+	echo -n "$test:" 1>&2
+	"./$test" "$@" >> "$target"
+	res=$?
+	if [ $res -ne 0 ]; then
+		echo " FAILED" 1>&2
+		FAILED="$FAILED $test(error $res)"
+		return 2
+	else
+		echo " PASS" 1>&2
+		return 0
+	fi
+}
+
+
 #usage
 _usage()
 {
@@ -51,8 +88,11 @@ target="$1"
 
 > "$target"
 FAILED=
-./string		>> "$target" 2>&1	|| FAILED="$FAILED string"
-./variable		>> "$target" 2>&1	|| FAILED="$FAILED variable"
-[ -z "$FAILED" ]			&& exit 0
-echo "Failed tests:$FAILED" 1>&2
-exit 2
+echo "Performing tests:" 1>&2
+_test "string"
+_test "variable"
+if [ -n "$FAILED" ]; then
+	echo "Failed tests:$FAILED" 1>&2
+	exit 2
+fi
+echo "All tests completed" 1>&2
