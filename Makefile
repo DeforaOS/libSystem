@@ -1,5 +1,5 @@
 PACKAGE	= libSystem
-VERSION	= 0.1.6
+VERSION	= 0.1.7
 SUBDIRS	= data doc include src tests
 RM	= rm -f
 LN	= ln -f
