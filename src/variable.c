@@ -1,5 +1,5 @@
 /* $Id$ */
-/* Copyright (c) 2012-2013 Pierre Pronchery <khorben@defora.org> */
+/* Copyright (c) 2012-2014 Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS System libSystem */
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -226,6 +226,16 @@ Variable * variable_new_deserialize(size_t * size, char const * data)
 	variable = variable_new_deserialize_type(u8, &s, &data[sizeof(u8)]);
 	*size = s + sizeof(u8);
 	return variable;
+}
+
+
+/* variable_new_deserialize_buffer */
+Variable * variable_new_deserialize_buffer(size_t * size, Buffer const * buffer)
+{
+	char const * data;
+
+	data = buffer_get_data(buffer);
+	return variable_new_deserialize(size, data);
 }
 
 

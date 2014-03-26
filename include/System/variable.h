@@ -1,5 +1,5 @@
 /* $Id$ */
-/* Copyright (c) 2012-2013 Pierre Pronchery <khorben@defora.org> */
+/* Copyright (c) 2012-2014 Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS System libSystem */
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -50,6 +50,8 @@ typedef enum _VariableType
 Variable * variable_new(VariableType type, void * value);
 Variable * variable_new_copy(Variable * variable);
 Variable * variable_new_deserialize(size_t * size, char const * data);
+Variable * variable_new_deserialize_buffer(size_t * size,
+		Buffer const * buffer);
 Variable * variable_new_deserialize_type(VariableType type, size_t * size,
 		char const * data);
 void variable_delete(Variable * variable);
