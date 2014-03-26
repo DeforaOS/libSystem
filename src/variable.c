@@ -50,6 +50,15 @@ struct _Variable
 };
 
 
+/* constants */
+#define VT_LAST VT_STRING
+#define VT_COUNT (VT_LAST + 1)
+static const size_t _variable_sizes[VT_COUNT] = { 0, 1,
+	sizeof(int8_t), sizeof(uint8_t), sizeof(int16_t), sizeof(uint16_t),
+	sizeof(int32_t), sizeof(uint32_t), sizeof(int64_t), sizeof(uint64_t),
+	0, 0, sizeof(uint32_t), 0 };
+
+
 /* public */
 /* variable_new */
 Variable * variable_new(VariableType type, void * value)
@@ -214,12 +223,13 @@ Variable * variable_new_deserialize(size_t * size, char const * data)
 	uint8_t u8;
 	size_t s;
 
-	/* obtain the type from the data */
-	if(*size < sizeof(u8))
+	/* check the arguments */
+	if(size == NULL || *size < sizeof(u8) || data == NULL)
 	{
-		*size = 1;
+		error_set_code(-EINVAL, "%s", strerror(EINVAL));
 		return NULL;
 	}
+	/* obtain the type from the data */
 	u8 = data[0];
 	s = *size - sizeof(u8);
 	/* deserialize according to the type */
@@ -258,36 +268,31 @@ Variable * variable_new_deserialize_type(VariableType type, size_t * size,
 			(void *)data);
 #endif
 	/* estimate the size required */
+	s = (type < sizeof(_variable_sizes) / sizeof(*_variable_sizes))
+		? _variable_sizes[type] : 0;
 	switch(type)
 	{
 		case VT_NULL:
-			s = 0;
 			break;
 		case VT_BOOL:
-			s = sizeof(uint8_t);
 			p = (char *)&u8;
 			break;
 		case VT_INT8:
 		case VT_UINT8:
-			s = sizeof(int8_t);
 			break;
 		case VT_INT16:
 		case VT_UINT16:
-			s = sizeof(int16_t);
 			p = (char *)&i16;
 			break;
 		case VT_INT32:
 		case VT_UINT32:
-			s = sizeof(int32_t);
 			p = (char *)&i32;
 			break;
 		case VT_INT64:
 		case VT_UINT64:
-			s = sizeof(int64_t);
 			p = (char *)&i64;
 			break;
 		case VT_BUFFER:
-			s = sizeof(uint32_t);
 			if(*size < s)
 				break;
 			memcpy(&u32, data, s);
@@ -302,7 +307,7 @@ Variable * variable_new_deserialize_type(VariableType type, size_t * size,
 					continue;
 				else if((p = malloc(++s)) == NULL)
 				{
-					error_set_code(1, "%s",
+					error_set_code(-errno, "%s",
 							strerror(errno));
 					return NULL;
 				}
