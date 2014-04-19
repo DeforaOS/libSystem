@@ -652,6 +652,14 @@ VariableType variable_get_type(Variable * variable)
 }
 
 
+/* variable_set_from */
+int variable_set_from(Variable * variable, VariableType type, void * value)
+{
+	/* FIXME implement */
+	return -1;
+}
+
+
 /* useful */
 /* variable_serialize */
 int variable_serialize(Variable * variable, Buffer * buffer, int type)
