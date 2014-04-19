@@ -253,6 +253,7 @@ Variable * variable_new_deserialize_buffer(size_t * size, Buffer const * buffer)
 Variable * variable_new_deserialize_type(VariableType type, size_t * size,
 		char const * data)
 {
+	Variable * v;
 	size_t s;
 	uint8_t u8;
 	int16_t i16;
@@ -261,6 +262,7 @@ Variable * variable_new_deserialize_type(VariableType type, size_t * size,
 	int64_t i64;
 	float f;
 	double d;
+	Buffer * b = NULL;
 	void * p = (char *)data;
 
 #ifdef DEBUG
@@ -373,16 +375,20 @@ Variable * variable_new_deserialize_type(VariableType type, size_t * size,
 		case VT_INT64:
 		case VT_UINT64:
 		case VT_BUFFER:
-			if((p = buffer_new(s - sizeof(u32), &data[sizeof(u32)]))
+			if((b = buffer_new(s - sizeof(u32), &data[sizeof(u32)]))
 					== NULL)
 				return NULL;
+			p = b;
 			break;
 		default:
 			error_set_code(1, "Unable to deserialize type %u",
 					type);
 			return NULL;
 	}
-	return variable_new(type, p);
+	v = variable_new(type, p);
+	if(b != NULL)
+		buffer_delete(b);
+	return v;
 }
 
 
