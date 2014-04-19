@@ -64,126 +64,14 @@ static const size_t _variable_sizes[VT_COUNT] = { 0, 1,
 Variable * variable_new(VariableType type, void * value)
 {
 	Variable * variable;
-	int8_t * i8;
-	uint8_t * u8;
-	int16_t * i16;
-	uint16_t * u16;
-	int32_t * i32;
-	uint32_t * u32;
-	int64_t * i64;
-	uint64_t * u64;
-	float * f;
-	double * d;
-	Buffer * b;
-	char const * s;
 
 	if((variable = object_new(sizeof(*variable))) == NULL)
 		return NULL;
-	memset(&variable->u, 0, sizeof(variable->u));
-	if(value == NULL)
-		variable->type = VT_NULL;
-	else
-		switch((variable->type = type))
-		{
-			case VT_NULL:
-				break;
-			case VT_BOOL:
-				u8 = value;
-				variable->u.uint8 = (*u8 != 0) ? 1 : 0;
-#ifdef DEBUG
-				fprintf(stderr, "DEBUG: %s(%u)\n", __func__,
-						variable->u.uint8);
-#endif
-				break;
-			case VT_INT8:
-				i8 = value;
-				variable->u.int8 = *i8;
-#ifdef DEBUG
-				fprintf(stderr, "DEBUG: %s(%d)\n", __func__,
-						variable->u.int8);
-#endif
-				break;
-			case VT_UINT8:
-				u8 = value;
-				variable->u.uint8 = *u8;
-#ifdef DEBUG
-				fprintf(stderr, "DEBUG: %s(%u)\n", __func__,
-						variable->u.uint8);
-#endif
-				break;
-			case VT_INT16:
-				i16 = value;
-				variable->u.int16 = *i16;
-#ifdef DEBUG
-				fprintf(stderr, "DEBUG: %s(%d)\n", __func__,
-						*i16);
-#endif
-				break;
-			case VT_UINT16:
-				u16 = value;
-				variable->u.uint16 = *u16;
-#ifdef DEBUG
-				fprintf(stderr, "DEBUG: %s(%u)\n", __func__,
-						*u16);
-#endif
-				break;
-			case VT_INT32:
-				i32 = value;
-				variable->u.int32 = *i32;
-#ifdef DEBUG
-				fprintf(stderr, "DEBUG: %s(%d)\n", __func__,
-						*i32);
-#endif
-				break;
-			case VT_UINT32:
-				u32 = value;
-				variable->u.uint32 = *u32;
-#ifdef DEBUG
-				fprintf(stderr, "DEBUG: %s(%u)\n", __func__,
-						*u32);
-#endif
-				break;
-			case VT_INT64:
-				i64 = value;
-				variable->u.int64 = *i64;
-				break;
-			case VT_UINT64:
-				u64 = value;
-				variable->u.uint64 = *u64;
-				break;
-			case VT_FLOAT:
-				f = value;
-				variable->u.f = *f;
-				break;
-			case VT_DOUBLE:
-				d = value;
-				variable->u.d = *d;
-				break;
-			case VT_BUFFER:
-				if((b = buffer_new_copy(value)) == NULL)
-				{
-					object_delete(variable);
-					return NULL;
-				}
-				variable->u.buffer = b;
-#ifdef DEBUG
-				fprintf(stderr, "DEBUG: %s(%p)\n", __func__,
-						(void *)b);
-#endif
-				break;
-			case VT_STRING:
-				s = value;
-				if((variable->u.string = string_new(s)) == NULL)
-				{
-					object_delete(variable);
-					return NULL;
-				}
-#ifdef DEBUG
-				fprintf(stderr, "DEBUG: %s(\"%s\")\n", __func__,
-						s);
-#endif
-				break;
-		}
+	if(variable_set_from(variable, type, value) != 0)
+	{
+		object_delete(variable);
+		return NULL;
+	}
 	return variable;
 }
 
@@ -655,8 +543,114 @@ VariableType variable_get_type(Variable * variable)
 /* variable_set_from */
 int variable_set_from(Variable * variable, VariableType type, void * value)
 {
-	/* FIXME implement */
-	return -1;
+	int8_t * i8;
+	uint8_t * u8;
+	int16_t * i16;
+	uint16_t * u16;
+	int32_t * i32;
+	uint32_t * u32;
+	int64_t * i64;
+	uint64_t * u64;
+	float * f;
+	double * d;
+	Buffer * b;
+	char const * s;
+
+	memset(&variable->u, 0, sizeof(variable->u));
+	if(value == NULL)
+		type = VT_NULL;
+	switch((variable->type = type))
+	{
+		case VT_NULL:
+			break;
+		case VT_BOOL:
+			u8 = value;
+			variable->u.uint8 = (*u8 != 0) ? 1 : 0;
+#ifdef DEBUG
+			fprintf(stderr, "DEBUG: %s(%u)\n", __func__,
+					variable->u.uint8);
+#endif
+			break;
+		case VT_INT8:
+			i8 = value;
+			variable->u.int8 = *i8;
+#ifdef DEBUG
+			fprintf(stderr, "DEBUG: %s(%d)\n", __func__,
+					variable->u.int8);
+#endif
+			break;
+		case VT_UINT8:
+			u8 = value;
+			variable->u.uint8 = *u8;
+#ifdef DEBUG
+			fprintf(stderr, "DEBUG: %s(%u)\n", __func__,
+					variable->u.uint8);
+#endif
+			break;
+		case VT_INT16:
+			i16 = value;
+			variable->u.int16 = *i16;
+#ifdef DEBUG
+			fprintf(stderr, "DEBUG: %s(%d)\n", __func__, *i16);
+#endif
+			break;
+		case VT_UINT16:
+			u16 = value;
+			variable->u.uint16 = *u16;
+#ifdef DEBUG
+			fprintf(stderr, "DEBUG: %s(%u)\n", __func__, *u16);
+#endif
+			break;
+		case VT_INT32:
+			i32 = value;
+			variable->u.int32 = *i32;
+#ifdef DEBUG
+			fprintf(stderr, "DEBUG: %s(%d)\n", __func__, *i32);
+#endif
+			break;
+		case VT_UINT32:
+			u32 = value;
+			variable->u.uint32 = *u32;
+#ifdef DEBUG
+			fprintf(stderr, "DEBUG: %s(%u)\n", __func__, *u32);
+#endif
+			break;
+		case VT_INT64:
+			i64 = value;
+			variable->u.int64 = *i64;
+			break;
+		case VT_UINT64:
+			u64 = value;
+			variable->u.uint64 = *u64;
+			break;
+		case VT_FLOAT:
+			f = value;
+			variable->u.f = *f;
+			break;
+		case VT_DOUBLE:
+			d = value;
+			variable->u.d = *d;
+			break;
+		case VT_BUFFER:
+			if((b = buffer_new_copy(value)) == NULL)
+				return -1;
+			variable->u.buffer = b;
+#ifdef DEBUG
+			fprintf(stderr, "DEBUG: %s(%p)\n", __func__, (void *)b);
+#endif
+			break;
+		case VT_STRING:
+			s = value;
+			if((variable->u.string = string_new(s)) == NULL)
+				return -1;
+#ifdef DEBUG
+			fprintf(stderr, "DEBUG: %s(\"%s\")\n", __func__, s);
+#endif
+			break;
+		default:
+			return -1;
+	}
+	return 0;
 }
 
 
