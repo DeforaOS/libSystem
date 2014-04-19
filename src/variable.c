@@ -374,6 +374,8 @@ Variable * variable_new_deserialize_type(VariableType type, size_t * size,
 			break;
 		case VT_INT64:
 		case VT_UINT64:
+			/* FIXME need to be converted */
+			break;
 		case VT_BUFFER:
 			if((b = buffer_new(s - sizeof(u32), &data[sizeof(u32)]))
 					== NULL)
