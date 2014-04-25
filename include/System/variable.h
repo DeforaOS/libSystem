@@ -61,6 +61,7 @@ void variable_delete(Variable * variable);
 int variable_get_as(Variable * variable, VariableType type, void * result);
 VariableType variable_get_type(Variable * variable);
 
+int variable_set(Variable * variable, Variable * from);
 int variable_set_from(Variable * variable, VariableType type, void * value);
 
 /* useful */

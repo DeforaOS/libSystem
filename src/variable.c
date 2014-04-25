@@ -523,6 +523,50 @@ VariableType variable_get_type(Variable * variable)
 }
 
 
+/* variable_set */
+int variable_set(Variable * variable, Variable * from)
+{
+	Buffer * b;
+	String * s;
+
+	switch(from->type)
+	{
+		case VT_NULL:
+		case VT_BOOL:
+		case VT_INT8:
+		case VT_UINT8:
+		case VT_INT16:
+		case VT_UINT16:
+		case VT_INT32:
+		case VT_UINT32:
+		case VT_INT64:
+		case VT_UINT64:
+		case VT_FLOAT:
+		case VT_DOUBLE:
+			_variable_destroy(variable);
+			memcpy(&variable->u, &from->u, sizeof(from->u));
+			break;
+		case VT_BUFFER:
+			if((b = buffer_new_copy(from->u.buffer)) == NULL)
+				return -1;
+			_variable_destroy(variable);
+			variable->u.buffer = b;
+			break;
+		case VT_STRING:
+			if((s = string_new(from->u.string)) == NULL)
+				return -1;
+			_variable_destroy(variable);
+			variable->u.string = s;
+			break;
+		default:
+			/* FIXME implement */
+			return -error_set_code(-ENOSYS, "%s", strerror(ENOSYS));
+	}
+	variable->type = from->type;
+	return 0;
+}
+
+
 /* variable_set_from */
 int variable_set_from(Variable * variable, VariableType type, void * value)
 {
