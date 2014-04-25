@@ -59,6 +59,10 @@ static const size_t _variable_sizes[VT_COUNT] = { 0, 1,
 	0, 0, sizeof(uint32_t), 0 };
 
 
+/* prototypes */
+static void _variable_destroy(Variable * variable);
+
+
 /* public */
 /* variable_new */
 Variable * variable_new(VariableType type, void * value)
@@ -285,28 +289,7 @@ Variable * variable_new_deserialize_type(VariableType type, size_t * size,
 /* variable_delete */
 void variable_delete(Variable * variable)
 {
-	switch(variable->type)
-	{
-		case VT_NULL:
-		case VT_BOOL:
-		case VT_INT8:
-		case VT_UINT8:
-		case VT_INT16:
-		case VT_UINT16:
-		case VT_INT32:
-		case VT_UINT32:
-		case VT_INT64:
-		case VT_UINT64:
-		case VT_FLOAT:
-		case VT_DOUBLE:
-			break;
-		case VT_BUFFER:
-			buffer_delete(variable->u.buffer);
-			break;
-		case VT_STRING:
-			string_delete(variable->u.string);
-			break;
-	}
+	_variable_destroy(variable);
 	object_delete(variable);
 }
 
@@ -556,6 +539,8 @@ int variable_set_from(Variable * variable, VariableType type, void * value)
 	Buffer * b;
 	char const * s;
 
+	/* XXX keep the previous contents in case of error? */
+	_variable_destroy(variable);
 	memset(&variable->u, 0, sizeof(variable->u));
 	if(value == NULL)
 		type = VT_NULL;
@@ -755,4 +740,33 @@ int variable_serialize(Variable * variable, Buffer * buffer, int type)
 		return buffer_set_data(buffer, sizeof(u32), p, size);
 	}
 	return buffer_set(buffer, size, p);
+}
+
+
+/* private */
+/* variable_destroy */
+static void _variable_destroy(Variable * variable)
+{
+	switch(variable->type)
+	{
+		case VT_NULL:
+		case VT_BOOL:
+		case VT_INT8:
+		case VT_UINT8:
+		case VT_INT16:
+		case VT_UINT16:
+		case VT_INT32:
+		case VT_UINT32:
+		case VT_INT64:
+		case VT_UINT64:
+		case VT_FLOAT:
+		case VT_DOUBLE:
+			break;
+		case VT_BUFFER:
+			buffer_delete(variable->u.buffer);
+			break;
+		case VT_STRING:
+			string_delete(variable->u.string);
+			break;
+	}
 }
