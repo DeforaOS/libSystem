@@ -18,6 +18,8 @@
 #ifndef LIBSYSTEM_HASH_H
 # define LIBSYSTEM_HASH_H
 
+# include <sys/types.h>
+
 
 /* Hash */
 /* types */
