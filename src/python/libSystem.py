@@ -1,6 +1,6 @@
 #!/usr/bin/env python2.7
 #$Id$
-#Copyright (c) 2013 Pierre Pronchery <khorben@defora.org>
+#Copyright (c) 2013-2014 Pierre Pronchery <khorben@defora.org>
 #This file is part of DeforaOS System libSystem
 #This program is free software: you can redistribute it and/or modify
 #it under the terms of the GNU Lesser General Public License as published by
@@ -48,6 +48,15 @@ class Event:
 
 	def loop(self):
 		return _libSystem.event_loop(self.event)
+
+
+#Mutator
+class Mutator:
+	def __init__(self):
+		self.mutator = _libSystem.mutator_new()
+
+	def get(self, key):
+		return _libSystem.mutator_get(self.mutator, key)
 
 
 #Plugin
