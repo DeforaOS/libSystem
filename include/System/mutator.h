@@ -25,7 +25,7 @@
 /* types */
 typedef struct _Hash Mutator;
 
-typedef void (*MutatorForeach)(void const * key, void * value, void * data);
+typedef void (*MutatorForeach)(String const * key, void * value, void * data);
 
 
 /* functions */

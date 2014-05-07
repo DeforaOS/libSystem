@@ -23,6 +23,7 @@
 #include <ctype.h>
 #include <errno.h>
 #include "System/error.h"
+#include "System/mutator.h"
 #include "System/config.h"
 
 
@@ -47,7 +48,7 @@ typedef struct _ConfigForeachSectionData
 /* config_new */
 Config * config_new(void)
 {
-	return hash_new(hash_func_string, hash_compare_string);
+	return mutator_new();
 }
 
 
@@ -55,7 +56,7 @@ Config * config_new(void)
 void config_delete(Config * config)
 {
 	config_reset(config);
-	hash_delete(config);
+	mutator_delete(config);
 }
 
 
@@ -64,12 +65,12 @@ void config_delete(Config * config)
 char const * config_get(Config * config, char const * section,
 		char const * variable)
 {
-	Hash * h;
+	Mutator * mutator;
 	char const * value;
 
 	if(section == NULL)
 		section = "";
-	if((h = hash_get(config, section)) == NULL)
+	if((mutator = mutator_get(config, section)) == NULL)
 	{
 		/* the section does not exist */
 		if(section[0] == '\0')
@@ -78,7 +79,7 @@ char const * config_get(Config * config, char const * section,
 			error_set_code(1, "%s%s", section, ": No such section");
 		return NULL;
 	}
-	if((value = hash_get(h, variable)) == NULL)
+	if((value = mutator_get(mutator, variable)) == NULL)
 	{
 		/* the variable is not defined */
 		error_set_code(1, "%s%s%s%s%s", variable, ": Not defined in",
@@ -95,30 +96,29 @@ char const * config_get(Config * config, char const * section,
 int config_set(Config * config, char const * section, char const * variable,
 		char const * value)
 {
-	Hash * hash;
+	Mutator * mutator;
 	char * p;
 	char * oldvalue = NULL;
 	char * newvalue = NULL;
 
 	if(section == NULL)
 		section = "";
-	if((hash = hash_get(config, section)) == NULL)
+	if((mutator = mutator_get(config, section)) == NULL)
 	{
 		/* create a new section */
-		if((hash = hash_new(hash_func_string, hash_compare_string))
-				== NULL)
+		if((mutator = mutator_new()) == NULL)
 			return 1;
 		if((p = string_new(section)) == NULL
-				|| hash_set(config, p, hash) != 0)
+				|| mutator_set(config, p, mutator) != 0)
 		{
 			string_delete(p);
-			hash_delete(hash);
+			mutator_delete(mutator);
 			return 1;
 		}
 	}
 	else
 		/* to free the current value if already set */
-		oldvalue = hash_get(hash, variable);
+		oldvalue = mutator_get(mutator, variable);
 	if((p = string_new(variable)) == NULL)
 		return 1;
 	if(value != NULL && (newvalue = string_new(value)) == NULL)
@@ -127,7 +127,7 @@ int config_set(Config * config, char const * section, char const * variable,
 		return 1;
 	}
 	/* set the new value */
-	if(hash_set(hash, p, newvalue) != 0)
+	if(mutator_set(mutator, p, newvalue) != 0)
 	{
 		string_delete(p);
 		string_delete(newvalue);
@@ -140,7 +140,7 @@ int config_set(Config * config, char const * section, char const * variable,
 
 /* useful */
 /* config_foreach */
-static void _foreach_callback(void const * key, void * value, void * data);
+static void _foreach_callback(char const * key, void * value, void * data);
 
 void config_foreach(Config * config, ConfigForeachCallback callback,
 		void * priv)
@@ -149,10 +149,10 @@ void config_foreach(Config * config, ConfigForeachCallback callback,
 
 	data.callback = callback;
 	data.priv = priv;
-	hash_foreach(config, _foreach_callback, &data);
+	mutator_foreach(config, _foreach_callback, &data);
 }
 
-static void _foreach_callback(void const * key, void * value, void * data)
+static void _foreach_callback(char const * key, void * value, void * data)
 {
 	ConfigForeachData * priv = data;
 
@@ -161,23 +161,23 @@ static void _foreach_callback(void const * key, void * value, void * data)
 
 
 /* config_foreach_section */
-static void _foreach_section_callback(void const * key, void * value,
+static void _foreach_section_callback(char const * key, void * value,
 		void * data);
 
 void config_foreach_section(Config * config, char const * section,
 		ConfigForeachSectionCallback callback, void * priv)
 {
-	Hash * h;
+	Mutator * mutator;
 	ConfigForeachSectionData data;
 
-	if((h = hash_get(config, section)) == NULL)
+	if((mutator = mutator_get(config, section)) == NULL)
 		return; /* could not find section */
 	data.callback = callback;
 	data.priv = priv;
-	hash_foreach(h, _foreach_section_callback, &data);
+	mutator_foreach(mutator, _foreach_section_callback, &data);
 }
 
-static void _foreach_section_callback(void const * key, void * value,
+static void _foreach_section_callback(char const * key, void * value,
 		void * data)
 {
 	ConfigForeachSectionData * priv = data;
@@ -334,27 +334,27 @@ static String * _load_value(FILE * fp)
 
 
 /* config_reset */
-static void _delete_foreach(void const * key, void * value, void * data);
-static void _delete_foreach_section(void const * key, void * value,
+static void _delete_foreach(char const * key, void * value, void * data);
+static void _delete_foreach_section(char const * key, void * value,
 		void * data);
 
 int config_reset(Config * config)
 {
-	hash_foreach(config, _delete_foreach, NULL);
-	return hash_reset(config);
+	mutator_foreach(config, _delete_foreach, NULL);
+	return mutator_reset(config);
 }
 
-static void _delete_foreach(void const * key, void * value, void * data)
+static void _delete_foreach(char const * key, void * value, void * data)
 {
 	char * str = (char *)key;
-	Hash * hash = value;
+	Mutator * mutator = value;
 
 	free(str);
-	hash_foreach(hash, _delete_foreach_section, data);
-	hash_delete(hash);
+	mutator_foreach(mutator, _delete_foreach_section, data);
+	mutator_delete(mutator);
 }
 
-static void _delete_foreach_section(void const * key, void * value, void * data)
+static void _delete_foreach_section(char const * key, void * value, void * data)
 {
 	char * k = (char *)key;
 	char * v = value;
@@ -365,9 +365,9 @@ static void _delete_foreach_section(void const * key, void * value, void * data)
 
 
 /* config_save */
-void _save_foreach_default(void const * key, void * value, void * data);
-void _save_foreach(void const * key, void * value, void * data);
-void _save_foreach_section(void const * key, void * value, void * data);
+void _save_foreach_default(char const * section, void * value, void * data);
+void _save_foreach(char const * section, void * value, void * data);
+void _save_foreach_section(char const * key, void * value, void * data);
 
 int config_save(Config * config, char const * filename)
 {
@@ -375,31 +375,29 @@ int config_save(Config * config, char const * filename)
 
 	if((fp = fopen(filename, "w")) == NULL)
 		return error_set_code(1, "%s: %s", filename, strerror(errno));
-	hash_foreach(config, _save_foreach_default, &fp);
-	hash_foreach(config, _save_foreach, &fp);
+	mutator_foreach(config, _save_foreach_default, &fp);
+	mutator_foreach(config, _save_foreach, &fp);
 	if(fp == NULL || fclose(fp) != 0)
 		return error_set_code(1, "%s: %s", filename, strerror(errno));
 	return 0;
 }
 
-void _save_foreach_default(void const * key, void * value, void * data)
+void _save_foreach_default(char const * section, void * value, void * data)
 {
 	FILE ** fp = data;
-	char const * section = key;
-	Hash * hash = value;
+	Mutator * mutator = value;
 
 	if(*fp == NULL)
 		return;
 	if(section[0] != '\0')
 		return;
-	hash_foreach(hash, _save_foreach_section, fp);
+	mutator_foreach(mutator, _save_foreach_section, fp);
 }
 
-void _save_foreach(void const * key, void * value, void * data)
+void _save_foreach(char const * section, void * value, void * data)
 {
 	FILE ** fp = data;
-	char const * section = key;
-	Hash * hash = value;
+	Mutator * mutator = value;
 
 	if(*fp == NULL)
 		return;
@@ -411,19 +409,18 @@ void _save_foreach(void const * key, void * value, void * data)
 		*fp = NULL;
 		return;
 	}
-	hash_foreach(hash, _save_foreach_section, fp);
+	mutator_foreach(mutator, _save_foreach_section, fp);
 }
 
-void _save_foreach_section(void const * key, void * value, void * data)
+void _save_foreach_section(char const * key, void * value, void * data)
 {
 	FILE ** fp = data;
-	char const * var = key;
 	char const * val = value;
 
 	if(*fp == NULL)
 		return;
 	/* FIXME escape lines with a backslash */
-	if(val == NULL || fprintf(*fp, "%s=%s\n", var, val) >= 0)
+	if(val == NULL || fprintf(*fp, "%s=%s\n", key, val) >= 0)
 		return;
 	fclose(*fp);
 	*fp = NULL;
