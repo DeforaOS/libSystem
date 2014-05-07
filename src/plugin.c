@@ -15,10 +15,7 @@
 
 
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <errno.h>
+#include <stddef.h>
 #ifdef __WIN32__
 # include <windows.h>
 #else
@@ -68,21 +65,13 @@ Plugin * plugin_new(String const * libdir, String const * package,
 		String const * type, String const * name)
 {
 	Plugin * plugin;
-	size_t len;
 	String * filename;
 	char const ext[] = PLUGIN_EXTENSION;
 
-	len = strlen(libdir) + 1 + strlen(package) + 1 + strlen(type) + 1
-		+ strlen(name) + sizeof(ext);
-	if((filename = malloc(len)) == NULL)
-	{
-		error_set_code(1, "%s", strerror(errno));
+	if((filename = string_new_append(libdir, "/", package, "/", type, "/",
+					name, ext, NULL)) == NULL)
 		return NULL;
-	}
-	snprintf(filename, len, "%s/%s/%s/%s%s", libdir, package, type, name,
-			ext);
 	plugin = _plugin_open(filename);
-	free(filename);
 	return plugin;
 }
 
