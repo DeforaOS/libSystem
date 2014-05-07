@@ -1,5 +1,5 @@
 /* $Id$ */
-/* Copyright (c) 2013 Pierre Pronchery <khorben@defora.org> */
+/* Copyright (c) 2013-2014 Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS System libSystem */
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -24,6 +24,7 @@
 /* constants */
 static char const _libsystem_config_name[] = "libSystem::Config";
 static char const _libsystem_event_name[] = "libSystem::Event";
+static char const _libsystem_mutator_name[] = "libSystem::Mutator";
 static char const _libsystem_plugin_name[] = "libSystem::Plugin";
 static char const _libsystem_plugin_symbol_name[] = "libSystem::Plugin::symbol";
 
@@ -51,6 +52,12 @@ static PyObject * _libsystem_event_new(PyObject * self, PyObject * args);
 static void _libsystem_event_delete(PyObject * self);
 
 static PyObject * _libsystem_event_loop(PyObject * self, PyObject * args);
+
+/* Mutator */
+static PyObject * _libsystem_mutator_new(PyObject * self, PyObject * args);
+static void _libsystem_mutator_delete(PyObject * self);
+
+static PyObject * _libsystem_mutator_get(PyObject * self, PyObject * args);
 
 /* Plugin */
 static PyObject * _libsystem_plugin_new(PyObject * self, PyObject * args);
@@ -84,6 +91,10 @@ static PyMethodDef _libsystem_methods[] =
 		"Instantiates an Event object." },
 	{ "event_loop", _libsystem_event_loop, METH_VARARGS,
 		"Loops an Event object." },
+	{ "mutator_new", _libsystem_mutator_new, METH_VARARGS,
+		"Instantiates a Mutator object." },
+	{ "mutator_get", _libsystem_mutator_get, METH_VARARGS,
+		"Get the corresponding value for the key." },
 	{ "plugin_new", _libsystem_plugin_new, METH_VARARGS,
 		"Opens a plug-in (or the current process)." },
 	{ "plugin_lookup", _libsystem_plugin_lookup, METH_VARARGS,
@@ -299,6 +310,50 @@ static PyObject * _libsystem_event_loop(PyObject * self, PyObject * args)
 		return NULL;
 	ret = event_loop(event);
 	return Py_BuildValue("i", ret);
+}
+
+
+/* Mutator */
+/* libsystem_mutator_new */
+static PyObject * _libsystem_mutator_new(PyObject * self, PyObject * args)
+{
+	Mutator * mutator;
+
+	if(!PyArg_ParseTuple(args, ""))
+		return NULL;
+	if((mutator = mutator_new()) == NULL)
+		return NULL;
+	return PyCapsule_New(mutator, _libsystem_mutator_name,
+			_libsystem_mutator_delete);
+}
+
+
+/* libsystem_mutator_delete */
+static void _libsystem_mutator_delete(PyObject * self)
+{
+	Mutator * mutator;
+
+	if((mutator = PyCapsule_GetPointer(self, _libsystem_mutator_name))
+			== NULL)
+		return;
+	mutator_delete(mutator);
+}
+
+
+/* libsystem_mutator_get */
+static PyObject * _libsystem_mutator_get(PyObject * self, PyObject * args)
+{
+	char const * ret;
+	Mutator * mutator;
+	char const * key;
+
+	if((mutator = PyCapsule_GetPointer(self, _libsystem_mutator_name))
+			== NULL)
+		return NULL;
+	if(!PyArg_ParseTuple(args, "s", &key))
+		return NULL;
+	ret = mutator_get(mutator, key);
+	return Py_BuildValue("s", ret);
 }
 
 
