@@ -1,4 +1,4 @@
-TARGETS	= string variable tests.log
+TARGETS	= includes string variable tests.log
 PREFIX	= /usr/local
 DESTDIR	=
 BINDIR	= $(PREFIX)/bin
@@ -18,6 +18,13 @@ INSTALL	= install
 
 all: $(TARGETS)
 
+includes_OBJS = includes.o
+includes_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
+includes_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
+
+includes: $(includes_OBJS)
+	$(CC) -o includes $(includes_OBJS) $(includes_LDFLAGS)
+
 string_OBJS = string.o
 string_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
 string_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
@@ -32,8 +39,11 @@ variable_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 variable: $(variable_OBJS)
 	$(CC) -o variable $(variable_OBJS) $(variable_LDFLAGS)
 
-tests.log: string tests.sh variable
+tests.log: includes string tests.sh variable
 	./tests.sh -P "$(PREFIX)" -- "tests.log"
+
+includes.o: includes.c
+	$(CC) $(includes_CFLAGS) -c includes.c
 
 string.o: string.c ../src/string.c
 	$(CC) $(string_CFLAGS) -c string.c
@@ -42,7 +52,7 @@ variable.o: variable.c ../src/variable.c
 	$(CC) $(variable_CFLAGS) -c variable.c
 
 clean:
-	$(RM) -- $(string_OBJS) $(variable_OBJS) $(tests.log_OBJS)
+	$(RM) -- $(includes_OBJS) $(string_OBJS) $(variable_OBJS) $(tests.log_OBJS)
 	./tests.sh -c -P "$(PREFIX)" -- "tests.log"
 
 distclean: clean

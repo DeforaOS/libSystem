@@ -86,6 +86,7 @@ dist:
 		$(PACKAGE)-$(VERSION)/src/python/libSystem.c \
 		$(PACKAGE)-$(VERSION)/src/python/libSystem.py \
 		$(PACKAGE)-$(VERSION)/src/project.conf \
+		$(PACKAGE)-$(VERSION)/tests/includes.c \
 		$(PACKAGE)-$(VERSION)/tests/string.c \
 		$(PACKAGE)-$(VERSION)/tests/variable.c \
 		$(PACKAGE)-$(VERSION)/tests/COPYING \
