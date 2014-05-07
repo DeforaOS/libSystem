@@ -57,6 +57,7 @@ dist:
 		$(PACKAGE)-$(VERSION)/include/System/event.h \
 		$(PACKAGE)-$(VERSION)/include/System/file.h \
 		$(PACKAGE)-$(VERSION)/include/System/hash.h \
+		$(PACKAGE)-$(VERSION)/include/System/mutator.h \
 		$(PACKAGE)-$(VERSION)/include/System/object.h \
 		$(PACKAGE)-$(VERSION)/include/System/parser.h \
 		$(PACKAGE)-$(VERSION)/include/System/plugin.h \
@@ -71,6 +72,7 @@ dist:
 		$(PACKAGE)-$(VERSION)/src/error.c \
 		$(PACKAGE)-$(VERSION)/src/event.c \
 		$(PACKAGE)-$(VERSION)/src/hash.c \
+		$(PACKAGE)-$(VERSION)/src/mutator.c \
 		$(PACKAGE)-$(VERSION)/src/object.c \
 		$(PACKAGE)-$(VERSION)/src/parser.c \
 		$(PACKAGE)-$(VERSION)/src/plugin.c \

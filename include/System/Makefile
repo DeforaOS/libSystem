@@ -29,6 +29,8 @@ install:
 	$(MKDIR) $(DESTDIR)$(INCLUDEDIR)/System
 	$(INSTALL) -m 0644 hash.h $(DESTDIR)$(INCLUDEDIR)/System/hash.h
 	$(MKDIR) $(DESTDIR)$(INCLUDEDIR)/System
+	$(INSTALL) -m 0644 mutator.h $(DESTDIR)$(INCLUDEDIR)/System/mutator.h
+	$(MKDIR) $(DESTDIR)$(INCLUDEDIR)/System
 	$(INSTALL) -m 0644 object.h $(DESTDIR)$(INCLUDEDIR)/System/object.h
 	$(MKDIR) $(DESTDIR)$(INCLUDEDIR)/System
 	$(INSTALL) -m 0644 parser.h $(DESTDIR)$(INCLUDEDIR)/System/parser.h
@@ -49,6 +51,7 @@ uninstall:
 	$(RM) -- $(DESTDIR)$(INCLUDEDIR)/System/event.h
 	$(RM) -- $(DESTDIR)$(INCLUDEDIR)/System/file.h
 	$(RM) -- $(DESTDIR)$(INCLUDEDIR)/System/hash.h
+	$(RM) -- $(DESTDIR)$(INCLUDEDIR)/System/mutator.h
 	$(RM) -- $(DESTDIR)$(INCLUDEDIR)/System/object.h
 	$(RM) -- $(DESTDIR)$(INCLUDEDIR)/System/parser.h
 	$(RM) -- $(DESTDIR)$(INCLUDEDIR)/System/plugin.h

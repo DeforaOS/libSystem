@@ -1,5 +1,5 @@
 /* $Id$ */
-/* Copyright (c) 2008-2012 Pierre Pronchery <khorben@defora.org> */
+/* Copyright (c) 2008-2014 Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS System libSystem */
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -24,6 +24,7 @@
 # include "System/error.h"
 # include "System/event.h"
 # include "System/file.h"
+# include "System/mutator.h"
 # include "System/object.h"
 # include "System/parser.h"
 # include "System/plugin.h"

@@ -19,7 +19,7 @@ INSTALL	= install
 
 all: $(TARGETS)
 
-libSystem_OBJS = array.o buffer.o config.o error.o event.o hash.o object.o parser.o plugin.o string.o token.o variable.o
+libSystem_OBJS = array.o buffer.o config.o error.o event.o hash.o mutator.o object.o parser.o plugin.o string.o token.o variable.o
 libSystem_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
 libSystem_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)   
 
@@ -49,6 +49,9 @@ event.o: event.c
 
 hash.o: hash.c
 	$(CC) $(libSystem_CFLAGS) -c hash.c
+
+mutator.o: mutator.c
+	$(CC) $(libSystem_CFLAGS) -c mutator.c
 
 object.o: object.c
 	$(CC) $(libSystem_CFLAGS) -c object.c
