@@ -133,6 +133,13 @@ int hash_compare_string(void const * value1, void const * value2)
 
 
 /* accessors */
+/* hash_count */
+size_t hash_count(Hash * hash)
+{
+	return array_count(hash->entries);
+}
+
+
 /* hash_get */
 void * hash_get(Hash * hash, void const * key)
 {
