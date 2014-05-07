@@ -62,7 +62,7 @@ int mutator_set(Mutator * mutator, String const * key, void * value)
 /* useful */
 void mutator_foreach(Mutator * mutator, MutatorForeach func, void * data)
 {
-	hash_foreach(mutator, func, data);
+	hash_foreach(mutator, (HashForeach)func, data);
 }
 
 
