@@ -1,5 +1,5 @@
 /* $Id$ */
-/* Copyright (c) 2008-2012 Pierre Pronchery <khorben@defora.org> */
+/* Copyright (c) 2008-2014 Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS System libSystem */
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -18,19 +18,21 @@
 #ifndef LIBSYSTEM_PLUGIN_H
 # define LIBSYSTEM_PLUGIN_H
 
+# include "string.h"
+
 
 /* Plugin */
 typedef void Plugin;
 
 
 /* functions */
-Plugin * plugin_new(char const * libdir, char const * package,
-		char const * type, char const * name);
+Plugin * plugin_new(String const * libdir, String const * package,
+		String const * type, String const * name);
 Plugin * plugin_new_self(void);
 void plugin_delete(Plugin * plugin);
 
 
 /* useful */
-void * plugin_lookup(Plugin * plugin, char const * symbol);
+void * plugin_lookup(Plugin * plugin, String const * symbol);
 
 #endif /* !LIBSYSTEM_PLUGIN_H */

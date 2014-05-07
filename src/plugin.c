@@ -1,5 +1,5 @@
 /* $Id$ */
-/* Copyright (c) 2008-2013 Pierre Pronchery <khorben@defora.org> */
+/* Copyright (c) 2008-2014 Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS System libSystem */
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -41,11 +41,11 @@
 
 
 /* prototypes */
-static Plugin * _plugin_open(char const * filename);
+static Plugin * _plugin_open(String const * filename);
 
 
 /* functions */
-static Plugin * _plugin_open(char const * filename)
+static Plugin * _plugin_open(String const * filename)
 {
 #ifdef __WIN32__
 	if(filename == NULL)
@@ -64,12 +64,12 @@ static Plugin * _plugin_open(char const * filename)
 /* public */
 /* functions */
 /* plugin_new */
-Plugin * plugin_new(char const * libdir, char const * package,
-		char const * type, char const * name)
+Plugin * plugin_new(String const * libdir, String const * package,
+		String const * type, String const * name)
 {
 	Plugin * plugin;
 	size_t len;
-	char * filename;
+	String * filename;
 	char const ext[] = PLUGIN_EXTENSION;
 
 	len = strlen(libdir) + 1 + strlen(package) + 1 + strlen(type) + 1
@@ -107,7 +107,7 @@ void plugin_delete(Plugin * plugin)
 
 /* useful */
 /* plugin_lookup */
-void * plugin_lookup(Plugin * plugin, char const * symbol)
+void * plugin_lookup(Plugin * plugin, String const * symbol)
 {
 #ifdef __WIN32__
 	return GetProcAddress(plugin, symbol);
