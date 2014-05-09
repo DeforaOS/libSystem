@@ -1,6 +1,11 @@
 PACKAGE	= libSystem
 VERSION	= 0.1.7
 SUBDIRS	= data doc include src tests
+PREFIX	= /usr/local
+DESTDIR	=
+MKDIR	= mkdir -m 0755 -p
+INSTALL	= install
+RM	= rm -f
 RM	= rm -f
 LN	= ln -f
 TAR	= tar -czvf
@@ -102,8 +107,11 @@ dist:
 
 install:
 	@for i in $(SUBDIRS); do (cd "$$i" && $(MAKE) install) || exit; done
+	$(MKDIR) $(DESTDIR)$(PREFIX)/share/doc/$(PACKAGE)
+	$(INSTALL) -m 0644 README.md $(DESTDIR)$(PREFIX)/share/doc/$(PACKAGE)/README.md
 
 uninstall:
 	@for i in $(SUBDIRS); do (cd "$$i" && $(MAKE) uninstall) || exit; done
+	$(RM) -- $(DESTDIR)$(PREFIX)/share/doc/$(PACKAGE)/README.md
 
 .PHONY: all subdirs clean distclean dist install uninstall
