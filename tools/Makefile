@@ -34,7 +34,10 @@ distclean: clean
 	$(RM) -- $(TARGETS)
 
 install: $(TARGETS)
+	$(MKDIR) $(DESTDIR)$(BINDIR)
+	$(INSTALL) -m 0755 config $(DESTDIR)$(BINDIR)/config
 
 uninstall:
+	$(RM) -- $(DESTDIR)$(BINDIR)/config
 
 .PHONY: all clean distclean install uninstall
