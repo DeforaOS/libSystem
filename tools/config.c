@@ -30,7 +30,7 @@
 /* private */
 /* prototypes */
 static int _config(int verbose, char const * filename, char const * section,
-		char const * key);
+		char const * key, char const * value);
 
 static int _error(char const * progname, int ret);
 static int _usage(void);
@@ -39,7 +39,7 @@ static int _usage(void);
 /* functions */
 /* config */
 static int _config(int verbose, char const * filename, char const * section,
-		char const * key)
+		char const * key, char const * value)
 {
 	int ret = 0;
 	Config * config;
@@ -49,11 +49,23 @@ static int _config(int verbose, char const * filename, char const * section,
 		ret = _error(PROGNAME, 1);
 	if(config_load(config, filename) != 0)
 		ret = _error(PROGNAME, 1);
-	else if((p = config_get(config, section, key)) != NULL)
+	else if(value == NULL && (p = config_get(config, section, key)) != NULL)
 		printf("%s%s%s%s%s\n",
 				(verbose && section != NULL) ? section : "",
 				(verbose && section != NULL) ? "." : "",
 				(verbose) ? key : "", (verbose) ? "=" : "", p);
+	else if(value != NULL)
+	{
+		printf("%s%s%s%s%s\n",
+				(verbose && section != NULL) ? section : "",
+				(verbose && section != NULL) ? "." : "",
+				(verbose) ? key : "", (verbose) ? "=" : "",
+				value);
+		if(config_set(config, section, key, value) != 0)
+			ret = _error(PROGNAME, 1);
+		if(config_save(config, filename) != 0)
+			ret = _error(PROGNAME, 1);
+	}
 	else
 		ret = _error(PROGNAME, 1);
 	config_delete(config);
@@ -72,7 +84,8 @@ static int _error(char const * progname, int ret)
 /* usage */
 static int _usage(void)
 {
-	fputs("Usage: config [-v] -f filename [section.]key\n", stderr);
+	fputs("Usage: config [-v] -f filename [section.]key\n"
+"       config [-v] -w -f filename [section.]key[=value]\n", stderr);
 	return 1;
 }
 
@@ -85,10 +98,12 @@ int main(int argc, char * argv[])
 	int o;
 	char const * filename = NULL;
 	int verbose = 0;
+	int write = 0;
 	char * section;
 	char * key;
+	char * value = NULL;
 
-	while((o = getopt(argc, argv, "f:v")) != -1)
+	while((o = getopt(argc, argv, "f:vw")) != -1)
 		switch(o)
 		{
 			case 'f':
@@ -96,6 +111,9 @@ int main(int argc, char * argv[])
 				break;
 			case 'v':
 				verbose = 1;
+				break;
+			case 'w':
+				write = 1;
 				break;
 			default:
 				return _usage();
@@ -110,5 +128,7 @@ int main(int argc, char * argv[])
 	}
 	else
 		*(key++) = '\0';
-	return (_config(verbose, filename, section, key) == 0) ? 0 : 2;
+	if(write && (value = strchr(key, '=')) != NULL)
+		*(value++) = '\0';
+	return (_config(verbose, filename, section, key, value) == 0) ? 0 : 2;
 }
