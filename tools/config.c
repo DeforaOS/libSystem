@@ -84,8 +84,8 @@ static int _error(char const * progname, int ret)
 /* usage */
 static int _usage(void)
 {
-	fputs("Usage: config [-v] -f filename [section.]key\n"
-"       config [-v] -w -f filename [section.]key[=value]\n", stderr);
+	fputs("Usage: config -f filename [-v] [section.]key\n"
+"       config -w -f filename [-v] [section.]key[=value]\n", stderr);
 	return 1;
 }
 
