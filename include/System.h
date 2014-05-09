@@ -19,6 +19,7 @@
 # define LIBSYSTEM_SYSTEM_H
 
 
+# include "System/array.h"
 # include "System/buffer.h"
 # include "System/config.h"
 # include "System/error.h"

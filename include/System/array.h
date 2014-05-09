@@ -1,5 +1,5 @@
 /* $Id$ */
-/* Copyright (c) 2006-2012 Pierre Pronchery <khorben@defora.org> */
+/* Copyright (c) 2006-2014 Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS System libSystem */
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -18,12 +18,15 @@
 #ifndef LIBSYSTEM_ARRAY_H
 # define LIBSYSTEM_ARRAY_H
 
+# include <sys/types.h>
+
 
 /* Array */
 /* macros */
 # define ARRAY(type, name) \
-	typedef Array name ## Array; \
-	Array * name ## array_new(void) { return array_new(sizeof(type)); }
+	typedef struct _Array name ## Array; \
+	static Array * name ## array_new(void) \
+		{ return array_new(sizeof(type)); }
 
 
 /* types */
