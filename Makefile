@@ -99,6 +99,7 @@ dist:
 		$(PACKAGE)-$(VERSION)/tests/tests.sh \
 		$(PACKAGE)-$(VERSION)/tests/project.conf \
 		$(PACKAGE)-$(VERSION)/tools/config.c \
+		$(PACKAGE)-$(VERSION)/tools/COPYING \
 		$(PACKAGE)-$(VERSION)/tools/Makefile \
 		$(PACKAGE)-$(VERSION)/tools/project.conf \
 		$(PACKAGE)-$(VERSION)/Makefile \
