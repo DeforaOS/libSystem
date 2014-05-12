@@ -15,6 +15,8 @@
 
 
 
+#include <stddef.h>
+#include "System/error.h"
 #include "System/hash.h"
 #include "System/mutator.h"
 #include "System/object.h"
@@ -48,14 +50,22 @@ size_t mutator_count(Mutator * mutator)
 /* mutator_get */
 void * mutator_get(Mutator * mutator, String const * key)
 {
-	return hash_get(mutator, key);
+	void * ret;
+
+	if((ret = hash_get(mutator, key)) == NULL)
+		error_set("%s: %s", key, "Key not found");
+	return ret;
 }
 
 
 /* mutator_set */
 int mutator_set(Mutator * mutator, String const * key, void * value)
 {
-	return hash_set(mutator, key, value);
+	int ret;
+
+	if((ret = hash_set(mutator, key, value)) != 0)
+		error_set("%s: %s", key, "Could not set the value");
+	return ret;
 }
 
 
