@@ -52,7 +52,7 @@
 			<arg choice="plain"><option>-f</option>
 				<replaceable>filename</replaceable></arg>
 			<arg choice="opt"><option>-v</option></arg>
-			<arg choice="plain">
+			<arg choice="plain" rep="repeat">
 				<arg choice="opt"><replaceable>section.</replaceable></arg>
 				<arg choice="plain"><replaceable>variable</replaceable></arg>
 			</arg>
@@ -63,7 +63,7 @@
 			<arg choice="plain"><option>-f</option>
 				<replaceable>filename</replaceable></arg>
 			<arg choice="opt"><option>-v</option></arg>
-			<arg choice="plain">
+			<arg choice="plain" rep="repeat">
 				<arg choice="opt"><replaceable>section.</replaceable></arg>
 				<arg choice="plain"><replaceable>variable</replaceable></arg>
 				<arg choice="opt"><replaceable>=value</replaceable></arg>

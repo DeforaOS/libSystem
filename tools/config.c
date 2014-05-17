@@ -84,8 +84,8 @@ static int _error(char const * progname, int ret)
 /* usage */
 static int _usage(void)
 {
-	fputs("Usage: config -f filename [-v] [section.]key\n"
-"       config -w -f filename [-v] [section.]key[=value]\n", stderr);
+	fputs("Usage: config -f filename [-v] [section.]key...\n"
+"       config -w -f filename [-v] [section.]key[=value]...\n", stderr);
 	return 1;
 }
 
@@ -95,10 +95,12 @@ static int _usage(void)
 /* main */
 int main(int argc, char * argv[])
 {
+	int ret = 0;
 	int o;
 	char const * filename = NULL;
 	int verbose = 0;
 	int write = 0;
+	int i;
 	char * section;
 	char * key;
 	char * value = NULL;
@@ -118,17 +120,21 @@ int main(int argc, char * argv[])
 			default:
 				return _usage();
 		}
-	if(filename == NULL || optind + 1 != argc)
+	if(filename == NULL || optind == argc)
 		return _usage();
-	section = argv[optind];
-	if((key = strchr(section, '.')) == NULL)
+	for(i = optind; i < argc; i++)
 	{
-		key = section;
-		section = NULL;
+		section = argv[i];
+		if((key = strchr(section, '.')) == NULL)
+		{
+			key = section;
+			section = NULL;
+		}
+		else
+			*(key++) = '\0';
+		if(write && (value = strchr(key, '=')) != NULL)
+			*(value++) = '\0';
+		ret |= _config(verbose, filename, section, key, value);
 	}
-	else
-		*(key++) = '\0';
-	if(write && (value = strchr(key, '=')) != NULL)
-		*(value++) = '\0';
-	return (_config(verbose, filename, section, key, value) == 0) ? 0 : 2;
+	return (ret == 0) ? 0 : 2;
 }
