@@ -29,8 +29,8 @@
 /* config */
 /* private */
 /* prototypes */
-static int _config(int verbose, char const * filename, char const * section,
-		char const * key, char const * value);
+static int _config(int verbose, int write, char const * filename, int argc,
+		char * argv[]);
 
 static int _error(char const * progname, int ret);
 static int _usage(void);
@@ -38,7 +38,36 @@ static int _usage(void);
 
 /* functions */
 /* config */
-static int _config(int verbose, char const * filename, char const * section,
+static int _config_do(int verbose, char const * filename, char const * section,
+		char const * key, char const * value);
+
+static int _config(int verbose, int write, char const * filename, int argc,
+		char * argv[])
+{
+	int ret = 0;
+	int i;
+	char * section;
+	char * key;
+	char * value = NULL;
+
+	for(i = 0; i < argc; i++)
+	{
+		section = argv[i];
+		if((key = strchr(section, '.')) == NULL)
+		{
+			key = section;
+			section = NULL;
+		}
+		else
+			*(key++) = '\0';
+		if(write && (value = strchr(key, '=')) != NULL)
+			*(value++) = '\0';
+		ret |= _config_do(verbose, filename, section, key, value);
+	}
+	return (ret == 0) ? 0 : 2;
+}
+
+static int _config_do(int verbose, char const * filename, char const * section,
 		char const * key, char const * value)
 {
 	int ret = 0;
@@ -95,15 +124,10 @@ static int _usage(void)
 /* main */
 int main(int argc, char * argv[])
 {
-	int ret = 0;
 	int o;
-	char const * filename = NULL;
 	int verbose = 0;
 	int write = 0;
-	int i;
-	char * section;
-	char * key;
-	char * value = NULL;
+	char const * filename = NULL;
 
 	while((o = getopt(argc, argv, "f:vw")) != -1)
 		switch(o)
@@ -122,19 +146,6 @@ int main(int argc, char * argv[])
 		}
 	if(filename == NULL || optind == argc)
 		return _usage();
-	for(i = optind; i < argc; i++)
-	{
-		section = argv[i];
-		if((key = strchr(section, '.')) == NULL)
-		{
-			key = section;
-			section = NULL;
-		}
-		else
-			*(key++) = '\0';
-		if(write && (value = strchr(key, '=')) != NULL)
-			*(value++) = '\0';
-		ret |= _config(verbose, filename, section, key, value);
-	}
-	return (ret == 0) ? 0 : 2;
+	return (_config(verbose, write, filename, argc - optind, &argv[optind])
+			== 0) ? 0 : 2;
 }
