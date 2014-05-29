@@ -9,7 +9,7 @@
 	<!ENTITY section   "1">
 	<!ENTITY title     "libSystem User Manual">
 	<!ENTITY package   "DeforaOS libSystem">
-	<!ENTITY name      "config">
+	<!ENTITY name      "configctl">
 	<!ENTITY purpose   "Generic tool to parse and update configuration files">
 ]>
 <refentry>

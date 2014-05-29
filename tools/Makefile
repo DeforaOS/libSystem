@@ -1,4 +1,4 @@
-TARGETS	= config
+TARGETS	= configctl
 PREFIX	= /usr/local
 DESTDIR	=
 BINDIR	= $(PREFIX)/bin
@@ -17,27 +17,27 @@ INSTALL	= install
 
 all: $(TARGETS)
 
-config_OBJS = config.o
-config_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
-config_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
+configctl_OBJS = configctl.o
+configctl_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
+configctl_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 
-config: $(config_OBJS)
-	$(CC) -o config $(config_OBJS) $(config_LDFLAGS)
+configctl: $(configctl_OBJS)
+	$(CC) -o configctl $(configctl_OBJS) $(configctl_LDFLAGS)
 
-config.o: config.c
-	$(CC) $(config_CFLAGS) -c config.c
+configctl.o: configctl.c
+	$(CC) $(configctl_CFLAGS) -c configctl.c
 
 clean:
-	$(RM) -- $(config_OBJS)
+	$(RM) -- $(configctl_OBJS)
 
 distclean: clean
 	$(RM) -- $(TARGETS)
 
 install: $(TARGETS)
 	$(MKDIR) $(DESTDIR)$(BINDIR)
-	$(INSTALL) -m 0755 config $(DESTDIR)$(BINDIR)/config
+	$(INSTALL) -m 0755 configctl $(DESTDIR)$(BINDIR)/configctl
 
 uninstall:
-	$(RM) -- $(DESTDIR)$(BINDIR)/config
+	$(RM) -- $(DESTDIR)$(BINDIR)/configctl
 
 .PHONY: all clean distclean install uninstall

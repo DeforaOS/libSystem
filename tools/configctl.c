@@ -22,14 +22,14 @@
 #include "System/error.h"
 
 #ifndef PROGNAME
-# define PROGNAME "config"
+# define PROGNAME "configctl"
 #endif
 
 
-/* config */
+/* configctl */
 /* private */
 /* prototypes */
-static int _config(int verbose, int write, char const * filename, int argc,
+static int _configctl(int verbose, int write, char const * filename, int argc,
 		char * argv[]);
 
 static int _error(char const * progname, int ret);
@@ -37,11 +37,11 @@ static int _usage(void);
 
 
 /* functions */
-/* config */
-static int _config_do(int verbose, char const * filename, char const * section,
-		char const * key, char const * value);
+/* configctl */
+static int _configctl_do(int verbose, char const * filename,
+		char const * section, char const * key, char const * value);
 
-static int _config(int verbose, int write, char const * filename, int argc,
+static int _configctl(int verbose, int write, char const * filename, int argc,
 		char * argv[])
 {
 	int ret = 0;
@@ -62,13 +62,13 @@ static int _config(int verbose, int write, char const * filename, int argc,
 			*(key++) = '\0';
 		if(write && (value = strchr(key, '=')) != NULL)
 			*(value++) = '\0';
-		ret |= _config_do(verbose, filename, section, key, value);
+		ret |= _configctl_do(verbose, filename, section, key, value);
 	}
 	return (ret == 0) ? 0 : 2;
 }
 
-static int _config_do(int verbose, char const * filename, char const * section,
-		char const * key, char const * value)
+static int _configctl_do(int verbose, char const * filename,
+		char const * section, char const * key, char const * value)
 {
 	int ret = 0;
 	Config * config;
@@ -113,8 +113,8 @@ static int _error(char const * progname, int ret)
 /* usage */
 static int _usage(void)
 {
-	fputs("Usage: config -f filename [-v] [section.]key...\n"
-"       config -w -f filename [-v] [section.]key[=value]...\n", stderr);
+	fputs("Usage: " PROGNAME " -f filename [-v] [section.]key...\n"
+"       " PROGNAME " -w -f filename [-v] [section.]key[=value]...\n", stderr);
 	return 1;
 }
 
@@ -146,6 +146,6 @@ int main(int argc, char * argv[])
 		}
 	if(filename == NULL || optind == argc)
 		return _usage();
-	return (_config(verbose, write, filename, argc - optind, &argv[optind])
-			== 0) ? 0 : 2;
+	return (_configctl(verbose, write, filename, argc - optind,
+				&argv[optind]) == 0) ? 0 : 2;
 }

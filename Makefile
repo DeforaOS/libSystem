@@ -31,8 +31,8 @@ dist:
 		$(PACKAGE)-$(VERSION)/data/pkgconfig.sh \
 		$(PACKAGE)-$(VERSION)/data/project.conf \
 		$(PACKAGE)-$(VERSION)/doc/Makefile \
-		$(PACKAGE)-$(VERSION)/doc/config.css.xml \
-		$(PACKAGE)-$(VERSION)/doc/config.xml \
+		$(PACKAGE)-$(VERSION)/doc/configctl.css.xml \
+		$(PACKAGE)-$(VERSION)/doc/configctl.xml \
 		$(PACKAGE)-$(VERSION)/doc/docbook.sh \
 		$(PACKAGE)-$(VERSION)/doc/gtkdoc.sh \
 		$(PACKAGE)-$(VERSION)/doc/manual.css.xml \
@@ -102,7 +102,7 @@ dist:
 		$(PACKAGE)-$(VERSION)/tests/Makefile \
 		$(PACKAGE)-$(VERSION)/tests/tests.sh \
 		$(PACKAGE)-$(VERSION)/tests/project.conf \
-		$(PACKAGE)-$(VERSION)/tools/config.c \
+		$(PACKAGE)-$(VERSION)/tools/configctl.c \
 		$(PACKAGE)-$(VERSION)/tools/COPYING \
 		$(PACKAGE)-$(VERSION)/tools/Makefile \
 		$(PACKAGE)-$(VERSION)/tools/project.conf \
