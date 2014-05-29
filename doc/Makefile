@@ -16,7 +16,7 @@ subdirs:
 config.1: config.xml
 	./docbook.sh -P "$(PREFIX)" -- "config.1"
 
-config.html: config.xml
+config.html: config.css.xml config.xml manual.css.xml
 	./docbook.sh -P "$(PREFIX)" -- "config.html"
 
 gtkdoc/libSystem.types:
