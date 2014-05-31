@@ -15,8 +15,8 @@
 
 
 
-#ifndef LIBSYSTEM_ARRAY_H
-# define LIBSYSTEM_ARRAY_H
+#ifndef LIBSYSTEM_SYSTEM_ARRAY_H
+# define LIBSYSTEM_SYSTEM_ARRAY_H
 
 # include <sys/types.h>
 
@@ -52,4 +52,4 @@ int array_remove_pos(Array * array, size_t pos);
 
 void array_foreach(Array * array, ArrayForeach func, void * data);
 
-#endif /* !LIBSYSTEM_ARRAY_H */
+#endif /* !LIBSYSTEM_SYSTEM_ARRAY_H */

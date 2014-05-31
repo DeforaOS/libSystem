@@ -15,8 +15,8 @@
 
 
 
-#ifndef LIBSYSTEM_PLUGIN_H
-# define LIBSYSTEM_PLUGIN_H
+#ifndef LIBSYSTEM_SYSTEM_PLUGIN_H
+# define LIBSYSTEM_SYSTEM_PLUGIN_H
 
 # include "string.h"
 
@@ -35,4 +35,4 @@ void plugin_delete(Plugin * plugin);
 /* useful */
 void * plugin_lookup(Plugin * plugin, String const * symbol);
 
-#endif /* !LIBSYSTEM_PLUGIN_H */
+#endif /* !LIBSYSTEM_SYSTEM_PLUGIN_H */

@@ -1,5 +1,5 @@
 /* $Id$ */
-/* Copyright (c) 2006-2012 Pierre Pronchery <khorben@defora.org> */
+/* Copyright (c) 2006-2014 Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS System libSystem */
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -15,8 +15,8 @@
 
 
 
-#ifndef LIBSYSTEM_EVENT_H
-# define LIBSYSTEM_EVENT_H
+#ifndef LIBSYSTEM_SYSTEM_EVENT_H
+# define LIBSYSTEM_SYSTEM_EVENT_H
 
 # include <sys/time.h>
 # include <time.h>
@@ -48,4 +48,4 @@ int event_unregister_io_read(Event * event, int fd);
 int event_unregister_io_write(Event * event, int fd);
 int event_unregister_timeout(Event * event, EventTimeoutFunc func);
 
-#endif /* !LIBSYSTEM_EVENT_H */
+#endif /* !LIBSYSTEM_SYSTEM_EVENT_H */

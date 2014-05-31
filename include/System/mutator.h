@@ -15,8 +15,8 @@
 
 
 
-#ifndef LIBSYSTEM_MUTATOR_H
-# define LIBSYSTEM_MUTATOR_H
+#ifndef LIBSYSTEM_SYSTEM_MUTATOR_H
+# define LIBSYSTEM_SYSTEM_MUTATOR_H
 
 # include "string.h"
 
@@ -41,4 +41,4 @@ size_t mutator_count(Mutator * mutator);
 void mutator_foreach(Mutator * mutator, MutatorForeach func, void * data);
 int mutator_reset(Mutator * mutator);
 
-#endif /* !LIBSYSTEM_MUTATOR_H */
+#endif /* !LIBSYSTEM_SYSTEM_MUTATOR_H */

@@ -1,5 +1,5 @@
 /* $Id$ */
-/* Copyright (c) 2007-2013 Pierre Pronchery <khorben@defora.org> */
+/* Copyright (c) 2007-2014 Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS System libSystem */
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -15,8 +15,8 @@
 
 
 
-#ifndef LIBSYSTEM_ERROR_H
-# define LIBSYSTEM_ERROR_H
+#ifndef LIBSYSTEM_SYSTEM_ERROR_H
+# define LIBSYSTEM_SYSTEM_ERROR_H
 
 # include "string.h"
 
@@ -34,4 +34,4 @@ int error_set_print(String const * program, int code,
 /* useful */
 int error_print(String const * program);
 
-#endif /* !LIBSYSTEM_ERROR_H */
+#endif /* !LIBSYSTEM_SYSTEM_ERROR_H */

@@ -15,8 +15,8 @@
 
 
 
-#ifndef LIBSYSTEM_VARIABLE_H
-# define LIBSYSTEM_VARIABLE_H
+#ifndef LIBSYSTEM_SYSTEM_VARIABLE_H
+# define LIBSYSTEM_SYSTEM_VARIABLE_H
 
 # include <stdint.h>
 # include "buffer.h"
@@ -67,4 +67,4 @@ int variable_set_from(Variable * variable, VariableType type, void * value);
 /* useful */
 int variable_serialize(Variable * variable, Buffer * buffer, int type);
 
-#endif /* !LIBSYSTEM_VARIABLE_H */
+#endif /* !LIBSYSTEM_SYSTEM_VARIABLE_H */

@@ -1,5 +1,5 @@
 /* $Id$ */
-/* Copyright (c) 2008-2012 Pierre Pronchery <khorben@defora.org> */
+/* Copyright (c) 2008-2014 Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS System libSystem */
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -15,8 +15,8 @@
 
 
 
-#ifndef LIBSYSTEM_OBJECT_H
-# define LIBSYSTEM_OBJECT_H
+#ifndef LIBSYSTEM_SYSTEM_OBJECT_H
+# define LIBSYSTEM_SYSTEM_OBJECT_H
 
 
 /* Object */
@@ -30,4 +30,4 @@ void object_delete(Object * object);
 /* useful */
 int object_resize(Object ** object, size_t size);
 
-#endif /* !LIBSYSTEM_OBJECT_H */
+#endif /* !LIBSYSTEM_SYSTEM_OBJECT_H */

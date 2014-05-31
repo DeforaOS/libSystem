@@ -15,8 +15,8 @@
 
 
 
-#ifndef LIBSYSTEM_CONFIG_H
-# define LIBSYSTEM_CONFIG_H
+#ifndef LIBSYSTEM_SYSTEM_CONFIG_H
+# define LIBSYSTEM_SYSTEM_CONFIG_H
 
 # include "string.h"
 
@@ -50,4 +50,4 @@ int config_load(Config * config, String const * filename);
 int config_reset(Config * config);
 int config_save(Config * config, String const * filename);
 
-#endif /* !LIBSYSTEM_CONFIG_H */
+#endif /* !LIBSYSTEM_SYSTEM_CONFIG_H */

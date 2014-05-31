@@ -1,5 +1,5 @@
 /* $Id$ */
-/* Copyright (c) 2008-2012 Pierre Pronchery <khorben@defora.org> */
+/* Copyright (c) 2008-2014 Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS System libSystem */
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -15,8 +15,8 @@
 
 
 
-#ifndef LIBSYSTEM_PARSER_H
-# define LIBSYSTEM_PARSER_H
+#ifndef LIBSYSTEM_SYSTEM_PARSER_H
+# define LIBSYSTEM_SYSTEM_PARSER_H
 
 # include "token.h"
 
@@ -49,4 +49,4 @@ int parser_remove_filter(Parser * parser, ParserFilter filter);
 int parser_scan(Parser * parser);
 int parser_scan_filter(Parser * parser);
 
-#endif /* !LIBSYSTEM_PARSER_H */
+#endif /* !LIBSYSTEM_SYSTEM_PARSER_H */

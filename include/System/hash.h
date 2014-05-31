@@ -15,8 +15,8 @@
 
 
 
-#ifndef LIBSYSTEM_HASH_H
-# define LIBSYSTEM_HASH_H
+#ifndef LIBSYSTEM_SYSTEM_HASH_H
+# define LIBSYSTEM_SYSTEM_HASH_H
 
 # include <sys/types.h>
 
@@ -47,4 +47,4 @@ size_t hash_count(Hash * hash);
 void hash_foreach(Hash * hash, HashForeach func, void * data);
 int hash_reset(Hash * hash);
 
-#endif /* !LIBSYSTEM_HASH_H */
+#endif /* !LIBSYSTEM_SYSTEM_HASH_H */

@@ -1,5 +1,5 @@
 /* $Id$ */
-/* Copyright (c) 2008-2012 Pierre Pronchery <khorben@defora.org> */
+/* Copyright (c) 2008-2014 Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS System libSystem */
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -15,8 +15,8 @@
 
 
 
-#ifndef LIBSYSTEM_TOKEN_H
-# define LIBSYSTEM_TOKEN_H
+#ifndef LIBSYSTEM_SYSTEM_TOKEN_H
+# define LIBSYSTEM_SYSTEM_TOKEN_H
 
 # include "string.h"
 
@@ -56,4 +56,4 @@ void token_set_data(Token * token, void * data);
 /* useful */
 int token_in_set(Token * token, TokenSet set);
 
-#endif /* !LIBSYSTEM_TOKEN_H */
+#endif /* !LIBSYSTEM_SYSTEM_TOKEN_H */

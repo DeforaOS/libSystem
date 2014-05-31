@@ -1,5 +1,5 @@
 /* $Id$ */
-/* Copyright (c) 2006-2012 Pierre Pronchery <khorben@defora.org> */
+/* Copyright (c) 2006-2014 Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS System libSystem */
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -15,8 +15,8 @@
 
 
 
-#ifndef LIBSYSTEM_FILE_H
-# define LIBSYSTEM_FILE_H
+#ifndef LIBSYSTEM_SYSTEM_FILE_H
+# define LIBSYSTEM_SYSTEM_FILE_H
 
 # include <sys/types.h>
 
@@ -33,4 +33,4 @@ void file_delete(File * file);
 ssize_t file_read(File * file, void * buf, size_t size, ssize_t count);
 ssize_t file_write(File * file, void * buf, size_t size, ssize_t count);
 
-#endif /* !LIBSYSTEM_FILE_H */
+#endif /* !LIBSYSTEM_SYSTEM_FILE_H */
