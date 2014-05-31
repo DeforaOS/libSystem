@@ -29,6 +29,8 @@ install:
 	$(MKDIR) $(DESTDIR)$(INCLUDEDIR)/System
 	$(INSTALL) -m 0644 hash.h $(DESTDIR)$(INCLUDEDIR)/System/hash.h
 	$(MKDIR) $(DESTDIR)$(INCLUDEDIR)/System
+	$(INSTALL) -m 0644 license.h $(DESTDIR)$(INCLUDEDIR)/System/license.h
+	$(MKDIR) $(DESTDIR)$(INCLUDEDIR)/System
 	$(INSTALL) -m 0644 mutator.h $(DESTDIR)$(INCLUDEDIR)/System/mutator.h
 	$(MKDIR) $(DESTDIR)$(INCLUDEDIR)/System
 	$(INSTALL) -m 0644 object.h $(DESTDIR)$(INCLUDEDIR)/System/object.h
@@ -51,6 +53,7 @@ uninstall:
 	$(RM) -- $(DESTDIR)$(INCLUDEDIR)/System/event.h
 	$(RM) -- $(DESTDIR)$(INCLUDEDIR)/System/file.h
 	$(RM) -- $(DESTDIR)$(INCLUDEDIR)/System/hash.h
+	$(RM) -- $(DESTDIR)$(INCLUDEDIR)/System/license.h
 	$(RM) -- $(DESTDIR)$(INCLUDEDIR)/System/mutator.h
 	$(RM) -- $(DESTDIR)$(INCLUDEDIR)/System/object.h
 	$(RM) -- $(DESTDIR)$(INCLUDEDIR)/System/parser.h

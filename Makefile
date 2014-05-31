@@ -66,6 +66,7 @@ dist:
 		$(PACKAGE)-$(VERSION)/include/System/event.h \
 		$(PACKAGE)-$(VERSION)/include/System/file.h \
 		$(PACKAGE)-$(VERSION)/include/System/hash.h \
+		$(PACKAGE)-$(VERSION)/include/System/license.h \
 		$(PACKAGE)-$(VERSION)/include/System/mutator.h \
 		$(PACKAGE)-$(VERSION)/include/System/object.h \
 		$(PACKAGE)-$(VERSION)/include/System/parser.h \
