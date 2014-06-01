@@ -97,7 +97,7 @@ typedef unsigned int LicenseFlags;
 	 | LF_VIRAL)
 # define LICENSE_GNU_LGPL3_STRING	"GNU LGPL 3"
 # define LICENSE_PROPRIETARY_FLAGS	0x0000000
-# define LICENSE_PROPRIETARY_FLAGS	"Proprietary"
+# define LICENSE_PROPRIETARY_STRING	"Proprietary"
 # define LICENSE_PUBLIC_DOMAIN_FLAGS \
 	(LF_CAN_JAIL \
 	 | LF_CAN_MODIFY \
