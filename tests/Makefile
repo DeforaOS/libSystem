@@ -39,7 +39,7 @@ variable_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 variable: $(variable_OBJS)
 	$(CC) -o variable $(variable_OBJS) $(variable_LDFLAGS)
 
-tests.log: includes string tests.sh variable
+tests.log: includes python.sh string tests.sh variable
 	./tests.sh -P "$(PREFIX)" -- "tests.log"
 
 includes.o: includes.c

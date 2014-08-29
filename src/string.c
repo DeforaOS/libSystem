@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 /* TODO:
- * - add string_new_format(), string_rtrim(), string_ltrim()... */
+ * - add string_rtrim(), string_ltrim()... */
 
 
 
@@ -63,6 +63,37 @@ String * string_new_append(String const * string, ...)
 			ret = NULL;
 			break;
 		}
+	va_end(ap);
+	return ret;
+}
+
+
+/* string_new_format */
+String * string_new_format(String const * format, ...)
+{
+	String * ret;
+	va_list ap;
+	int len;
+	size_t s;
+
+	va_start(ap, format);
+	len = vsnprintf(NULL, 0, format, ap);
+	va_end(ap);
+	if(len < 0)
+	{
+		error_set_code(1, "%s", strerror(errno));
+		return NULL;
+	}
+	s = (size_t)len + 1;
+	if((ret = object_new(s)) == NULL)
+		return NULL;
+	va_start(ap, format);
+	if(vsnprintf(ret, s, format, ap) != len)
+	{
+		error_set_code(1, "%s", strerror(errno));
+		object_delete(ret);
+		ret = NULL;
+	}
 	va_end(ap);
 	return ret;
 }

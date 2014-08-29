@@ -30,6 +30,7 @@ static int _test(char const * progname, String * s)
 	printf("%s: Testing %s\n", progname, "string_get_length()");
 	if((len = string_get_length(s)) == 0)
 		return 2;
+	printf("\"%s\" => %lu\n", s, len);
 	/* string_clear */
 	printf("%s: Testing %s\n", progname, "string_clear()");
 	string_clear(s);
@@ -47,6 +48,10 @@ int main(int argc, char * argv[])
 	String * s;
 
 	if((s = string_new(argv[0])) == NULL)
+		return 2;
+	ret |= _test(argv[0], s);
+	string_delete(s);
+	if((s = string_new_format("%s", argv[0])) == NULL)
 		return 2;
 	ret |= _test(argv[0], s);
 	string_delete(s);

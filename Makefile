@@ -101,6 +101,7 @@ dist:
 		$(PACKAGE)-$(VERSION)/tests/variable.c \
 		$(PACKAGE)-$(VERSION)/tests/COPYING \
 		$(PACKAGE)-$(VERSION)/tests/Makefile \
+		$(PACKAGE)-$(VERSION)/tests/python.sh \
 		$(PACKAGE)-$(VERSION)/tests/tests.sh \
 		$(PACKAGE)-$(VERSION)/tests/project.conf \
 		$(PACKAGE)-$(VERSION)/tools/configctl.c \

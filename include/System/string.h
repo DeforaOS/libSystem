@@ -34,6 +34,7 @@ typedef char String;
 /* functions */
 String * string_new(String const * string);
 String * string_new_append(String const * string, ...);
+String * string_new_format(String const * format, ...);
 String * string_new_length(String const * string, size_t length);
 void string_delete(String * string);
 
