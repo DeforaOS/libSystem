@@ -1,5 +1,5 @@
 PACKAGE	= libSystem
-VERSION	= 0.1.7
+VERSION	= 0.2.0
 SUBDIRS	= data doc include src tests tools
 PREFIX	= /usr/local
 DESTDIR	=
