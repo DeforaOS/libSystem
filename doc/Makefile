@@ -34,11 +34,21 @@ gtkdoc/html.stamp: gtkdoc/libSystem-docs.xml gtkdoc/sgml.stamp gtkdoc/tmpl.stamp
 clean:
 	@for i in $(SUBDIRS); do (cd "$$i" && $(MAKE) clean) || exit; done
 	$(RM) -- $(configctl.1_OBJS) $(configctl.html_OBJS) $(gtkdoc/libSystem.types_OBJS) $(gtkdoc/tmpl.stamp_OBJS) $(gtkdoc/sgml.stamp_OBJS) $(gtkdoc/html.stamp_OBJS)
+	./docbook.sh -c -P "$(PREFIX)" -- "configctl.1"
+	./docbook.sh -c -P "$(PREFIX)" -- "configctl.html"
+	./gtkdoc.sh -c -P "$(PREFIX)" -- "gtkdoc/libSystem.types"
+	./gtkdoc.sh -c -P "$(PREFIX)" -- "gtkdoc/tmpl.stamp"
+	./gtkdoc.sh -c -P "$(PREFIX)" -- "gtkdoc/sgml.stamp"
 	./gtkdoc.sh -c -P "$(PREFIX)" -- "gtkdoc/html.stamp"
 
 distclean:
 	@for i in $(SUBDIRS); do (cd "$$i" && $(MAKE) distclean) || exit; done
 	$(RM) -- $(configctl.1_OBJS) $(configctl.html_OBJS) $(gtkdoc/libSystem.types_OBJS) $(gtkdoc/tmpl.stamp_OBJS) $(gtkdoc/sgml.stamp_OBJS) $(gtkdoc/html.stamp_OBJS)
+	./docbook.sh -c -P "$(PREFIX)" -- "configctl.1"
+	./docbook.sh -c -P "$(PREFIX)" -- "configctl.html"
+	./gtkdoc.sh -c -P "$(PREFIX)" -- "gtkdoc/libSystem.types"
+	./gtkdoc.sh -c -P "$(PREFIX)" -- "gtkdoc/tmpl.stamp"
+	./gtkdoc.sh -c -P "$(PREFIX)" -- "gtkdoc/sgml.stamp"
 	./gtkdoc.sh -c -P "$(PREFIX)" -- "gtkdoc/html.stamp"
 	$(RM) -- $(TARGETS)
 
