@@ -101,6 +101,10 @@ int config_set(Config * config, char const * section, char const * variable,
 	char * oldvalue = NULL;
 	char * newvalue = NULL;
 
+#ifdef DEBUG
+	fprintf(stderr, "DEBUG: %s(\"%s\", \"%s\", \"%s\")\n", __func__,
+			section, variable, value);
+#endif
 	if(section == NULL)
 		section = "";
 	if((mutator = mutator_get(config, section)) == NULL)
@@ -212,6 +216,7 @@ int config_load(Config * config, char const * filename)
 	/* FIXME unescape backslashes (eg allow multiple lines) */
 	for(line = 0; (c = fgetc(fp)) != EOF; line++)
 		if(c == '#')
+			/* skip the comment */
 			while((c = fgetc(fp)) != EOF && c != '\n');
 		else if(c == '[')
 		{
@@ -246,7 +251,7 @@ int config_load(Config * config, char const * filename)
 
 static int _load_isprint(int c)
 {
-	if(c == '\n' || c == '\0')
+	if(c == EOF || c == '\n' || c == '\0')
 		return 0;
 	return 1;
 }
@@ -321,7 +326,7 @@ static String * _load_value(FILE * fp)
 		str = p;
 		str[len++] = c;
 	}
-	if(c != '\n')
+	if(c != EOF && c != '\n')
 	{
 		free(str);
 		return NULL;
