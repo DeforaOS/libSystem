@@ -1,5 +1,6 @@
 SUBDIRS	= gtkdoc
-TARGETS	= configctl.1 configctl.html gtkdoc/libSystem.types gtkdoc/tmpl.stamp gtkdoc/sgml.stamp gtkdoc/html.stamp
+TARGETS	= $(OBJDIR)configctl.1 $(OBJDIR)configctl.html $(OBJDIR)gtkdoc/libSystem.types $(OBJDIR)gtkdoc/tmpl.stamp $(OBJDIR)gtkdoc/sgml.stamp $(OBJDIR)gtkdoc/html.stamp
+OBJDIR	=
 PREFIX	= /usr/local
 DESTDIR	=
 RM	= rm -f
@@ -13,23 +14,23 @@ all: subdirs $(TARGETS)
 subdirs:
 	@for i in $(SUBDIRS); do (cd "$$i" && $(MAKE)) || exit; done
 
-configctl.1: configctl.xml
-	./docbook.sh -P "$(PREFIX)" -- "configctl.1"
+$(OBJDIR)configctl.1: configctl.xml
+	./docbook.sh -P "$(PREFIX)" -- "$(OBJDIR)configctl.1"
 
-configctl.html: configctl.css.xml configctl.xml manual.css.xml
-	./docbook.sh -P "$(PREFIX)" -- "configctl.html"
+$(OBJDIR)configctl.html: configctl.css.xml configctl.xml manual.css.xml
+	./docbook.sh -P "$(PREFIX)" -- "$(OBJDIR)configctl.html"
 
-gtkdoc/libSystem.types:
-	./gtkdoc.sh -P "$(PREFIX)" -- "gtkdoc/libSystem.types"
+$(OBJDIR)gtkdoc/libSystem.types:
+	./gtkdoc.sh -P "$(PREFIX)" -- "$(OBJDIR)gtkdoc/libSystem.types"
 
-gtkdoc/tmpl.stamp: gtkdoc/libSystem.types
-	./gtkdoc.sh -P "$(PREFIX)" -- "gtkdoc/tmpl.stamp"
+$(OBJDIR)gtkdoc/tmpl.stamp: gtkdoc/libSystem.types
+	./gtkdoc.sh -P "$(PREFIX)" -- "$(OBJDIR)gtkdoc/tmpl.stamp"
 
-gtkdoc/sgml.stamp: gtkdoc/tmpl.stamp
-	./gtkdoc.sh -P "$(PREFIX)" -- "gtkdoc/sgml.stamp"
+$(OBJDIR)gtkdoc/sgml.stamp: gtkdoc/tmpl.stamp
+	./gtkdoc.sh -P "$(PREFIX)" -- "$(OBJDIR)gtkdoc/sgml.stamp"
 
-gtkdoc/html.stamp: gtkdoc/libSystem-docs.xml gtkdoc/sgml.stamp gtkdoc/tmpl.stamp
-	./gtkdoc.sh -P "$(PREFIX)" -- "gtkdoc/html.stamp"
+$(OBJDIR)gtkdoc/html.stamp: gtkdoc/libSystem-docs.xml gtkdoc/sgml.stamp gtkdoc/tmpl.stamp
+	./gtkdoc.sh -P "$(PREFIX)" -- "$(OBJDIR)gtkdoc/html.stamp"
 
 clean:
 	@for i in $(SUBDIRS); do (cd "$$i" && $(MAKE) clean) || exit; done
@@ -54,9 +55,9 @@ distclean:
 
 install: $(TARGETS)
 	@for i in $(SUBDIRS); do (cd "$$i" && $(MAKE) install) || exit; done
-	./docbook.sh -P "$(DESTDIR)$(PREFIX)" -i -- "configctl.1"
-	./docbook.sh -P "$(DESTDIR)$(PREFIX)" -i -- "configctl.html"
-	./gtkdoc.sh -P "$(DESTDIR)$(PREFIX)" -i -- "gtkdoc/html.stamp"
+	./docbook.sh -P "$(DESTDIR)$(PREFIX)" -i -- "$(OBJDIR)configctl.1"
+	./docbook.sh -P "$(DESTDIR)$(PREFIX)" -i -- "$(OBJDIR)configctl.html"
+	./gtkdoc.sh -P "$(DESTDIR)$(PREFIX)" -i -- "$(OBJDIR)gtkdoc/html.stamp"
 
 uninstall:
 	@for i in $(SUBDIRS); do (cd "$$i" && $(MAKE) uninstall) || exit; done

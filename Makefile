@@ -1,6 +1,7 @@
 PACKAGE	= libSystem
 VERSION	= 0.2.0
 SUBDIRS	= data doc include src tests tools
+OBJDIR	=
 PREFIX	= /usr/local
 DESTDIR	=
 MKDIR	= mkdir -m 0755 -p
@@ -8,7 +9,8 @@ INSTALL	= install
 RM	= rm -f
 RM	= rm -f
 LN	= ln -f
-TAR	= tar -czvf
+TAR	= tar
+MKDIR	= mkdir -m 0755 -p
 
 
 all: subdirs
@@ -25,7 +27,7 @@ distclean:
 dist:
 	$(RM) -r -- $(PACKAGE)-$(VERSION)
 	$(LN) -s -- . $(PACKAGE)-$(VERSION)
-	@$(TAR) $(PACKAGE)-$(VERSION).tar.gz -- \
+	@$(TAR) -czvf $(PACKAGE)-$(VERSION).tar.gz -- \
 		$(PACKAGE)-$(VERSION)/data/Makefile \
 		$(PACKAGE)-$(VERSION)/data/libSystem.pc.in \
 		$(PACKAGE)-$(VERSION)/data/pkgconfig.sh \
@@ -115,6 +117,17 @@ dist:
 		$(PACKAGE)-$(VERSION)/project.conf
 	$(RM) -- $(PACKAGE)-$(VERSION)
 
+distcheck: dist
+	$(TAR) -xzvf $(PACKAGE)-$(VERSION).tar.gz
+	$(MKDIR) -- $(PACKAGE)-$(VERSION)/objdir
+	$(MKDIR) -- $(PACKAGE)-$(VERSION)/destdir
+	(cd "$(PACKAGE)-$(VERSION)" && $(MAKE) OBJDIR="$$PWD/objdir/")
+	(cd "$(PACKAGE)-$(VERSION)" && $(MAKE) OBJDIR="$$PWD/objdir/" DESTDIR="$$PWD/destdir" install)
+	(cd "$(PACKAGE)-$(VERSION)" && $(MAKE) OBJDIR="$$PWD/objdir/" DESTDIR="$$PWD/destdir" uninstall)
+	(cd "$(PACKAGE)-$(VERSION)" && $(MAKE) OBJDIR="$$PWD/objdir/" distclean)
+	(cd "$(PACKAGE)-$(VERSION)" && $(MAKE) dist)
+	$(RM) -r -- $(PACKAGE)-$(VERSION)
+
 install:
 	@for i in $(SUBDIRS); do (cd "$$i" && $(MAKE) install) || exit; done
 	$(MKDIR) $(DESTDIR)$(PREFIX)/share/doc/$(PACKAGE)
@@ -124,4 +137,4 @@ uninstall:
 	@for i in $(SUBDIRS); do (cd "$$i" && $(MAKE) uninstall) || exit; done
 	$(RM) -- $(DESTDIR)$(PREFIX)/share/doc/$(PACKAGE)/README.md
 
-.PHONY: all subdirs clean distclean dist install uninstall
+.PHONY: all subdirs clean distclean dist distcheck install uninstall

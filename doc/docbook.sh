@@ -51,7 +51,8 @@ _docbook()
 {
 	target="$1"
 
-	source="${target%.*}.xml"
+	source="${target#$OBJDIR}"
+	source="${source%.*}.xml"
 	ext="${target##*.}"
 	ext="${ext##.}"
 	case "$ext" in
@@ -153,7 +154,8 @@ while [ $# -gt 0 ]; do
 	case "$ext" in
 		html)
 			instdir="$DATADIR/doc/$ext/$PACKAGE"
-			source="${target%.*}.xml"
+			source="${target#$OBJDIR}"
+			source="${source%.*}.xml"
 			xpath="string(/refentry/refmeta/manvolnum)"
 			section=$($XMLLINT --xpath "$xpath" "$source")
 			if [ $? -eq 0 -a -n "$section" ]; then
@@ -177,14 +179,16 @@ while [ $# -gt 0 ]; do
 
 	#uninstall
 	if [ "$uninstall" -eq 1 ]; then
+		target="${target#$OBJDIR}"
 		$DEBUG $RM -- "$instdir/$target"		|| exit 2
 		continue
 	fi
 
 	#install
 	if [ "$install" -eq 1 ]; then
+		source="${target#$OBJDIR}"
 		$DEBUG $MKDIR -- "$instdir"			|| exit 2
-		$DEBUG $INSTALL "$target" "$instdir/$target"	|| exit 2
+		$DEBUG $INSTALL "$target" "$instdir/$source"	|| exit 2
 		continue
 	fi
 

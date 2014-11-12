@@ -1,4 +1,5 @@
-TARGETS	= libSystem.a libSystem.so.0.0 libSystem.so.0 libSystem.so
+TARGETS	= $(OBJDIR)libSystem.a $(OBJDIR)libSystem.so.0.0 $(OBJDIR)libSystem.so.0 $(OBJDIR)libSystem.so
+OBJDIR	=
 PREFIX	= /usr/local
 DESTDIR	=
 LIBDIR	= $(PREFIX)/lib
@@ -19,57 +20,57 @@ INSTALL	= install
 
 all: $(TARGETS)
 
-libSystem_OBJS = array.o buffer.o config.o error.o event.o hash.o mutator.o object.o parser.o plugin.o string.o token.o variable.o
+libSystem_OBJS = $(OBJDIR)array.o $(OBJDIR)buffer.o $(OBJDIR)config.o $(OBJDIR)error.o $(OBJDIR)event.o $(OBJDIR)hash.o $(OBJDIR)mutator.o $(OBJDIR)object.o $(OBJDIR)parser.o $(OBJDIR)plugin.o $(OBJDIR)string.o $(OBJDIR)token.o $(OBJDIR)variable.o
 libSystem_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
 libSystem_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)   
 
-libSystem.a: $(libSystem_OBJS)
-	$(AR) -rc libSystem.a $(libSystem_OBJS)
-	$(RANLIB) libSystem.a
+$(OBJDIR)libSystem.a: $(libSystem_OBJS)
+	$(AR) -rc $(OBJDIR)libSystem.a $(libSystem_OBJS)
+	$(RANLIB) $(OBJDIR)libSystem.a
 
-libSystem.so.0.0 libSystem.so.0 libSystem.so: $(libSystem_OBJS)
-	$(CCSHARED) -o libSystem.so.0.0 -Wl,-soname,libSystem.so.0 $(libSystem_OBJS) $(libSystem_LDFLAGS)
-	$(LN) -s -- libSystem.so.0.0 libSystem.so.0
-	$(LN) -s -- libSystem.so.0.0 libSystem.so
+$(OBJDIR)libSystem.so.0.0 $(OBJDIR)libSystem.so.0 $(OBJDIR)libSystem.so: $(libSystem_OBJS)
+	$(CCSHARED) -o $(OBJDIR)libSystem.so.0.0 -Wl,-soname,libSystem.so.0 $(libSystem_OBJS) $(libSystem_LDFLAGS)
+	$(LN) -s -- libSystem.so.0.0 $(OBJDIR)libSystem.so.0
+	$(LN) -s -- libSystem.so.0.0 $(OBJDIR)libSystem.so
 
-array.o: array.c
-	$(CC) $(libSystem_CFLAGS) -c array.c
+$(OBJDIR)array.o: array.c
+	$(CC) $(libSystem_CFLAGS) -o $(OBJDIR)array.o -c array.c
 
-buffer.o: buffer.c
-	$(CC) $(libSystem_CFLAGS) -c buffer.c
+$(OBJDIR)buffer.o: buffer.c
+	$(CC) $(libSystem_CFLAGS) -o $(OBJDIR)buffer.o -c buffer.c
 
-config.o: config.c
-	$(CC) $(libSystem_CFLAGS) -c config.c
+$(OBJDIR)config.o: config.c
+	$(CC) $(libSystem_CFLAGS) -o $(OBJDIR)config.o -c config.c
 
-error.o: error.c
-	$(CC) $(libSystem_CFLAGS) -c error.c
+$(OBJDIR)error.o: error.c
+	$(CC) $(libSystem_CFLAGS) -o $(OBJDIR)error.o -c error.c
 
-event.o: event.c
-	$(CC) $(libSystem_CFLAGS) -c event.c
+$(OBJDIR)event.o: event.c
+	$(CC) $(libSystem_CFLAGS) -o $(OBJDIR)event.o -c event.c
 
-hash.o: hash.c
-	$(CC) $(libSystem_CFLAGS) -c hash.c
+$(OBJDIR)hash.o: hash.c
+	$(CC) $(libSystem_CFLAGS) -o $(OBJDIR)hash.o -c hash.c
 
-mutator.o: mutator.c
-	$(CC) $(libSystem_CFLAGS) -c mutator.c
+$(OBJDIR)mutator.o: mutator.c
+	$(CC) $(libSystem_CFLAGS) -o $(OBJDIR)mutator.o -c mutator.c
 
-object.o: object.c
-	$(CC) $(libSystem_CFLAGS) -c object.c
+$(OBJDIR)object.o: object.c
+	$(CC) $(libSystem_CFLAGS) -o $(OBJDIR)object.o -c object.c
 
-parser.o: parser.c token.h
-	$(CC) $(libSystem_CFLAGS) -c parser.c
+$(OBJDIR)parser.o: parser.c token.h
+	$(CC) $(libSystem_CFLAGS) -o $(OBJDIR)parser.o -c parser.c
 
-plugin.o: plugin.c
-	$(CC) $(libSystem_CFLAGS) -c plugin.c
+$(OBJDIR)plugin.o: plugin.c
+	$(CC) $(libSystem_CFLAGS) -o $(OBJDIR)plugin.o -c plugin.c
 
-string.o: string.c
-	$(CC) $(libSystem_CFLAGS) -c string.c
+$(OBJDIR)string.o: string.c
+	$(CC) $(libSystem_CFLAGS) -o $(OBJDIR)string.o -c string.c
 
-token.o: token.c token.h
-	$(CC) $(libSystem_CFLAGS) -c token.c
+$(OBJDIR)token.o: token.c token.h
+	$(CC) $(libSystem_CFLAGS) -o $(OBJDIR)token.o -c token.c
 
-variable.o: variable.c
-	$(CC) $(libSystem_CFLAGS) -c variable.c
+$(OBJDIR)variable.o: variable.c
+	$(CC) $(libSystem_CFLAGS) -o $(OBJDIR)variable.o -c variable.c
 
 clean:
 	$(RM) -- $(libSystem_OBJS)
@@ -79,8 +80,8 @@ distclean: clean
 
 install: $(TARGETS)
 	$(MKDIR) $(DESTDIR)$(LIBDIR)
-	$(INSTALL) -m 0644 libSystem.a $(DESTDIR)$(LIBDIR)/libSystem.a
-	$(INSTALL) -m 0755 libSystem.so.0.0 $(DESTDIR)$(LIBDIR)/libSystem.so.0.0
+	$(INSTALL) -m 0644 $(OBJDIR)libSystem.a $(DESTDIR)$(LIBDIR)/libSystem.a
+	$(INSTALL) -m 0755 $(OBJDIR)libSystem.so.0.0 $(DESTDIR)$(LIBDIR)/libSystem.so.0.0
 	$(LN) -s -- libSystem.so.0.0 $(DESTDIR)$(LIBDIR)/libSystem.so.0
 	$(LN) -s -- libSystem.so.0.0 $(DESTDIR)$(LIBDIR)/libSystem.so
 
