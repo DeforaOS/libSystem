@@ -9,7 +9,7 @@ CPPFLAGSF= -I ../include
 CPPFLAGS=
 CFLAGSF	= -W
 CFLAGS	= -Wall -g -O2
-LDFLAGSF= -L ../src -lSystem
+LDFLAGSF= -L$(OBJDIR). -L../src -lSystem
 LDFLAGS	= -L$(PREFIX)/lib -Wl,-rpath,"$(PWD)/../src"
 RM	= rm -f
 LN	= ln -f
@@ -47,7 +47,7 @@ variable_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 $(OBJDIR)variable: $(variable_OBJS)
 	$(CC) -o $(OBJDIR)variable $(variable_OBJS) $(variable_LDFLAGS)
 
-$(OBJDIR)tests.log: config config.conf config-noeol.conf includes python.sh string tests.sh variable
+$(OBJDIR)tests.log: $(OBJDIR)config config.conf config-noeol.conf $(OBJDIR)includes python.sh $(OBJDIR)string tests.sh $(OBJDIR)variable
 	./tests.sh -P "$(PREFIX)" -- "$(OBJDIR)tests.log"
 
 $(OBJDIR)config.o: config.c ../src/config.c
