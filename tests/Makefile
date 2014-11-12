@@ -1,4 +1,4 @@
-TARGETS	= $(OBJDIR)includes $(OBJDIR)string $(OBJDIR)variable $(OBJDIR)tests.log
+TARGETS	= $(OBJDIR)config $(OBJDIR)includes $(OBJDIR)string $(OBJDIR)variable $(OBJDIR)tests.log
 OBJDIR	=
 PREFIX	= /usr/local
 DESTDIR	=
@@ -18,6 +18,13 @@ INSTALL	= install
 
 
 all: $(TARGETS)
+
+config_OBJS = $(OBJDIR)config.o
+config_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
+config_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
+
+$(OBJDIR)config: $(config_OBJS)
+	$(CC) -o $(OBJDIR)config $(config_OBJS) $(config_LDFLAGS)
 
 includes_OBJS = $(OBJDIR)includes.o
 includes_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
@@ -40,8 +47,11 @@ variable_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 $(OBJDIR)variable: $(variable_OBJS)
 	$(CC) -o $(OBJDIR)variable $(variable_OBJS) $(variable_LDFLAGS)
 
-$(OBJDIR)tests.log: includes python.sh string tests.sh variable
+$(OBJDIR)tests.log: config config.conf config-noeol.conf includes python.sh string tests.sh variable
 	./tests.sh -P "$(PREFIX)" -- "$(OBJDIR)tests.log"
+
+$(OBJDIR)config.o: config.c ../src/config.c
+	$(CC) $(config_CFLAGS) -o $(OBJDIR)config.o -c config.c
 
 $(OBJDIR)includes.o: includes.c
 	$(CC) $(includes_CFLAGS) -o $(OBJDIR)includes.o -c includes.c
@@ -53,7 +63,7 @@ $(OBJDIR)variable.o: variable.c ../src/variable.c
 	$(CC) $(variable_CFLAGS) -o $(OBJDIR)variable.o -c variable.c
 
 clean:
-	$(RM) -- $(includes_OBJS) $(string_OBJS) $(variable_OBJS) $(tests.log_OBJS)
+	$(RM) -- $(config_OBJS) $(includes_OBJS) $(string_OBJS) $(variable_OBJS) $(tests.log_OBJS)
 	./tests.sh -c -P "$(PREFIX)" -- "tests.log"
 
 distclean: clean

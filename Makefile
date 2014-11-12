@@ -98,11 +98,14 @@ dist:
 		$(PACKAGE)-$(VERSION)/src/python/libSystem.c \
 		$(PACKAGE)-$(VERSION)/src/python/libSystem.py \
 		$(PACKAGE)-$(VERSION)/src/project.conf \
+		$(PACKAGE)-$(VERSION)/tests/config.c \
 		$(PACKAGE)-$(VERSION)/tests/includes.c \
 		$(PACKAGE)-$(VERSION)/tests/string.c \
 		$(PACKAGE)-$(VERSION)/tests/variable.c \
 		$(PACKAGE)-$(VERSION)/tests/COPYING \
 		$(PACKAGE)-$(VERSION)/tests/Makefile \
+		$(PACKAGE)-$(VERSION)/tests/config.conf \
+		$(PACKAGE)-$(VERSION)/tests/config-noeol.conf \
 		$(PACKAGE)-$(VERSION)/tests/python.sh \
 		$(PACKAGE)-$(VERSION)/tests/tests.sh \
 		$(PACKAGE)-$(VERSION)/tests/project.conf \

@@ -31,7 +31,7 @@ _fail()
 	echo -n "$test:" 1>&2
 	(echo
 	echo "Testing: ./$test" "$@"
-	"./$test" "$@") >> "$target" 2>&1
+	"./$test" "$@" 2>&1) >> "$target"
 	res=$?
 	if [ $res -ne 0 ]; then
 		echo " FAIL (error $res)" 1>&2
@@ -99,6 +99,7 @@ target="$1"
 $DATE > "$target"
 FAILED=
 echo "Performing tests:" 1>&2
+_test "config"
 _test "includes"
 _test "string"
 _test "variable"
