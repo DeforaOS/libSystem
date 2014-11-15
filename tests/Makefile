@@ -1,4 +1,4 @@
-TARGETS	= $(OBJDIR)config $(OBJDIR)includes $(OBJDIR)string $(OBJDIR)variable $(OBJDIR)tests.log
+TARGETS	= $(OBJDIR)config $(OBJDIR)includes $(OBJDIR)pylint.log $(OBJDIR)string $(OBJDIR)variable $(OBJDIR)tests.log
 OBJDIR	=
 PREFIX	= /usr/local
 DESTDIR	=
@@ -33,6 +33,9 @@ includes_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 $(OBJDIR)includes: $(includes_OBJS)
 	$(CC) -o $(OBJDIR)includes $(includes_OBJS) $(includes_LDFLAGS)
 
+$(OBJDIR)pylint.log: pylint.sh
+	./pylint.sh -P "$(PREFIX)" -- "$(OBJDIR)pylint.log"
+
 string_OBJS = $(OBJDIR)string.o
 string_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
 string_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
@@ -63,7 +66,8 @@ $(OBJDIR)variable.o: variable.c ../src/variable.c
 	$(CC) $(variable_CFLAGS) -o $(OBJDIR)variable.o -c variable.c
 
 clean:
-	$(RM) -- $(config_OBJS) $(includes_OBJS) $(string_OBJS) $(variable_OBJS) $(tests.log_OBJS)
+	$(RM) -- $(config_OBJS) $(includes_OBJS) $(pylint.log_OBJS) $(string_OBJS) $(variable_OBJS) $(tests.log_OBJS)
+	./pylint.sh -c -P "$(PREFIX)" -- "pylint.log"
 	./tests.sh -c -P "$(PREFIX)" -- "tests.log"
 
 distclean: clean
