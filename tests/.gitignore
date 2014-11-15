@@ -1,0 +1,10 @@
+config
+config.o
+includes
+includes.o
+pylint.log
+string
+string.o
+tests.log
+variable
+variable.o
