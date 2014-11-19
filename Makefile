@@ -27,7 +27,7 @@ distclean:
 dist:
 	$(RM) -r -- $(PACKAGE)-$(VERSION)
 	$(LN) -s -- . $(PACKAGE)-$(VERSION)
-	@$(TAR) -czvf $(PACKAGE)-$(VERSION).tar.gz -- \
+	@$(TAR) -czvf $(OBJDIR)$(PACKAGE)-$(VERSION).tar.gz -- \
 		$(PACKAGE)-$(VERSION)/data/Makefile \
 		$(PACKAGE)-$(VERSION)/data/libSystem.pc.in \
 		$(PACKAGE)-$(VERSION)/data/pkgconfig.sh \
