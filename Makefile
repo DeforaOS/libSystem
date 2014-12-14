@@ -25,9 +25,9 @@ distclean:
 	@for i in $(SUBDIRS); do (cd "$$i" && $(MAKE) distclean) || exit; done
 
 dist:
-	$(RM) -r -- $(PACKAGE)-$(VERSION)
-	$(LN) -s -- . $(PACKAGE)-$(VERSION)
-	@$(TAR) -czvf $(OBJDIR)$(PACKAGE)-$(VERSION).tar.gz -- \
+	$(RM) -r -- $(OBJDIR)$(PACKAGE)-$(VERSION)
+	$(LN) -s -- "$$PWD" $(OBJDIR)$(PACKAGE)-$(VERSION)
+	@cd $(OBJDIR). && $(TAR) -czvf $(OBJDIR)$(PACKAGE)-$(VERSION).tar.gz -- \
 		$(PACKAGE)-$(VERSION)/data/Makefile \
 		$(PACKAGE)-$(VERSION)/data/libSystem.pc.in \
 		$(PACKAGE)-$(VERSION)/data/pkgconfig.sh \
@@ -119,10 +119,10 @@ dist:
 		$(PACKAGE)-$(VERSION)/config.sh \
 		$(PACKAGE)-$(VERSION)/README.md \
 		$(PACKAGE)-$(VERSION)/project.conf
-	$(RM) -- $(PACKAGE)-$(VERSION)
+	$(RM) -- $(OBJDIR)$(PACKAGE)-$(VERSION)
 
 distcheck: dist
-	$(TAR) -xzvf $(PACKAGE)-$(VERSION).tar.gz
+	$(TAR) -xzvf $(OBJDIR)$(PACKAGE)-$(VERSION).tar.gz
 	$(MKDIR) -- $(PACKAGE)-$(VERSION)/objdir
 	$(MKDIR) -- $(PACKAGE)-$(VERSION)/destdir
 	(cd "$(PACKAGE)-$(VERSION)" && $(MAKE) OBJDIR="$$PWD/objdir/")

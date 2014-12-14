@@ -22,7 +22,7 @@ all: $(TARGETS)
 
 libSystem_OBJS = $(OBJDIR)array.o $(OBJDIR)buffer.o $(OBJDIR)config.o $(OBJDIR)error.o $(OBJDIR)event.o $(OBJDIR)hash.o $(OBJDIR)mutator.o $(OBJDIR)object.o $(OBJDIR)parser.o $(OBJDIR)plugin.o $(OBJDIR)string.o $(OBJDIR)token.o $(OBJDIR)variable.o
 libSystem_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
-libSystem_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)   
+libSystem_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)  
 
 $(OBJDIR)libSystem.a: $(libSystem_OBJS)
 	$(AR) -rc $(OBJDIR)libSystem.a $(libSystem_OBJS)
