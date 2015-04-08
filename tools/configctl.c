@@ -78,17 +78,27 @@ static int _configctl_do(int verbose, char const * filename,
 		ret = _error(PROGNAME, 1);
 	if(config_load(config, filename) != 0)
 		ret = _error(PROGNAME, 1);
-	else if(value == NULL && (p = config_get(config, section, key)) != NULL)
-		printf("%s%s%s%s%s\n",
-				(verbose && section != NULL) ? section : "",
-				(verbose && section != NULL) ? "." : "",
-				(verbose) ? key : "", (verbose) ? "=" : "", p);
+	else if(value == NULL)
+	{
+		p = config_get(config, section, key);
+		if(verbose < 0)
+			ret = (p != NULL) ? 0 : 1;
+		else if(p != NULL)
+			printf("%s%s%s%s%s\n",
+					(verbose > 0 && section != NULL)
+					? section : "",
+					(verbose > 0 && section != NULL)
+					? "." : "",
+					(verbose > 0) ? key : "",
+					(verbose > 0) ? "=" : "", p);
+	}
 	else if(value != NULL)
 	{
 		printf("%s%s%s%s%s\n",
-				(verbose && section != NULL) ? section : "",
-				(verbose && section != NULL) ? "." : "",
-				(verbose) ? key : "", (verbose) ? "=" : "",
+				(verbose > 0 && section != NULL) ? section : "",
+				(verbose > 0 && section != NULL) ? "." : "",
+				(verbose > 0) ? key : "",
+				(verbose > 0) ? "=" : "",
 				value);
 		if(config_set(config, section, key, value) != 0)
 			ret = _error(PROGNAME, 1);
@@ -113,7 +123,7 @@ static int _error(char const * progname, int ret)
 /* usage */
 static int _usage(void)
 {
-	fputs("Usage: " PROGNAME " -f filename [-v] [section.]key...\n"
+	fputs("Usage: " PROGNAME " -f filename [-qv] [section.]key...\n"
 "       " PROGNAME " -w -f filename [-v] [section.]key[=value]...\n", stderr);
 	return 1;
 }
@@ -129,11 +139,14 @@ int main(int argc, char * argv[])
 	int write = 0;
 	char const * filename = NULL;
 
-	while((o = getopt(argc, argv, "f:vw")) != -1)
+	while((o = getopt(argc, argv, "f:qvw")) != -1)
 		switch(o)
 		{
 			case 'f':
 				filename = optarg;
+				break;
+			case 'q':
+				verbose = -1;
 				break;
 			case 'v':
 				verbose = 1;
