@@ -26,6 +26,9 @@
 #include "System/mutator.h"
 #include "System/config.h"
 
+/* constants */
+#define CONFIG_COMMENT '#'
+
 
 /* Config */
 /* private */
@@ -215,7 +218,7 @@ int config_load(Config * config, char const * filename)
 	}
 	/* FIXME unescape backslashes (eg allow multiple lines) */
 	for(line = 0; (c = fgetc(fp)) != EOF; line++)
-		if(c == '#')
+		if(c == CONFIG_COMMENT)
 			/* skip the comment */
 			while((c = fgetc(fp)) != EOF && c != '\n');
 		else if(c == '[')
