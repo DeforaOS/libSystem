@@ -114,6 +114,23 @@ String * string_new_length(String const * string, size_t length)
 }
 
 
+/* string_new_replace */
+String * string_new_replace(String const * string, String const * what,
+		String const * by)
+{
+	String * ret;
+
+	if((ret = string_new(string)) == NULL)
+		return NULL;
+	if(string_replace(&ret, what, by) != 0)
+	{
+		string_delete(ret);
+		return NULL;
+	}
+	return ret;
+}
+
+
 /* string_delete */
 void string_delete(String * string)
 {
