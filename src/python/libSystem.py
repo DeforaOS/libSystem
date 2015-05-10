@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python
 #$Id$
 #Copyright (c) 2013-2014 Pierre Pronchery <khorben@defora.org>
 #This file is part of DeforaOS System libSystem
