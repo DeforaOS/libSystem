@@ -28,9 +28,13 @@ $(OBJDIR)libSystem.a: $(libSystem_OBJS)
 	$(AR) -rc $(OBJDIR)libSystem.a $(libSystem_OBJS)
 	$(RANLIB) $(OBJDIR)libSystem.a
 
-$(OBJDIR)libSystem.so.0.0 $(OBJDIR)libSystem.so.0 $(OBJDIR)libSystem.so: $(libSystem_OBJS)
+$(OBJDIR)libSystem.so.0.0: $(libSystem_OBJS)
 	$(CCSHARED) -o $(OBJDIR)libSystem.so.0.0 -Wl,-soname,libSystem.so.0 $(libSystem_OBJS) $(libSystem_LDFLAGS)
+
+$(OBJDIR)libSystem.so.0: $(OBJDIR)libSystem.so.0.0
 	$(LN) -s -- libSystem.so.0.0 $(OBJDIR)libSystem.so.0
+
+$(OBJDIR)libSystem.so: $(OBJDIR)libSystem.so.0.0
 	$(LN) -s -- libSystem.so.0.0 $(OBJDIR)libSystem.so
 
 $(OBJDIR)array.o: array.c
