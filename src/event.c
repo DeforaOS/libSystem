@@ -297,8 +297,12 @@ int event_register_io_read(Event * event, int fd, EventIOFunc func,
 	eventio->func = func;
 	eventio->data = userdata;
 	event->fdmax = max(event->fdmax, fd);
+	if(array_append(event->reads, &eventio) != 0)
+	{
+		object_delete(eventio);
+		return -1;
+	}
 	FD_SET(fd, &event->rfds);
-	array_append(event->reads, &eventio);
 	return 0;
 }
 
@@ -316,8 +320,12 @@ int event_register_io_write(Event * event, int fd, EventIOFunc func,
 	eventio->func = func;
 	eventio->data = userdata;
 	event->fdmax = max(event->fdmax, fd);
+	if(array_append(event->writes, &eventio) != 0)
+	{
+		object_delete(eventio);
+		return -1;
+	}
 	FD_SET(fd, &event->wfds);
-	array_append(event->writes, &eventio);
 	return 0;
 }
 
@@ -339,7 +347,11 @@ int event_register_timeout(Event * event, struct timeval * timeout,
 	eventtimeout->timeout.tv_usec = now.tv_usec + timeout->tv_usec;
 	eventtimeout->func = func;
 	eventtimeout->data = data;
-	array_append(event->timeouts, &eventtimeout);
+	if(array_append(event->timeouts, &eventtimeout) != 0)
+	{
+		object_delete(eventtimeout);
+		return -1;
+	}
 	if(event->timeout.tv_sec > timeout->tv_sec
 			|| (event->timeout.tv_sec == timeout->tv_sec
 				&& event->timeout.tv_usec > timeout->tv_usec))
