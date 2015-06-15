@@ -88,13 +88,12 @@ int array_get_copy(Array * array, size_t pos, void * value)
 
 /* array_set */
 int array_set(Array * array, size_t pos, void * value)
-	/* FIXME not tested */
 {
 	void * p;
 	size_t cursize;
 	size_t newpos;
 
-	newpos = array->count * (pos);
+	newpos = pos * array->size;
 	if(array->count <= pos)
 	{
 		if((p = realloc(array->value, array->size * (pos + 1))) == NULL)
