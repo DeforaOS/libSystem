@@ -1,4 +1,4 @@
-TARGETS	= $(OBJDIR)config $(OBJDIR)includes $(OBJDIR)pylint.log $(OBJDIR)string $(OBJDIR)variable $(OBJDIR)tests.log
+TARGETS	= $(OBJDIR)array $(OBJDIR)config $(OBJDIR)includes $(OBJDIR)pylint.log $(OBJDIR)string $(OBJDIR)variable $(OBJDIR)tests.log
 OBJDIR	=
 PREFIX	= /usr/local
 DESTDIR	=
@@ -18,6 +18,13 @@ INSTALL	= install
 
 
 all: $(TARGETS)
+
+array_OBJS = $(OBJDIR)array.o
+array_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
+array_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
+
+$(OBJDIR)array: $(array_OBJS)
+	$(CC) -o $(OBJDIR)array $(array_OBJS) $(array_LDFLAGS)
 
 config_OBJS = $(OBJDIR)config.o
 config_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
@@ -50,8 +57,11 @@ variable_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 $(OBJDIR)variable: $(variable_OBJS)
 	$(CC) -o $(OBJDIR)variable $(variable_OBJS) $(variable_LDFLAGS)
 
-$(OBJDIR)tests.log: $(OBJDIR)config config.conf config-noeol.conf $(OBJDIR)includes python.sh $(OBJDIR)string tests.sh $(OBJDIR)variable
+$(OBJDIR)tests.log: $(OBJDIR)array $(OBJDIR)config config.conf config-noeol.conf $(OBJDIR)includes python.sh $(OBJDIR)string tests.sh $(OBJDIR)variable
 	./tests.sh -P "$(PREFIX)" -- "$(OBJDIR)tests.log"
+
+$(OBJDIR)array.o: array.c ../src/array.c
+	$(CC) $(array_CFLAGS) -o $(OBJDIR)array.o -c array.c
 
 $(OBJDIR)config.o: config.c ../src/config.c
 	$(CC) $(config_CFLAGS) -o $(OBJDIR)config.o -c config.c
@@ -66,7 +76,7 @@ $(OBJDIR)variable.o: variable.c ../src/variable.c
 	$(CC) $(variable_CFLAGS) -o $(OBJDIR)variable.o -c variable.c
 
 clean:
-	$(RM) -- $(config_OBJS) $(includes_OBJS) $(pylint.log_OBJS) $(string_OBJS) $(variable_OBJS) $(tests.log_OBJS)
+	$(RM) -- $(array_OBJS) $(config_OBJS) $(includes_OBJS) $(pylint.log_OBJS) $(string_OBJS) $(variable_OBJS) $(tests.log_OBJS)
 	./pylint.sh -c -P "$(PREFIX)" -- "pylint.log"
 	./tests.sh -c -P "$(PREFIX)" -- "tests.log"
 

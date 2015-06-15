@@ -100,6 +100,7 @@ target="$1"
 $DATE > "$target"
 FAILED=
 echo "Performing tests:" 1>&2
+_test "array"
 _test "config"
 _test "includes"
 _test "string"
