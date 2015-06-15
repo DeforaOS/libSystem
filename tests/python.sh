@@ -17,11 +17,14 @@
 
 
 #variables
-PKG_CONFIG_PATH="$PWD/../data"
+[ -f "../config.sh" ] && . "../config.sh"
+[ -n "$PREFIX" ] || PREFIX="/usr/local"
+[ -n "$LIBDIR" ] || LIBDIR="$PREFIX/lib"
+PKG_CONFIG_PATH="$PWD/../data:$LIBDIR/pkgconfig"
 PYTHONDIR="../src/python"
 #executables
 MAKE="make"
 
 
-[ -n "$OBJDIR" ] && PKG_CONFIG_PATH="${OBJDIR}../data"
+[ -n "$OBJDIR" ] && PKG_CONFIG_PATH="${OBJDIR}../data:$LIBDIR/pkgconfig"
 (cd "$PYTHONDIR" && PKG_CONFIG_PATH="$PKG_CONFIG_PATH" $MAKE clean all)
