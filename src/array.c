@@ -12,11 +12,10 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. */
-/* FIXME:
- * - integer overflows when resizing array */
 
 
 
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
@@ -30,8 +29,8 @@
 /* types */
 struct _Array
 {
-	size_t count;
-	size_t size;
+	uint32_t count;
+	uint32_t size;
 	char * value;
 };
 
@@ -41,12 +40,19 @@ struct _Array
 Array * array_new(size_t size)
 {
 	Array * array;
+	uint64_t s = size;
 
 	if((array = object_new(sizeof(*array))) == NULL)
 		return NULL;
 	array->count = 0;
 	array->size = size;
 	array->value = NULL;
+	/* check for overflows */
+	if(array->size != s)
+	{
+		object_delete(array);
+		return NULL;
+	}
 	return array;
 }
 
@@ -70,18 +76,24 @@ size_t array_count(Array * array)
 /* array_get */
 void * array_get(Array * array, size_t pos)
 {
+	uint64_t offset;
+
 	if(pos >= array->count)
 		return NULL;
-	return &array->value[pos * array->size];
+	offset = pos * array->size;
+	return &array->value[offset];
 }
 
 
 /* array_get_copy */
 int array_get_copy(Array * array, size_t pos, void * value)
 {
+	uint64_t offset;
+
 	if(pos >= array->count)
 		return 1;
-	memcpy(value, &array->value[pos * array->size], array->size);
+	offset = pos * array->size;
+	memcpy(value, &array->value[offset], array->size);
 	return 0;
 }
 
@@ -89,21 +101,27 @@ int array_get_copy(Array * array, size_t pos, void * value)
 /* array_set */
 int array_set(Array * array, size_t pos, void * value)
 {
-	void * p;
-	size_t cursize;
-	size_t newpos;
+	uint32_t p = pos + 1;
+	uint64_t offset;
+	uint64_t curpos;
+	void * q;
 
-	newpos = pos * array->size;
-	if(array->count <= pos)
+	/* check for overflows */
+	if(p != pos + 1)
+		return -error_set_code(1, "%s", strerror(ERANGE));
+	offset = pos * array->size;
+	if(array->count < p)
 	{
-		if((p = realloc(array->value, array->size * (pos + 1))) == NULL)
-			return error_set_code(1, "%s", strerror(errno));
-		array->value = p;
-		cursize = array->count * array->size;
-		memset(&array->value[cursize], 0, newpos - cursize);
+		/* grow the array */
+		if((q = realloc(array->value, offset + array->size)) == NULL)
+			return -error_set_code(1, "%s", strerror(errno));
+		array->value = q;
+		curpos = array->count * array->size;
+		memset(&array->value[curpos], 0, offset - curpos);
 		array->count = pos + 1;
 	}
-	memcpy(&array->value[newpos], value, array->size);
+	/* set the value */
+	memcpy(&array->value[offset], value, array->size);
 	return 0;
 }
 
@@ -113,12 +131,12 @@ int array_set(Array * array, size_t pos, void * value)
 int array_append(Array * array, void * value)
 {
 	char * p;
+	uint64_t offset = array->size * array->count;
 
-	if((p = realloc(array->value, array->size * (array->count + 1)))
-			== NULL)
+	if((p = realloc(array->value, offset + array->size)) == NULL)
 		return error_set_code(1, "%s", strerror(errno));
 	array->value = p;
-	memcpy(&p[array->size * array->count], value, array->size);
+	memcpy(&p[offset], value, array->size);
 	array->count++;
 	return 0;
 }
@@ -140,8 +158,9 @@ int array_remove_pos(Array * array, size_t pos)
 /* array_foreach */
 void array_foreach(Array * array, ArrayForeach func, void * data)
 {
-	size_t i;
+	uint32_t i;
+	uint64_t offset;
 
-	for(i = 0; i < array->count; i++)
-		func(array->value + (i * array->size), data);
+	for(i = 0, offset = 0; i < array->count; i++, offset += array->size)
+		func(array->value + offset, data);
 }
