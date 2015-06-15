@@ -17,9 +17,11 @@
 
 
 #variables
+PKG_CONFIG_PATH="$PWD/../data"
 PYTHONDIR="../src/python"
 #executables
 MAKE="make"
 
 
-(cd "$PYTHONDIR" && $MAKE clean all)
+[ -n "$OBJDIR" ] && PKG_CONFIG_PATH="${OBJDIR}../data"
+(cd "$PYTHONDIR" && PKG_CONFIG_PATH="$PKG_CONFIG_PATH" $MAKE clean all)
