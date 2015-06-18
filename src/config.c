@@ -45,6 +45,12 @@ typedef struct _ConfigForeachSectionData
 	void * priv;
 } ConfigForeachSectionData;
 
+typedef struct _ConfigSave
+{
+	FILE * fp;
+	char const * sep;
+} ConfigSave;
+
 
 /* public */
 /* functions */
@@ -110,6 +116,9 @@ int config_set(Config * config, char const * section, char const * variable,
 #endif
 	if(section == NULL)
 		section = "";
+	if(variable == NULL || string_length(variable) == 0)
+		return error_set_code(-EINVAL, "variable: %s",
+				strerror(EINVAL));
 	if((mutator = mutator_get(config, section)) == NULL)
 	{
 		/* create a new section */
@@ -380,13 +389,14 @@ static void _save_foreach_section(char const * key, void * value, void * data);
 
 int config_save(Config * config, char const * filename)
 {
-	FILE * fp;
+	ConfigSave save;
 
-	if((fp = fopen(filename, "w")) == NULL)
+	save.sep = "";
+	if((save.fp = fopen(filename, "w")) == NULL)
 		return error_set_code(1, "%s: %s", filename, strerror(errno));
-	mutator_foreach(config, _save_foreach_default, &fp);
-	mutator_foreach(config, _save_foreach, &fp);
-	if(fp == NULL || fclose(fp) != 0)
+	mutator_foreach(config, _save_foreach_default, &save);
+	mutator_foreach(config, _save_foreach, &save);
+	if(save.fp == NULL || fclose(save.fp) != 0)
 		return error_set_code(1, "%s: %s", filename, strerror(errno));
 	return 0;
 }
@@ -394,44 +404,45 @@ int config_save(Config * config, char const * filename)
 static void _save_foreach_default(char const * section, void * value,
 		void * data)
 {
-	FILE ** fp = data;
+	ConfigSave * save = data;
 	Mutator * mutator = value;
 
-	if(*fp == NULL)
+	if(save->fp == NULL)
 		return;
 	if(section[0] != '\0')
 		return;
-	mutator_foreach(mutator, _save_foreach_section, fp);
+	mutator_foreach(mutator, _save_foreach_section, save);
 }
 
 static void _save_foreach(char const * section, void * value, void * data)
 {
-	FILE ** fp = data;
+	ConfigSave * save = data;
 	Mutator * mutator = value;
 
-	if(*fp == NULL)
+	if(save->fp == NULL)
 		return;
 	if(section[0] == '\0')
 		return;
-	if(fprintf(*fp, "\n[%s]\n", section) < 0)
+	if(fprintf(save->fp, "%s[%s]\n", save->sep, section) < 0)
 	{
-		fclose(*fp);
-		*fp = NULL;
+		fclose(save->fp);
+		save->fp = NULL;
 		return;
 	}
-	mutator_foreach(mutator, _save_foreach_section, fp);
+	save->sep = "\n";
+	mutator_foreach(mutator, _save_foreach_section, save);
 }
 
 static void _save_foreach_section(char const * key, void * value, void * data)
 {
-	FILE ** fp = data;
+	ConfigSave * save = data;
 	char const * val = value;
 
-	if(*fp == NULL)
+	if(save->fp == NULL)
 		return;
 	/* FIXME escape lines with a backslash */
-	if(val == NULL || fprintf(*fp, "%s=%s\n", key, val) >= 0)
+	if(val == NULL || fprintf(save->fp, "%s=%s\n", key, val) >= 0)
 		return;
-	fclose(*fp);
-	*fp = NULL;
+	fclose(save->fp);
+	save->fp = NULL;
 }
