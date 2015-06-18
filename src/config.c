@@ -373,9 +373,10 @@ static void _delete_foreach_section(char const * key, void * value, void * data)
 
 
 /* config_save */
-void _save_foreach_default(char const * section, void * value, void * data);
-void _save_foreach(char const * section, void * value, void * data);
-void _save_foreach_section(char const * key, void * value, void * data);
+static void _save_foreach_default(char const * section, void * value,
+		void * data);
+static void _save_foreach(char const * section, void * value, void * data);
+static void _save_foreach_section(char const * key, void * value, void * data);
 
 int config_save(Config * config, char const * filename)
 {
@@ -390,7 +391,8 @@ int config_save(Config * config, char const * filename)
 	return 0;
 }
 
-void _save_foreach_default(char const * section, void * value, void * data)
+static void _save_foreach_default(char const * section, void * value,
+		void * data)
 {
 	FILE ** fp = data;
 	Mutator * mutator = value;
@@ -402,7 +404,7 @@ void _save_foreach_default(char const * section, void * value, void * data)
 	mutator_foreach(mutator, _save_foreach_section, fp);
 }
 
-void _save_foreach(char const * section, void * value, void * data)
+static void _save_foreach(char const * section, void * value, void * data)
 {
 	FILE ** fp = data;
 	Mutator * mutator = value;
@@ -420,7 +422,7 @@ void _save_foreach(char const * section, void * value, void * data)
 	mutator_foreach(mutator, _save_foreach_section, fp);
 }
 
-void _save_foreach_section(char const * key, void * value, void * data)
+static void _save_foreach_section(char const * key, void * value, void * data)
 {
 	FILE ** fp = data;
 	char const * val = value;
