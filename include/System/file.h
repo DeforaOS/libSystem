@@ -23,14 +23,31 @@
 
 /* types */
 typedef struct _File File;
-typedef int FileMode; /* FIXME actually is an enumerated type */
+typedef unsigned int FileMode;
+
+typedef unsigned int FileSeekMode;
+
+/* constants */
+#define FILE_MODE_READ		0x01
+#define FILE_MODE_WRITE		0x02
+#define FILE_MODE_APPEND	0x10
+#define FILE_MODE_CREATE	0x20
+#define FILE_MODE_EXCLUSIVE	0x40
+#define FILE_MODE_TRUNCATE	0x80
 
 /* functions */
 File * file_new(char const * path, FileMode mode);
-void file_delete(File * file);
+int file_delete(File * file);
+
+/* accessors */
+FileMode file_get_mode(File * file);
 
 /* useful */
 ssize_t file_read(File * file, void * buf, size_t size, ssize_t count);
 ssize_t file_write(File * file, void * buf, size_t size, ssize_t count);
+
+int file_seek(File * file, FileSeekMode mode, off_t offset);
+
+int file_unlink(File * file);
 
 #endif /* !LIBSYSTEM_SYSTEM_FILE_H */
