@@ -131,7 +131,7 @@ static int _test2(char const * progname, size_t size, ...)
 	if(stat(tmpname, &st) != 0)
 		ret = -error_set_print(progname, -errno, "%s: %s", tmpname,
 				strerror(errno));
-	else if(st.st_size != size)
+	else if(st.st_size < 0 || (size_t)st.st_size != size)
 		ret = -error_set_print(progname, 2, "%s: %lu: Size mismatch"
 				" (expected: %lu)", tmpname, st.st_size, size);
 	if(unlink(tmpname) != 0)
