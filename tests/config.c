@@ -15,6 +15,7 @@
 
 
 
+#include <sys/stat.h>
 #include <unistd.h>
 #include <stdarg.h>
 #include <stdlib.h>
@@ -92,7 +93,7 @@ static int _test(char const * progname, String const * filename,
 
 
 /* test2 */
-static int _test2(char const * progname, ...)
+static int _test2(char const * progname, size_t size, ...)
 {
 	int ret = 0;
 	va_list ap;
@@ -101,6 +102,7 @@ static int _test2(char const * progname, ...)
 	String const * section;
 	String const * variable;
 	String const * value;
+	struct stat st;
 
 	/* config_save */
 	printf("%s: Testing config_save()\n", progname);
@@ -113,7 +115,7 @@ static int _test2(char const * progname, ...)
 		unlink(tmpname);
 		return -error_print(progname);
 	}
-	va_start(ap, progname);
+	va_start(ap, size);
 	while(ret == 0 && (section = va_arg(ap, String const *)) != NULL)
 	{
 		variable = va_arg(ap, String const *);
@@ -126,6 +128,12 @@ static int _test2(char const * progname, ...)
 	if(ret != 0)
 		error_print(progname);
 	config_delete(config);
+	if(stat(tmpname, &st) != 0)
+		ret = -error_set_print(progname, -errno, "%s: %s", tmpname,
+				strerror(errno));
+	else if(st.st_size != size)
+		ret = -error_set_print(progname, 2, "%s: %lu: Size mismatch"
+				" (expected: %lu)", tmpname, st.st_size, size);
 	if(unlink(tmpname) != 0)
 		ret = -error_set_print(progname, -errno, "%s: %s", tmpname,
 				strerror(errno));
@@ -142,11 +150,11 @@ int main(int argc, char * argv[])
 
 	ret |= _test(argv[0], "config.conf", variable, expected);
 	ret |= _test(argv[0], "config-noeol.conf", variable, expected);
-	ret |= _test2(argv[0], NULL);
-	ret |= _test2(argv[0], "", "variable", NULL, NULL);
-	ret |= _test2(argv[0], "", "variable", "value", NULL);
-	ret |= _test2(argv[0], "section", "variable", "value", NULL);
-	ret |= _test2(argv[0], "section1", "variable", "value",
+	ret |= _test2(argv[0], 0, NULL);
+	ret |= _test2(argv[0], 0, "", "variable", NULL, NULL);
+	ret |= _test2(argv[0], 15, "", "variable", "value", NULL);
+	ret |= _test2(argv[0], 25, "section", "variable", "value", NULL);
+	ret |= _test2(argv[0], 53, "section1", "variable", "value",
 			"section2", "variable", "value", NULL);
 	return (ret == 0) ? 0 : 2;
 }
