@@ -15,7 +15,12 @@
 
 
 
+#include <unistd.h>
+#include <stdarg.h>
+#include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
+#include <errno.h>
 #include "System/error.h"
 #include "System/string.h"
 #include "System/config.h"
@@ -86,6 +91,48 @@ static int _test(char const * progname, String const * filename,
 }
 
 
+/* test2 */
+static int _test2(char const * progname, ...)
+{
+	int ret = 0;
+	va_list ap;
+	char tmpname[] = P_tmpdir "/config-test2-XXXXXX";
+	Config * config;
+	String const * section;
+	String const * variable;
+	String const * value;
+
+	/* config_save */
+	printf("%s: Testing config_save()\n", progname);
+	fflush(stdout);
+	if(mktemp(tmpname) == NULL)
+		return -error_set_print(progname, -errno, "%s: %s", "mktemp",
+				strerror(errno));
+	if((config = config_new()) == NULL)
+	{
+		unlink(tmpname);
+		return -error_print(progname);
+	}
+	va_start(ap, progname);
+	while(ret == 0 && (section = va_arg(ap, String const *)) != NULL)
+	{
+		variable = va_arg(ap, String const *);
+		value = va_arg(ap, String const *);
+		ret = config_set(config, section, variable, value);
+	}
+	va_end(ap);
+	if(ret == 0)
+		ret = config_save(config, tmpname);
+	if(ret != 0)
+		error_print(progname);
+	config_delete(config);
+	if(unlink(tmpname) != 0)
+		ret = -error_set_print(progname, -errno, "%s: %s", tmpname,
+				strerror(errno));
+	return ret;
+}
+
+
 /* main */
 int main(int argc, char * argv[])
 {
@@ -95,5 +142,11 @@ int main(int argc, char * argv[])
 
 	ret |= _test(argv[0], "config.conf", variable, expected);
 	ret |= _test(argv[0], "config-noeol.conf", variable, expected);
+	ret |= _test2(argv[0], NULL);
+	ret |= _test2(argv[0], "", "variable", NULL, NULL);
+	ret |= _test2(argv[0], "", "variable", "value", NULL);
+	ret |= _test2(argv[0], "section", "variable", "value", NULL);
+	ret |= _test2(argv[0], "section1", "variable", "value",
+			"section2", "variable", "value", NULL);
 	return (ret == 0) ? 0 : 2;
 }
