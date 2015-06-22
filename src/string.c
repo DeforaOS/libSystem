@@ -17,6 +17,7 @@
 
 
 
+#include <ctype.h>
 #include <stdarg.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -356,4 +357,35 @@ int string_replace(String ** string, String const * what, String const * by)
 		*string = ret;
 	}
 	return 0;
+}
+
+
+/* string_rtrim */
+int string_rtrim(String * string, String const * which)
+{
+	int ret = 0;
+	size_t i;
+	size_t j;
+
+	for(i = string_get_length(string); i > 0; i--)
+		if(which == NULL)
+		{
+			if(!isspace((unsigned char)string[i - 1]))
+				return ret;
+			string[i - 1] = '\0';
+			ret++;
+		}
+		else
+		{
+			for(j = 0; which[j] != '\0'; j++)
+				if(string[i - 1] == which[j])
+				{
+					string[i - 1] = '\0';
+					ret++;
+					break;
+				}
+			if(which[j] == '\0')
+				break;
+		}
+	return ret;
 }

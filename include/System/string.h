@@ -62,4 +62,6 @@ ssize_t string_index(String const * string, String const * key);
 
 int string_replace(String ** string, String const * what, String const * by);
 
+int string_rtrim(String * string, String const * which);
+
 #endif /* !LIBSYSTEM_SYSTEM_STRING_H */
