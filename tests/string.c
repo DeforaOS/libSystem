@@ -36,7 +36,7 @@ static int _test(char const * progname, String * s)
 	string_clear(s);
 	for(i = 0; i <= len; i++)
 		if(s[i] != '\0')
-			return 2;
+			return 4;
 	return 0;
 }
 
