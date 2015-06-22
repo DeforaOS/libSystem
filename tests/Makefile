@@ -57,7 +57,7 @@ variable_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 $(OBJDIR)variable: $(variable_OBJS)
 	$(CC) -o $(OBJDIR)variable $(variable_OBJS) $(variable_LDFLAGS)
 
-$(OBJDIR)tests.log: $(OBJDIR)array $(OBJDIR)config config.conf config-noeol.conf $(OBJDIR)includes python.sh $(OBJDIR)string tests.sh $(OBJDIR)variable
+$(OBJDIR)tests.log: $(OBJDIR)array $(OBJDIR)config config.conf config-noeol.conf $(OBJDIR)includes python.sh $(OBJDIR)string tests.sh $(OBJDIR)variable $(OBJDIR)../src/libSystem.a
 	./tests.sh -P "$(PREFIX)" -- "$(OBJDIR)tests.log"
 
 $(OBJDIR)array.o: array.c ../src/array.c
