@@ -76,7 +76,7 @@ static int _test(char const * progname, String const * filename,
 	if(config_set(config, NULL, variable, "") != 0)
 		ret = -error_print(progname);
 	if((value = config_get(config, NULL, variable)) == NULL
-			|| string_length(value) != 0)
+			|| string_get_length(value) != 0)
 		ret = -error_set_print(progname, 1, "%s (\"%s\")",
 				"Invalid variable returned", value);
 	/* config_set: restore the variable */

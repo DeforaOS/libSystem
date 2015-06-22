@@ -116,7 +116,7 @@ int config_set(Config * config, char const * section, char const * variable,
 #endif
 	if(section == NULL)
 		section = "";
-	if(variable == NULL || string_length(variable) == 0)
+	if(variable == NULL || string_get_length(variable) == 0)
 		return error_set_code(-EINVAL, "variable: %s",
 				strerror(EINVAL));
 	if((mutator = mutator_get(config, section)) == NULL)
