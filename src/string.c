@@ -415,3 +415,16 @@ int string_rtrim(String * string, String const * which)
 		}
 	return ret;
 }
+
+
+/* string_trim */
+int string_trim(String * string, String const * which)
+{
+	int ret1;
+	int ret2;
+
+	if((ret1 = string_ltrim(string, which)) < 0
+			|| (ret2 = string_rtrim(string, which)) < 0)
+		return -1;
+	return ret1 + ret2;
+}

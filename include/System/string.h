@@ -64,5 +64,6 @@ int string_replace(String ** string, String const * what, String const * by);
 
 int string_ltrim(String * string, String const * which);
 int string_rtrim(String * string, String const * which);
+int string_trim(String * string, String const * which);
 
 #endif /* !LIBSYSTEM_SYSTEM_STRING_H */
