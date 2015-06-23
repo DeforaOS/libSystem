@@ -87,6 +87,29 @@ static int _test3(char const * progname, String const * string, String * ltrim,
 }
 
 
+/* test4 */
+static int _test4(char const * progname, String const * string, String * trim,
+		int count)
+{
+	int ret = 0;
+	String * s;
+	int res;
+
+	if((s = string_new(string)) == NULL)
+		return -1;
+	/* string_trim */
+	printf("%s: Testing %s\n", progname, "string_trim()");
+	if((res = string_trim(s, trim)) != count)
+	{
+		printf("%s: %s, %s, %d: Test failed (expected: %d)\n", progname,
+				string, trim, res, count);
+		ret = 32;
+	}
+	string_delete(s);
+	return ret;
+}
+
+
 /* main */
 int main(int argc, char * argv[])
 {
@@ -126,5 +149,18 @@ int main(int argc, char * argv[])
 	ret |= _test3(argv[0], "YZZZZ", "Y", 1);
 	ret |= _test3(argv[0], "YYZZZZ", "Y", 2);
 	ret |= _test3(argv[0], "YYYYZZ", "YZ", 6);
+	/* test4 */
+	ret |= _test4(argv[0], "", NULL, 0);
+	ret |= _test4(argv[0], " ", NULL, 1);
+	ret |= _test4(argv[0], "", "", 0);
+	ret |= _test4(argv[0], "Y", "Y", 1);
+	ret |= _test4(argv[0], "YYYY", NULL, 0);
+	ret |= _test4(argv[0], "YYYY", "", 0);
+	ret |= _test4(argv[0], "YYYY", "Y", 4);
+	ret |= _test4(argv[0], "YYYYZ", "Z", 1);
+	ret |= _test4(argv[0], "YYYYZZ", "Z", 2);
+	ret |= _test4(argv[0], "YYYYZZ", "YZ", 6);
+	ret |= _test4(argv[0], "ZZYYYYZZ", "YZ", 8);
+	ret |= _test4(argv[0], "ZZYYYYZZ", "Y", 0);
 	return ret;
 }
