@@ -104,6 +104,7 @@ int array_set(Array * array, size_t pos, void * value)
 	uint32_t p = pos + 1;
 	uint64_t offset;
 	uint64_t curpos;
+	size_t size;
 	void * q;
 
 	/* check for overflows */
@@ -113,6 +114,9 @@ int array_set(Array * array, size_t pos, void * value)
 	if(array->count < p)
 	{
 		/* grow the array */
+		size = offset + array->size;
+		if(size != offset + array->size)
+			return -error_set_code(-ERANGE, "%s", strerror(ERANGE));
 		if((q = realloc(array->value, offset + array->size)) == NULL)
 			return -error_set_code(-errno, "%s", strerror(errno));
 		array->value = q;
