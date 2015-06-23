@@ -114,7 +114,7 @@ int array_set(Array * array, size_t pos, void * value)
 	{
 		/* grow the array */
 		if((q = realloc(array->value, offset + array->size)) == NULL)
-			return -error_set_code(1, "%s", strerror(errno));
+			return -error_set_code(-errno, "%s", strerror(errno));
 		array->value = q;
 		curpos = array->count * array->size;
 		memset(&array->value[curpos], 0, offset - curpos);
@@ -134,7 +134,7 @@ int array_append(Array * array, void * value)
 	uint64_t offset = array->size * array->count;
 
 	if((p = realloc(array->value, offset + array->size)) == NULL)
-		return error_set_code(1, "%s", strerror(errno));
+		return error_set_code(-errno, "%s", strerror(errno));
 	array->value = p;
 	memcpy(&p[offset], value, array->size);
 	array->count++;
