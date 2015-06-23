@@ -325,6 +325,32 @@ ssize_t string_index(String const * string, String const * key)
 }
 
 
+/* string_ltrim */
+int string_ltrim(String * string, String const * which)
+{
+	size_t i;
+	size_t j;
+
+	for(i = 0; string[i] != '\0'; i++)
+		if(which == NULL)
+		{
+			if(!isspace((unsigned char)string[i]))
+				break;
+		}
+		else
+		{
+			for(j = 0; which[j] != '\0' && string[i] != which[j];
+					j++);
+			if(which[j] == '\0')
+				break;
+		}
+	for(j = i; string[j] != '\0'; j++)
+		string[j - i] = string[j];
+	string[j - i] = '\0';
+	return i;
+}
+
+
 /* string_replace */
 int string_replace(String ** string, String const * what, String const * by)
 {
