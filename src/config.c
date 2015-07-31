@@ -396,6 +396,12 @@ int config_save(Config * config, char const * filename)
 		return error_set_code(1, "%s: %s", filename, strerror(errno));
 	mutator_foreach(config, _save_foreach_default, &save);
 	mutator_foreach(config, _save_foreach, &save);
+	if(save.fp != NULL && save.sep[0] != '\0'
+			&& fputs(save.sep, save.fp) == EOF)
+	{
+		fclose(save.fp);
+		save.fp = NULL;
+	}
 	if(save.fp == NULL || fclose(save.fp) != 0)
 		return error_set_code(1, "%s: %s", filename, strerror(errno));
 	return 0;
@@ -423,7 +429,7 @@ static void _save_foreach(char const * section, void * value, void * data)
 		return;
 	if(section[0] == '\0')
 		return;
-	if(fprintf(save->fp, "%s[%s]\n", save->sep, section) < 0)
+	if(fprintf(save->fp, "%s%s[%s]", save->sep, save->sep, section) < 0)
 	{
 		fclose(save->fp);
 		save->fp = NULL;
@@ -441,8 +447,13 @@ static void _save_foreach_section(char const * key, void * value, void * data)
 	if(save->fp == NULL)
 		return;
 	/* FIXME escape lines with a backslash */
-	if(val == NULL || fprintf(save->fp, "%s=%s\n", key, val) >= 0)
+	if(val == NULL)
 		return;
-	fclose(save->fp);
-	save->fp = NULL;
+	if(fprintf(save->fp, "%s%s=%s", save->sep, key, val) < 0)
+	{
+		fclose(save->fp);
+		save->fp = NULL;
+		return;
+	}
+	save->sep = "\n";
 }
