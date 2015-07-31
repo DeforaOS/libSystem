@@ -154,7 +154,12 @@ int main(int argc, char * argv[])
 	ret |= _test2(argv[0], 0, "", "variable", NULL, NULL);
 	ret |= _test2(argv[0], 15, "", "variable", "value", NULL);
 	ret |= _test2(argv[0], 25, "section", "variable", "value", NULL);
+	ret |= _test2(argv[0], 41, "", "variable", "value",
+			"section", "variable", "value", NULL);
 	ret |= _test2(argv[0], 53, "section1", "variable", "value",
 			"section2", "variable", "value", NULL);
+	ret |= _test2(argv[0], 80, "section1", "variable", "value",
+			"section2", "variable", "value",
+			"section3", "variable", "value", NULL);
 	return (ret == 0) ? 0 : 2;
 }
