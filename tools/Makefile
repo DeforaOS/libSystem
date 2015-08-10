@@ -9,7 +9,7 @@ CPPFLAGSF= -I ../include
 CPPFLAGS=
 CFLAGSF	=
 CFLAGS	= -W -Wall -g -O2 -pedantic -fPIE -D_FORTIFY_SOURCE=2 -fstack-protector-all
-LDFLAGSF= -L../src -L$(OBJDIR). -Wl,-rpath,$(PREFIX)/lib -lSystem
+LDFLAGSF= -L$(OBJDIR)../src -Wl,-rpath,$(PREFIX)/lib -lSystem
 LDFLAGS	= -Wl,-pie
 RM	= rm -f
 LN	= ln -f
