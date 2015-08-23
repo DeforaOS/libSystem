@@ -6,8 +6,8 @@ LIBDIR	= $(PREFIX)/lib
 CC	= cc
 CPPFLAGSF= -I ../include
 CPPFLAGS=
-CFLAGSF	=
-CFLAGS	= -W -Wall -g -O2 -pedantic -fPIC -D_FORTIFY_SOURCE=2 -fstack-protector-all
+CFLAGSF	= -fPIC
+CFLAGS	= -W -Wall -g -O2 -pedantic -D_FORTIFY_SOURCE=2 -fstack-protector-all
 LDFLAGSF= 
 AR	= ar
 RANLIB	= ranlib
