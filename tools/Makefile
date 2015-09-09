@@ -1,4 +1,4 @@
-TARGETS	= $(OBJDIR)configctl
+TARGETS	= $(OBJDIR)configctl$(EXEEXT)
 OBJDIR	=
 PREFIX	= /usr/local
 DESTDIR	=
@@ -11,6 +11,7 @@ CFLAGSF	=
 CFLAGS	= -W -Wall -g -O2 -pedantic -fPIE -D_FORTIFY_SOURCE=2 -fstack-protector-all
 LDFLAGSF= -L$(OBJDIR)../src -Wl,-rpath,$(PREFIX)/lib -lSystem
 LDFLAGS	= -Wl,-pie
+EXEEXT	=
 RM	= rm -f
 LN	= ln -f
 MKDIR	= mkdir -m 0755 -p
@@ -23,8 +24,8 @@ configctl_OBJS = $(OBJDIR)configctl.o
 configctl_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
 configctl_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 
-$(OBJDIR)configctl: $(configctl_OBJS)
-	$(CC) -o $(OBJDIR)configctl $(configctl_OBJS) $(configctl_LDFLAGS)
+$(OBJDIR)configctl$(EXEEXT): $(configctl_OBJS)
+	$(CC) -o $(OBJDIR)configctl$(EXEEXT) $(configctl_OBJS) $(configctl_LDFLAGS)
 
 $(OBJDIR)configctl.o: configctl.c
 	$(CC) $(configctl_CFLAGS) -o $(OBJDIR)configctl.o -c configctl.c
@@ -37,9 +38,9 @@ distclean: clean
 
 install: $(TARGETS)
 	$(MKDIR) $(DESTDIR)$(BINDIR)
-	$(INSTALL) -m 0755 $(OBJDIR)configctl $(DESTDIR)$(BINDIR)/configctl
+	$(INSTALL) -m 0755 $(OBJDIR)configctl$(EXEEXT) $(DESTDIR)$(BINDIR)/configctl$(EXEEXT)
 
 uninstall:
-	$(RM) -- $(DESTDIR)$(BINDIR)/configctl
+	$(RM) -- $(DESTDIR)$(BINDIR)/configctl$(EXEEXT)
 
 .PHONY: all clean distclean install uninstall

@@ -1,4 +1,4 @@
-TARGETS	= $(OBJDIR)array $(OBJDIR)config $(OBJDIR)includes $(OBJDIR)pylint.log $(OBJDIR)string $(OBJDIR)variable $(OBJDIR)tests.log
+TARGETS	= $(OBJDIR)array$(EXEEXT) $(OBJDIR)config$(EXEEXT) $(OBJDIR)includes$(EXEEXT) $(OBJDIR)pylint.log $(OBJDIR)string$(EXEEXT) $(OBJDIR)variable$(EXEEXT) $(OBJDIR)tests.log
 OBJDIR	=
 PREFIX	= /usr/local
 DESTDIR	=
@@ -11,6 +11,7 @@ CFLAGSF	=
 CFLAGS	= -W -Wall -g -O2 -pedantic -fPIE -D_FORTIFY_SOURCE=2 -fstack-protector-all
 LDFLAGSF= -L../src -L$(OBJDIR)../src -Wl,-rpath,$(OBJDIR)../src -lSystem
 LDFLAGS	= -L$(PREFIX)/lib -Wl,-rpath,"$(PWD)/../src" -Wl,-pie -Wl,-z,relro
+EXEEXT	=
 RM	= rm -f
 LN	= ln -f
 MKDIR	= mkdir -m 0755 -p
@@ -23,22 +24,22 @@ array_OBJS = $(OBJDIR)array.o
 array_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
 array_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 
-$(OBJDIR)array: $(array_OBJS)
-	$(CC) -o $(OBJDIR)array $(array_OBJS) $(array_LDFLAGS)
+$(OBJDIR)array$(EXEEXT): $(array_OBJS)
+	$(CC) -o $(OBJDIR)array$(EXEEXT) $(array_OBJS) $(array_LDFLAGS)
 
 config_OBJS = $(OBJDIR)config.o
 config_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
 config_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 
-$(OBJDIR)config: $(config_OBJS)
-	$(CC) -o $(OBJDIR)config $(config_OBJS) $(config_LDFLAGS)
+$(OBJDIR)config$(EXEEXT): $(config_OBJS)
+	$(CC) -o $(OBJDIR)config$(EXEEXT) $(config_OBJS) $(config_LDFLAGS)
 
 includes_OBJS = $(OBJDIR)includes.o
 includes_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
 includes_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 
-$(OBJDIR)includes: $(includes_OBJS)
-	$(CC) -o $(OBJDIR)includes $(includes_OBJS) $(includes_LDFLAGS)
+$(OBJDIR)includes$(EXEEXT): $(includes_OBJS)
+	$(CC) -o $(OBJDIR)includes$(EXEEXT) $(includes_OBJS) $(includes_LDFLAGS)
 
 $(OBJDIR)pylint.log: pylint.sh
 	./pylint.sh -P "$(PREFIX)" -- "$(OBJDIR)pylint.log"
@@ -47,15 +48,15 @@ string_OBJS = $(OBJDIR)string.o
 string_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
 string_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 
-$(OBJDIR)string: $(string_OBJS)
-	$(CC) -o $(OBJDIR)string $(string_OBJS) $(string_LDFLAGS)
+$(OBJDIR)string$(EXEEXT): $(string_OBJS)
+	$(CC) -o $(OBJDIR)string$(EXEEXT) $(string_OBJS) $(string_LDFLAGS)
 
 variable_OBJS = $(OBJDIR)variable.o
 variable_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
 variable_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 
-$(OBJDIR)variable: $(variable_OBJS)
-	$(CC) -o $(OBJDIR)variable $(variable_OBJS) $(variable_LDFLAGS)
+$(OBJDIR)variable$(EXEEXT): $(variable_OBJS)
+	$(CC) -o $(OBJDIR)variable$(EXEEXT) $(variable_OBJS) $(variable_LDFLAGS)
 
 $(OBJDIR)tests.log: $(OBJDIR)array $(OBJDIR)config config.conf config-noeol.conf $(OBJDIR)includes python.sh $(OBJDIR)string tests.sh $(OBJDIR)variable $(OBJDIR)../src/libSystem.a
 	./tests.sh -P "$(PREFIX)" -- "$(OBJDIR)tests.log"

@@ -1,4 +1,4 @@
-TARGETS	= $(OBJDIR)libSystem.a $(OBJDIR)libSystem.so.0.0 $(OBJDIR)libSystem.so.0 $(OBJDIR)libSystem.so
+TARGETS	= $(OBJDIR)libSystem.a $(OBJDIR)libSystem$(SOEXT).0.0 $(OBJDIR)libSystem$(SOEXT).0 $(OBJDIR)libSystem$(SOEXT)
 OBJDIR	=
 PREFIX	= /usr/local
 DESTDIR	=
@@ -9,9 +9,11 @@ CPPFLAGS=
 CFLAGSF	= -fPIC
 CFLAGS	= -W -Wall -g -O2 -pedantic -D_FORTIFY_SOURCE=2 -fstack-protector-all
 LDFLAGSF= 
+EXEEXT	=
 AR	= ar
 RANLIB	= ranlib
 CCSHARED= $(CC) -shared
+SOEXT	= .so
 RM	= rm -f
 LN	= ln -f
 MKDIR	= mkdir -m 0755 -p
@@ -28,14 +30,14 @@ $(OBJDIR)libSystem.a: $(libSystem_OBJS)
 	$(AR) -rc $(OBJDIR)libSystem.a $(libSystem_OBJS)
 	$(RANLIB) $(OBJDIR)libSystem.a
 
-$(OBJDIR)libSystem.so.0.0: $(libSystem_OBJS)
-	$(CCSHARED) -o $(OBJDIR)libSystem.so.0.0 -Wl,-soname,libSystem.so.0 $(libSystem_OBJS) $(libSystem_LDFLAGS)
+$(OBJDIR)libSystem$(SOEXT).0.0: $(libSystem_OBJS)
+	$(CCSHARED) -o $(OBJDIR)libSystem$(SOEXT).0.0 -Wl,-soname,libSystem$(SOEXT).0 $(libSystem_OBJS) $(libSystem_LDFLAGS)
 
-$(OBJDIR)libSystem.so.0: $(OBJDIR)libSystem.so.0.0
-	$(LN) -s -- libSystem.so.0.0 $(OBJDIR)libSystem.so.0
+$(OBJDIR)libSystem$(SOEXT).0: $(OBJDIR)libSystem$(SOEXT).0.0
+	$(LN) -s -- libSystem$(SOEXT).0.0 $(OBJDIR)libSystem$(SOEXT).0
 
-$(OBJDIR)libSystem.so: $(OBJDIR)libSystem.so.0.0
-	$(LN) -s -- libSystem.so.0.0 $(OBJDIR)libSystem.so
+$(OBJDIR)libSystem$(SOEXT): $(OBJDIR)libSystem$(SOEXT).0.0
+	$(LN) -s -- libSystem$(SOEXT).0.0 $(OBJDIR)libSystem$(SOEXT)
 
 $(OBJDIR)array.o: array.c
 	$(CC) $(libSystem_CFLAGS) -o $(OBJDIR)array.o -c array.c
@@ -85,14 +87,14 @@ distclean: clean
 install: $(TARGETS)
 	$(MKDIR) $(DESTDIR)$(LIBDIR)
 	$(INSTALL) -m 0644 $(OBJDIR)libSystem.a $(DESTDIR)$(LIBDIR)/libSystem.a
-	$(INSTALL) -m 0755 $(OBJDIR)libSystem.so.0.0 $(DESTDIR)$(LIBDIR)/libSystem.so.0.0
-	$(LN) -s -- libSystem.so.0.0 $(DESTDIR)$(LIBDIR)/libSystem.so.0
-	$(LN) -s -- libSystem.so.0.0 $(DESTDIR)$(LIBDIR)/libSystem.so
+	$(INSTALL) -m 0755 $(OBJDIR)libSystem$(SOEXT).0.0 $(DESTDIR)$(LIBDIR)/libSystem$(SOEXT).0.0
+	$(LN) -s -- libSystem$(SOEXT).0.0 $(DESTDIR)$(LIBDIR)/libSystem$(SOEXT).0
+	$(LN) -s -- libSystem$(SOEXT).0.0 $(DESTDIR)$(LIBDIR)/libSystem$(SOEXT)
 
 uninstall:
 	$(RM) -- $(DESTDIR)$(LIBDIR)/libSystem.a
-	$(RM) -- $(DESTDIR)$(LIBDIR)/libSystem.so.0.0
-	$(RM) -- $(DESTDIR)$(LIBDIR)/libSystem.so.0
-	$(RM) -- $(DESTDIR)$(LIBDIR)/libSystem.so
+	$(RM) -- $(DESTDIR)$(LIBDIR)/libSystem$(SOEXT).0.0
+	$(RM) -- $(DESTDIR)$(LIBDIR)/libSystem$(SOEXT).0
+	$(RM) -- $(DESTDIR)$(LIBDIR)/libSystem$(SOEXT)
 
 .PHONY: all clean distclean install uninstall
