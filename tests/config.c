@@ -98,6 +98,7 @@ static int _test2(char const * progname, size_t size, ...)
 	int ret = 0;
 	va_list ap;
 	char tmpname[] = P_tmpdir "/config-test2-XXXXXX";
+	int fd;
 	Config * config;
 	String const * section;
 	String const * variable;
@@ -107,12 +108,13 @@ static int _test2(char const * progname, size_t size, ...)
 	/* config_save */
 	printf("%s: Testing config_save()\n", progname);
 	fflush(stdout);
-	if(mktemp(tmpname) == NULL)
+	if((fd = mkstemp(tmpname)) < 0)
 		return -error_set_print(progname, -errno, "%s: %s", "mktemp",
 				strerror(errno));
 	if((config = config_new()) == NULL)
 	{
 		unlink(tmpname);
+		close(fd);
 		return -error_print(progname);
 	}
 	va_start(ap, size);
@@ -137,6 +139,7 @@ static int _test2(char const * progname, size_t size, ...)
 	if(unlink(tmpname) != 0)
 		ret = -error_set_print(progname, -errno, "%s: %s", tmpname,
 				strerror(errno));
+	close(fd);
 	return ret;
 }
 
