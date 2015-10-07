@@ -85,7 +85,7 @@ int parser_scan_filter(Parser * parser)
 	int l;
 
 #ifdef DEBUG
-	fprintf(stderr, "DEBUG: %s(%p)\n", __func__, parser);
+	fprintf(stderr, "DEBUG: %s(%p)\n", __func__, (void *)parser);
 #endif
 	if(parser->lookahead)
 		parser->lookahead--;
@@ -207,7 +207,7 @@ Parser * parser_new_string(char const * string, size_t length)
 	Parser * parser;
 
 #ifdef DEBUG
-	fprintf(stderr, "DEBUG: %s(\"%s\")\n", __func__, string);
+	fprintf(stderr, "DEBUG: %s(\"%s\", %lu)\n", __func__, string, length);
 #endif
 	if((parser = _new_do(_parser_scanner_string)) == NULL)
 		return NULL;
@@ -230,7 +230,7 @@ int parser_delete(Parser * parser)
 	int ret = 0;
 
 #ifdef DEBUG
-	fprintf(stderr, "DEBUG: %s(%p) \"%s\"\n", __func__, parser,
+	fprintf(stderr, "DEBUG: %s(%p) \"%s\"\n", __func__, (void *)parser,
 			parser->filename);
 #endif
 	if(parser->fp != NULL
@@ -307,8 +307,8 @@ int parser_add_filter(Parser * parser, ParserFilter filter, void * data)
 	ParserFilterData * p = parser->filters;
 
 #ifdef DEBUG
-	fprintf(stderr, "DEBUG: %s(%p, %p, %p)\n", __func__, parser, filter,
-			data);
+	fprintf(stderr, "DEBUG: %s(%p, %p, %p)\n", __func__, (void *)parser,
+			(void *)filter, (void *)data);
 #endif
 	if((p = realloc(p, sizeof(*p) * (parser->filters_cnt + 1))) == NULL)
 		return 1;
@@ -334,8 +334,9 @@ int parser_remove_callback(Parser * parser, ParserCallback callback)
 		return 1;
 	p = &parser->callbacks[i];
 #ifdef DEBUG
-	fprintf(stderr, "DEBUG: %s(): memmove(%p, %p, %zu)\n", __func__, p,
-			p + 1, sizeof(*p) * (parser->callbacks_cnt - i));
+	fprintf(stderr, "DEBUG: %s(): memmove(%p, %p, %lu)\n", __func__,
+			(void *)p, (void *)(p + 1),
+			sizeof(*p) * (parser->callbacks_cnt - i));
 #endif
 	memmove(p, p + 1, sizeof(*p) * (parser->callbacks_cnt - i));
 	parser->callbacks_cnt--;
@@ -357,8 +358,9 @@ int parser_remove_filter(Parser * parser, ParserFilter filter)
 		return 1;
 	p = &parser->filters[i];
 #ifdef DEBUG
-	fprintf(stderr, "DEBUG: %s(): memmove(%p, %p, %zu)\n", __func__, p,
-			p + 1, sizeof(*p) * (parser->callbacks_cnt - i));
+	fprintf(stderr, "DEBUG: %s(): memmove(%p, %p, %lu)\n", __func__,
+			(void *)p, (void *)(p + 1),
+			sizeof(*p) * (parser->callbacks_cnt - i));
 #endif
 	memmove(p, p + 1, sizeof(*p) * (parser->filters_cnt - i));
 	parser->filters_cnt--;
@@ -372,7 +374,7 @@ int parser_scan(Parser * parser)
 	int c;
 
 #ifdef DEBUG
-	fprintf(stderr, "DEBUG: %s(%p)\n", __func__, parser);
+	fprintf(stderr, "DEBUG: %s(%p)\n", __func__, (void *)parser);
 #endif
 	if(parser->scanner(&c, parser) != 0)
 		return EOF;
