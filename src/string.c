@@ -304,7 +304,7 @@ String * string_find(String const * string, String const * key)
 
 	if((i = string_index(string, key)) < 0)
 		return NULL;
-	return (String*)&string[i]; /* XXX */
+	return (String *)&string[i]; /* XXX */
 }
 
 
