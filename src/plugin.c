@@ -72,6 +72,7 @@ Plugin * plugin_new(String const * libdir, String const * package,
 					name, ext, NULL)) == NULL)
 		return NULL;
 	plugin = _plugin_open(filename);
+	string_delete(filename);
 	return plugin;
 }
 
