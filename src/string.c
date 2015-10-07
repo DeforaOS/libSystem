@@ -315,8 +315,9 @@ ssize_t string_index(String const * string, String const * key)
 	ssize_t i;
 
 	len = string_get_length(key);
-	for(i = 0; string[i] != '\0' && string_compare_length(&string[i], key,
-				len) != 0; i++);
+	for(i = 0; string[i] != '\0'
+			&& string_compare_length(&string[i], key, len) != 0;
+			i++);
 	if(string[i] == '\0')
 		return -1;
 	return i;
