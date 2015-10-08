@@ -31,6 +31,8 @@
 /* prototypes */
 static int _configctl(int verbose, int write, char const * filename, int argc,
 		char * argv[]);
+static int _configctl_list(char const * filename);
+
 static void _configctl_print(int verbose, char const * section,
 		char const * variable, char const * value);
 
@@ -103,6 +105,43 @@ static int _configctl_do(int verbose, char const * filename,
 }
 
 
+/* configctl_list */
+static void _list_foreach(String const * section, void * data);
+static void _list_foreach_section(String const * variable, String const * value,
+		void * data);
+
+static int _configctl_list(char const * filename)
+{
+	Config * config;
+
+	if((config = config_new()) == NULL)
+		return _error(PROGNAME, 1);
+	if(config_load(config, filename) != 0)
+	{
+		config_delete(config);
+		return _error(PROGNAME, 1);
+	}
+	config_foreach(config, _list_foreach, config);
+	config_delete(config);
+	return 0;
+}
+
+static void _list_foreach(String const * section, void * data)
+{
+	Config * config = data;
+
+	config_foreach_section(config, section, _list_foreach_section, section);
+}
+
+static void _list_foreach_section(String const * variable, String const * value,
+		void * data)
+{
+	String const * section = data;
+
+	_configctl_print(1, section, variable, value);
+}
+
+
 /* configctl_print */
 static void _configctl_print(int verbose, char const * section,
 		char const * variable, char const * value)
@@ -126,7 +165,8 @@ static int _error(char const * progname, int ret)
 /* usage */
 static int _usage(void)
 {
-	fputs("Usage: " PROGNAME " -f filename [-qv] [section.]key...\n"
+	fputs("Usage: " PROGNAME " -f filename -a\n"
+"       " PROGNAME " -f filename [-qv] [section.]key...\n"
 "       " PROGNAME " -w -f filename [-v] [section.]key[=value]...\n", stderr);
 	return 1;
 }
@@ -138,13 +178,17 @@ static int _usage(void)
 int main(int argc, char * argv[])
 {
 	int o;
+	int list = 0;
 	int verbose = 0;
 	int write = 0;
 	char const * filename = NULL;
 
-	while((o = getopt(argc, argv, "f:qvw")) != -1)
+	while((o = getopt(argc, argv, "af:qvw")) != -1)
 		switch(o)
 		{
+			case 'a':
+				list = 1;
+				break;
 			case 'f':
 				filename = optarg;
 				break;
@@ -160,6 +204,13 @@ int main(int argc, char * argv[])
 			default:
 				return _usage();
 		}
+	if(list)
+	{
+		if(verbose != 0 || write != 0 || filename == NULL
+				|| optind != argc)
+			return _usage();
+		return _configctl_list(filename) ? 0 : 2;
+	}
 	if(filename == NULL || optind == argc)
 		return _usage();
 	return (_configctl(verbose, write, filename, argc - optind,
