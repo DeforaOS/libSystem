@@ -31,6 +31,8 @@
 /* prototypes */
 static int _configctl(int verbose, int write, char const * filename, int argc,
 		char * argv[]);
+static void _configctl_print(int verbose, char const * section,
+		char const * variable, char const * value);
 
 static int _error(char const * progname, int ret);
 static int _usage(void);
@@ -84,22 +86,11 @@ static int _configctl_do(int verbose, char const * filename,
 		if(verbose < 0)
 			ret = (p != NULL) ? 0 : 1;
 		else if(p != NULL)
-			printf("%s%s%s%s%s\n",
-					(verbose > 0 && section != NULL)
-					? section : "",
-					(verbose > 0 && section != NULL)
-					? "." : "",
-					(verbose > 0) ? key : "",
-					(verbose > 0) ? "=" : "", p);
+			_configctl_print(verbose, section, key, value);
 	}
 	else if(value != NULL)
 	{
-		printf("%s%s%s%s%s\n",
-				(verbose > 0 && section != NULL) ? section : "",
-				(verbose > 0 && section != NULL) ? "." : "",
-				(verbose > 0) ? key : "",
-				(verbose > 0) ? "=" : "",
-				value);
+		_configctl_print(verbose, section, key, value);
 		if(config_set(config, section, key, value) != 0)
 			ret = _error(PROGNAME, 1);
 		if(config_save(config, filename) != 0)
@@ -109,6 +100,18 @@ static int _configctl_do(int verbose, char const * filename,
 		ret = _error(PROGNAME, 1);
 	config_delete(config);
 	return ret;
+}
+
+
+/* configctl_print */
+static void _configctl_print(int verbose, char const * section,
+		char const * variable, char const * value)
+{
+	printf("%s%s%s%s%s\n", (verbose > 0 && section != NULL) ? section : "",
+			(verbose > 0 && section != NULL) ? "." : "",
+			(verbose > 0) ? variable : "",
+			(verbose > 0) ? "=" : "",
+			(value != NULL) ? value : "");
 }
 
 
