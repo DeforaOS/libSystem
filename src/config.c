@@ -354,8 +354,8 @@ static String * _load_value(FILE * fp)
 
 
 /* config_reset */
-static void _delete_foreach(char const * key, void * value, void * data);
-static void _delete_foreach_section(char const * key, void * value,
+static void _delete_foreach(String const * key, void * value, void * data);
+static void _delete_foreach_section(String const * key, void * value,
 		void * data);
 
 int config_reset(Config * config)
@@ -364,23 +364,24 @@ int config_reset(Config * config)
 	return mutator_reset(config);
 }
 
-static void _delete_foreach(char const * key, void * value, void * data)
+static void _delete_foreach(String const * key, void * value, void * data)
 {
-	char * str = (char *)key;
+	String * section = (String *)key;
 	Mutator * mutator = value;
 
-	free(str);
-	mutator_foreach(mutator, _delete_foreach_section, data);
+	mutator_foreach(mutator, _delete_foreach_section, NULL);
+	string_delete(section);
 	mutator_delete(mutator);
 }
 
-static void _delete_foreach_section(char const * key, void * value, void * data)
+static void _delete_foreach_section(String const * key, void * value,
+		void * data)
 {
-	char * k = (char *)key;
-	char * v = value;
+	String * k = (String *)key;
+	String * v = value;
 
-	free(k);
-	free(v);
+	string_delete(k);
+	string_delete(v);
 }
 
 
