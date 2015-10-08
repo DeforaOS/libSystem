@@ -257,7 +257,7 @@ int config_load(Config * config, char const * filename)
 	string_delete(variable);
 	string_delete(value);
 	if(c != EOF)
-		ret = error_set_code(1, "%s: %s%zd", filename, "Syntax error"
+		ret = error_set_code(1, "%s: %s%ld", filename, "Syntax error"
 				" at line ", line);
 	if(fclose(fp) != 0)
 		ret = error_set_code(1, "%s: %s", filename, strerror(errno));
