@@ -107,7 +107,7 @@ int config_set(Config * config, char const * section, char const * variable,
 {
 	Mutator * mutator;
 	char * p;
-	char * oldvalue = NULL;
+	char * oldvalue;
 	char * newvalue = NULL;
 
 #ifdef DEBUG
@@ -131,6 +131,7 @@ int config_set(Config * config, char const * section, char const * variable,
 			mutator_delete(mutator);
 			return 1;
 		}
+		oldvalue = NULL;
 	}
 	else
 		/* to free the current value if already set */
