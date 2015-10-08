@@ -107,7 +107,6 @@ int config_set(Config * config, char const * section, char const * variable,
 {
 	Mutator * mutator;
 	char * p;
-	char * oldvalue;
 	char * newvalue = NULL;
 
 #ifdef DEBUG
@@ -131,11 +130,21 @@ int config_set(Config * config, char const * section, char const * variable,
 			mutator_delete(mutator);
 			return -1;
 		}
-		oldvalue = NULL;
 	}
-	else
-		/* to free the current value if already set */
-		oldvalue = mutator_get(mutator, variable);
+	/* check if a value was already set for this variable */
+	else if((p = mutator_get(mutator, variable)) != NULL)
+	{
+		if(value != NULL && (newvalue = string_new(value)) == NULL)
+			return -1;
+		if(mutator_set(mutator, variable, newvalue) != 0)
+		{
+			string_delete(newvalue);
+			return -1;
+		}
+		/* free the former value */
+		string_delete(p);
+		return 0;
+	}
 	if((p = string_new(variable)) == NULL)
 		return -1;
 	if(value != NULL && (newvalue = string_new(value)) == NULL)
@@ -146,14 +155,9 @@ int config_set(Config * config, char const * section, char const * variable,
 	/* set the new value */
 	if(mutator_set(mutator, p, newvalue) != 0)
 	{
-		string_delete(p);
 		string_delete(newvalue);
-		return -1;
-	}
-	if(oldvalue != NULL)
-	{
 		string_delete(p);
-		string_delete(oldvalue);
+		return -1;
 	}
 	return 0;
 }
