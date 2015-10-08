@@ -220,6 +220,7 @@ int config_load(Config * config, char const * filename)
 	FILE * fp;
 	String * section = NULL;
 	String * variable = NULL;
+	String * value = NULL;
 	int c;
 	String * str;
 
@@ -245,14 +246,16 @@ int config_load(Config * config, char const * filename)
 			variable = str;
 			if((str = _load_value(fp)) == NULL)
 				break;
-			/* XXX optimize string alloc/free, and may fail */
-			config_set(config, section, variable, str);
-			string_delete(str);
+			string_delete(value);
+			value = str;
+			if(config_set(config, section, variable, value) != 0)
+				break;
 		}
 		else if(c != '\n')
 			break;
 	string_delete(section);
 	string_delete(variable);
+	string_delete(value);
 	if(!feof(fp))
 		ret = error_set_code(1, "%s: %s%zd", filename, "Syntax error"
 				" at line ", line);
