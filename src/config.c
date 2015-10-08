@@ -150,7 +150,11 @@ int config_set(Config * config, char const * section, char const * variable,
 		string_delete(newvalue);
 		return 1;
 	}
-	string_delete(oldvalue);
+	if(oldvalue != NULL)
+	{
+		string_delete(p);
+		string_delete(oldvalue);
+	}
 	return 0;
 }
 
