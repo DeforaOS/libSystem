@@ -218,18 +218,13 @@ int config_load(Config * config, char const * filename)
 	int ret = 0;
 	size_t line;
 	FILE * fp;
-	String * section;
+	String * section = NULL;
 	String * variable = NULL;
 	int c;
 	String * str;
 
-	if((section = string_new("")) == NULL)
-		return 1;
 	if((fp = fopen(filename, "r")) == NULL)
-	{
-		string_delete(section);
 		return error_set_code(1, "%s: %s", filename, strerror(errno));
-	}
 	/* FIXME unescape backslashes (eg allow multiple lines) */
 	for(line = 0; (c = fgetc(fp)) != EOF; line++)
 		if(c == CONFIG_COMMENT)
