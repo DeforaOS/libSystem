@@ -123,13 +123,13 @@ int config_set(Config * config, char const * section, char const * variable,
 	{
 		/* create a new section */
 		if((mutator = mutator_new()) == NULL)
-			return 1;
+			return -1;
 		if((p = string_new(section)) == NULL
 				|| mutator_set(config, p, mutator) != 0)
 		{
 			string_delete(p);
 			mutator_delete(mutator);
-			return 1;
+			return -1;
 		}
 		oldvalue = NULL;
 	}
@@ -137,18 +137,18 @@ int config_set(Config * config, char const * section, char const * variable,
 		/* to free the current value if already set */
 		oldvalue = mutator_get(mutator, variable);
 	if((p = string_new(variable)) == NULL)
-		return 1;
+		return -1;
 	if(value != NULL && (newvalue = string_new(value)) == NULL)
 	{
 		string_delete(p);
-		return 1;
+		return -1;
 	}
 	/* set the new value */
 	if(mutator_set(mutator, p, newvalue) != 0)
 	{
 		string_delete(p);
 		string_delete(newvalue);
-		return 1;
+		return -1;
 	}
 	if(oldvalue != NULL)
 	{
