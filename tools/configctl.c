@@ -85,26 +85,25 @@ static int _configctl(int verbose, int write, char const * filename, int argc,
 static int _configctl_do(Config * config, int verbose, char const * section,
 		char const * key, char const * value)
 {
-	int ret = 0;
 	char const * p;
 
 	if(value == NULL)
 	{
 		p = config_get(config, section, key);
 		if(verbose < 0)
-			ret = (p != NULL) ? 0 : -1;
+			return (p != NULL) ? 0 : -1;
 		else if(p != NULL)
-			_configctl_print(verbose, section, key, value);
+			_configctl_print(verbose, section, key, p);
 	}
 	else if(value != NULL)
 	{
 		_configctl_print(verbose, section, key, value);
 		if(config_set(config, section, key, value) != 0)
-			ret = -_configctl_error(PROGNAME, 1);
+			return -_configctl_error(PROGNAME, 1);
 	}
 	else
-		ret = -_configctl_error(PROGNAME, 1);
-	return ret;
+		return -_configctl_error(PROGNAME, 1);
+	return 0;
 }
 
 
