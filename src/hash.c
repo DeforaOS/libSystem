@@ -162,6 +162,28 @@ void * hash_get(Hash * hash, void const * key)
 }
 
 
+/* hash_get_key */
+void * hash_get_key(Hash * hash, void const * key)
+{
+	unsigned int h;
+	size_t i;
+	HashEntry * he;
+
+	h = (hash->func != NULL) ? hash->func(key) : 0;
+	for(i = array_count(hash->entries); i > 0; i--)
+	{
+		if((he = array_get(hash->entries, i - 1)) == NULL)
+			return NULL;
+		if(he->hash != h)
+			continue;
+		if(hash->compare(he->key, key) == 0)
+			return he->key;
+	}
+	error_set_code(1, "%s", "Key not found");
+	return NULL;
+}
+
+
 /* hash_set */
 int hash_set(Hash * hash, void const * key, void * value)
 {
