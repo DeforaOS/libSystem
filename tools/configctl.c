@@ -36,7 +36,7 @@ static int _configctl_list(char const * filename);
 static void _configctl_print(int verbose, char const * section,
 		char const * variable, char const * value);
 
-static int _error(char const * progname, int ret);
+static int _configctl_error(char const * progname, int ret);
 static int _usage(void);
 
 
@@ -56,11 +56,11 @@ static int _configctl(int verbose, int write, char const * filename, int argc,
 	char * value = NULL;
 
 	if((config = config_new()) == NULL)
-		return -_error(PROGNAME, 1);
+		return -_configctl_error(PROGNAME, 1);
 	if(config_load(config, filename) != 0)
 	{
 		config_delete(config);
-		return -_error(PROGNAME, 1);
+		return -_configctl_error(PROGNAME, 1);
 	}
 	for(i = 0; i < argc; i++)
 	{
@@ -77,7 +77,7 @@ static int _configctl(int verbose, int write, char const * filename, int argc,
 		ret |= _configctl_do(config, verbose, section, key, value);
 	}
 	if(ret == 0 && write && config_save(config, filename) != 0)
-		ret = -_error(PROGNAME, 1);
+		ret = -_configctl_error(PROGNAME, 1);
 	config_delete(config);
 	return ret;
 }
@@ -100,10 +100,10 @@ static int _configctl_do(Config * config, int verbose, char const * section,
 	{
 		_configctl_print(verbose, section, key, value);
 		if(config_set(config, section, key, value) != 0)
-			ret = -_error(PROGNAME, 1);
+			ret = -_configctl_error(PROGNAME, 1);
 	}
 	else
-		ret = -_error(PROGNAME, 1);
+		ret = -_configctl_error(PROGNAME, 1);
 	return ret;
 }
 
@@ -118,11 +118,11 @@ static int _configctl_list(char const * filename)
 	Config * config;
 
 	if((config = config_new()) == NULL)
-		return -_error(PROGNAME, 1);
+		return -_configctl_error(PROGNAME, 1);
 	if(config_load(config, filename) != 0)
 	{
 		config_delete(config);
-		return -_error(PROGNAME, 1);
+		return -_configctl_error(PROGNAME, 1);
 	}
 	config_foreach(config, _list_foreach, config);
 	config_delete(config);
@@ -158,8 +158,8 @@ static void _configctl_print(int verbose, char const * section,
 }
 
 
-/* error */
-static int _error(char const * progname, int ret)
+/* configctl_error */
+static int _configctl_error(char const * progname, int ret)
 {
 	error_print(progname);
 	return ret;
