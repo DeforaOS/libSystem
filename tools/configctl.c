@@ -97,9 +97,9 @@ static int _configctl_do(Config * config, int verbose, char const * section,
 	}
 	else if(value != NULL)
 	{
-		_configctl_print(verbose, section, key, value);
 		if(config_set(config, section, key, value) != 0)
 			return -_configctl_error(PROGNAME, 1);
+		_configctl_print(verbose, section, key, value);
 	}
 	else
 		return -_configctl_error(PROGNAME, 1);
