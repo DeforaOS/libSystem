@@ -42,18 +42,26 @@ static int _usage(void);
 
 /* functions */
 /* configctl */
-static int _configctl_do(int verbose, char const * filename,
-		char const * section, char const * key, char const * value);
+static int _configctl_do(Config * config, int verbose, char const * section,
+		char const * key, char const * value);
 
 static int _configctl(int verbose, int write, char const * filename, int argc,
 		char * argv[])
 {
 	int ret = 0;
+	Config * config;
 	int i;
 	char * section;
 	char * key;
 	char * value = NULL;
 
+	if((config = config_new()) == NULL)
+		return _error(PROGNAME, 1);
+	if(config_load(config, filename) != 0)
+	{
+		config_delete(config);
+		return _error(PROGNAME, 1);
+	}
 	for(i = 0; i < argc; i++)
 	{
 		section = argv[i];
@@ -66,23 +74,21 @@ static int _configctl(int verbose, int write, char const * filename, int argc,
 			*(key++) = '\0';
 		if(write && (value = strchr(key, '=')) != NULL)
 			*(value++) = '\0';
-		ret |= _configctl_do(verbose, filename, section, key, value);
+		ret |= _configctl_do(config, verbose, section, key, value);
 	}
-	return (ret == 0) ? 0 : 2;
+	if(ret == 0 && write && config_save(config, filename) != 0)
+		ret = _error(PROGNAME, 1);
+	config_delete(config);
+	return ret;
 }
 
-static int _configctl_do(int verbose, char const * filename,
-		char const * section, char const * key, char const * value)
+static int _configctl_do(Config * config, int verbose, char const * section,
+		char const * key, char const * value)
 {
 	int ret = 0;
-	Config * config;
 	char const * p;
 
-	if((config = config_new()) == NULL)
-		ret = _error(PROGNAME, 1);
-	if(config_load(config, filename) != 0)
-		ret = _error(PROGNAME, 1);
-	else if(value == NULL)
+	if(value == NULL)
 	{
 		p = config_get(config, section, key);
 		if(verbose < 0)
@@ -95,12 +101,9 @@ static int _configctl_do(int verbose, char const * filename,
 		_configctl_print(verbose, section, key, value);
 		if(config_set(config, section, key, value) != 0)
 			ret = _error(PROGNAME, 1);
-		if(config_save(config, filename) != 0)
-			ret = _error(PROGNAME, 1);
 	}
 	else
 		ret = _error(PROGNAME, 1);
-	config_delete(config);
 	return ret;
 }
 
