@@ -145,6 +145,9 @@ int config_set(Config * config, char const * section, char const * variable,
 		string_delete(p);
 		return 0;
 	}
+	else if(value == NULL)
+		/* there is nothing to do */
+		return 0;
 	if((p = string_new(variable)) == NULL)
 		return -1;
 	if(value != NULL && (newvalue = string_new(value)) == NULL)
