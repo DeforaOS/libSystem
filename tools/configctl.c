@@ -130,7 +130,8 @@ static void _list_foreach(String const * section, void * data)
 {
 	Config * config = data;
 
-	config_foreach_section(config, section, _list_foreach_section, section);
+	config_foreach_section(config, section, _list_foreach_section,
+			(void *)section);
 }
 
 static void _list_foreach_section(String const * variable, String const * value,
