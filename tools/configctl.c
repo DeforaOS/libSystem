@@ -151,7 +151,8 @@ static void _configctl_print(int verbose, char const * section,
 		char const * variable, char const * value)
 {
 	printf("%s%s%s%s%s\n", (verbose > 0 && section != NULL) ? section : "",
-			(verbose > 0 && section != NULL) ? "." : "",
+			(verbose > 0 && section != NULL && section[0] != '\0')
+			? "." : "",
 			(verbose > 0) ? variable : "",
 			(verbose > 0) ? "=" : "",
 			(value != NULL) ? value : "");
