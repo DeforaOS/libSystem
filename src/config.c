@@ -123,45 +123,25 @@ int config_set(Config * config, char const * section, char const * variable,
 		/* create a new section */
 		if((mutator = mutator_new()) == NULL)
 			return -1;
-		if((p = string_new(section)) == NULL
-				|| mutator_set(config, p, mutator) != 0)
+		if(mutator_set(config, section, mutator) != 0)
 		{
-			string_delete(p);
 			mutator_delete(mutator);
 			return -1;
 		}
+		p = NULL;
 	}
-	/* check if a value was already set for this variable */
-	else if((p = mutator_get(mutator, variable)) != NULL)
-	{
-		if(value != NULL && (newvalue = string_new(value)) == NULL)
-			return -1;
-		if(mutator_set(mutator, variable, newvalue) != 0)
-		{
-			string_delete(newvalue);
-			return -1;
-		}
-		/* free the former value */
-		string_delete(p);
-		return 0;
-	}
-	else if(value == NULL)
+	else if((p = mutator_get(mutator, variable)) == NULL && value == NULL)
 		/* there is nothing to do */
 		return 0;
-	if((p = string_new(variable)) == NULL)
-		return -1;
 	if(value != NULL && (newvalue = string_new(value)) == NULL)
-	{
-		string_delete(p);
 		return -1;
-	}
-	/* set the new value */
-	if(mutator_set(mutator, p, newvalue) != 0)
+	if(mutator_set(mutator, variable, newvalue) != 0)
 	{
 		string_delete(newvalue);
-		string_delete(p);
 		return -1;
 	}
+	/* free the former value */
+	string_delete(p);
 	return 0;
 }
 
@@ -376,18 +356,16 @@ static void _delete_foreach(String const * key, void * value, void * data)
 	String * section = (String *)key;
 	Mutator * mutator = value;
 
+	/* free the values */
 	mutator_foreach(mutator, _delete_foreach_section, NULL);
-	string_delete(section);
 	mutator_delete(mutator);
 }
 
 static void _delete_foreach_section(String const * key, void * value,
 		void * data)
 {
-	String * k = (String *)key;
 	String * v = value;
 
-	string_delete(k);
 	string_delete(v);
 }
 

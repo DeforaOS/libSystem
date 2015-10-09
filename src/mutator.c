@@ -35,6 +35,7 @@ Mutator * mutator_new(void)
 /* mutator_delete */
 void mutator_delete(Mutator * mutator)
 {
+	mutator_reset(mutator);
 	hash_delete(mutator);
 }
 
@@ -62,9 +63,29 @@ void * mutator_get(Mutator * mutator, String const * key)
 int mutator_set(Mutator * mutator, String const * key, void * value)
 {
 	int ret;
+	String * k;
+	String * oldk;
 
-	if((ret = hash_set(mutator, key, value)) != 0)
+	if(value == NULL)
+	{
+		/* look for the former key */
+		if((oldk = hash_get_key(mutator, key)) == NULL)
+			/* there is nothing to do */
+			return 0;
+	}
+	else
+		oldk = NULL;
+	/* allocate the key */
+	if((k = string_new(key)) == NULL)
+		return -1;
+	if((ret = hash_set(mutator, k, value)) != 0)
+	{
 		error_set("%s: %s", key, "Could not set the value");
+		string_delete(k);
+	}
+	else
+		/* free the former key if removed */
+		string_delete(oldk);
 	return ret;
 }
 
@@ -77,7 +98,18 @@ void mutator_foreach(Mutator * mutator, MutatorForeach func, void * data)
 
 
 /* mutator_reset */
+static void _reset_foreach(String const * key, void * value, void * data);
+
 int mutator_reset(Mutator * mutator)
 {
+	/* free the keys */
+	mutator_foreach(mutator, _reset_foreach, NULL);
 	return hash_reset(mutator);
+}
+
+static void _reset_foreach(String const * key, void * value, void * data)
+{
+	String * k = (String *)key;
+
+	string_delete(k);
 }
