@@ -169,7 +169,12 @@ static int _usage(void)
 {
 	fputs("Usage: " PROGNAME " -f filename -a\n"
 "       " PROGNAME " -f filename [-qv] [section.]key...\n"
-"       " PROGNAME " -w -f filename [-v] [section.]key[=value]...\n", stderr);
+"       " PROGNAME " -w -f filename [-qv] [section.]key[=value]...\n"
+"  -a\tList every key of every section available\n"
+"  -f\tFilename to parse or update\n"
+"  -q\tQuiet mode\n"
+"  -v\tVerbose mode\n"
+"  -w\tSet and save values\n", stderr);
 	return 1;
 }
 
