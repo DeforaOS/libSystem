@@ -113,7 +113,7 @@ void event_delete(Event * event)
 
 	for(i = 0; i < array_count(event->timeouts); i++)
 	{
-		array_get_copy(event->writes, i, &et);
+		array_get_copy(event->timeouts, i, &et);
 		object_delete(et);
 	}
 	array_delete(event->timeouts);
