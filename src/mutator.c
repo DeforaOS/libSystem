@@ -66,19 +66,24 @@ int mutator_set(Mutator * mutator, String const * key, void * value)
 	String * k;
 	String * oldk;
 
-	if(value == NULL)
+	/* look for the former key */
+	if((oldk = hash_get_key(mutator, key)) == NULL)
 	{
-		/* look for the former key */
-		if((oldk = hash_get_key(mutator, key)) == NULL)
+		if(value == NULL)
 			/* there is nothing to do */
 			return 0;
+		/* allocate the new key */
+		if((k = string_new(key)) == NULL)
+			return -1;
+		key = k;
 	}
 	else
-		oldk = NULL;
-	/* allocate the key */
-	if((k = string_new(key)) == NULL)
-		return -1;
-	if((ret = hash_set(mutator, k, value)) != 0)
+	{
+		if(value != NULL)
+			oldk = NULL;
+		k = NULL;
+	}
+	if((ret = hash_set(mutator, key, value)) != 0)
 	{
 		error_set("%s: %s", key, "Could not set the value");
 		string_delete(k);
