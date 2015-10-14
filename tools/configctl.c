@@ -89,20 +89,16 @@ static int _configctl_do(Config * config, int verbose, char const * section,
 
 	if(value == NULL)
 	{
-		p = config_get(config, section, key);
-		if(verbose < 0)
-			return (p != NULL) ? 0 : -1;
-		else if(p != NULL)
-			_configctl_print(verbose, section, key, p);
+		if((p = config_get(config, section, key)) == NULL)
+			return -_configctl_error(PROGNAME, 1);
+		_configctl_print(verbose, section, key, p);
 	}
-	else if(value != NULL)
+	else
 	{
 		if(config_set(config, section, key, value) != 0)
 			return -_configctl_error(PROGNAME, 1);
 		_configctl_print(verbose, section, key, value);
 	}
-	else
-		return -_configctl_error(PROGNAME, 1);
 	return 0;
 }
 
@@ -149,6 +145,8 @@ static void _list_foreach_section(String const * variable, String const * value,
 static void _configctl_print(int verbose, char const * section,
 		char const * variable, char const * value)
 {
+	if(verbose < 0)
+		return;
 	printf("%s%s%s%s%s\n", (verbose > 0 && section != NULL) ? section : "",
 			(verbose > 0 && section != NULL && section[0] != '\0')
 			? "." : "",
