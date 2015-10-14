@@ -213,7 +213,6 @@ int config_load(Config * config, char const * filename)
 
 	if((fp = fopen(filename, "r")) == NULL)
 		return error_set_code(1, "%s: %s", filename, strerror(errno));
-	/* FIXME unescape backslashes (eg allow multiple lines) */
 	for(line = 0; (c = fgetc(fp)) != EOF; line++)
 		if(c == CONFIG_COMMENT)
 			/* skip the comment */
