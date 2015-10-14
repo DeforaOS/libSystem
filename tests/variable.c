@@ -63,5 +63,5 @@ static int _variable(char const * progname)
 /* main */
 int main(int argc, char * argv[])
 {
-	return (_variable(argv[0]) == 0) ? 0 : 2;;
+	return (_variable(argv[0]) == 0) ? 0 : 2;
 }
