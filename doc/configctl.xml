@@ -51,7 +51,16 @@
 			<command>&name;</command>
 			<arg choice="plain"><option>-f</option>
 				<replaceable>filename</replaceable></arg>
-			<arg choice="opt"><option>-v</option></arg>
+			<arg choice="plain"><option>-a</option></arg>
+		</cmdsynopsis>
+		<cmdsynopsis>
+			<command>&name;</command>
+			<arg choice="plain"><option>-f</option>
+				<replaceable>filename</replaceable></arg>
+			<group choice="opt">
+				<arg choice="plain"><option>-q</option></arg>
+				<arg choice="plain"><option>-v</option></arg>
+			</group>
 			<arg choice="plain" rep="repeat">
 				<arg choice="opt"><replaceable>section.</replaceable></arg>
 				<arg choice="plain"><replaceable>variable</replaceable></arg>
@@ -62,7 +71,10 @@
 			<arg choice="plain"><option>-w</option></arg>
 			<arg choice="plain"><option>-f</option>
 				<replaceable>filename</replaceable></arg>
-			<arg choice="opt"><option>-v</option></arg>
+			<group choice="opt">
+				<arg choice="plain"><option>-q</option></arg>
+				<arg choice="plain"><option>-v</option></arg>
+			</group>
 			<arg choice="plain" rep="repeat">
 				<arg choice="opt"><replaceable>section.</replaceable></arg>
 				<arg choice="plain"><replaceable>variable</replaceable></arg>
@@ -83,15 +95,34 @@
 			The following options are available:</para>
 		<variablelist>
 			<varlistentry>
+				<term><option>-a</option></term>
+				<listitem>
+					<para>Print every value set in every section for this file.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
 				<term><option>-f</option></term>
 				<listitem>
 					<para>Filename to parse or update.</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
+				<term><option>-q</option></term>
+				<listitem>
+					<para>Disable output on the standard stream.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
 				<term><option>-v</option></term>
 				<listitem>
 					<para>Be more verbose.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><option>-w</option></term>
+				<listitem>
+					<para>Update a value or add a new one, and save it back into the original
+						file.</para>
 				</listitem>
 			</varlistentry>
 		</variablelist>
