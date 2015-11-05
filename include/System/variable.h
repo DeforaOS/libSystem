@@ -42,12 +42,21 @@ typedef enum _VariableType
 	VT_FLOAT,
 	VT_DOUBLE,
 	VT_BUFFER,
-	VT_STRING
+	VT_STRING,
+	VT_ARRAY,
+	VT_COMPOUND
 } VariableType;
+
+typedef unsigned int VariableClass;
 
 
 /* functions */
 Variable * variable_new(VariableType type, void * value);
+Variable * variable_new_array(VariableType type, size_t size, ...);
+Variable * variable_new_arrayv(VariableType type, size_t size, void ** values);
+Variable * variable_new_compound(String const * name, size_t members, ...);
+Variable * variable_new_compoundv(String const * name, size_t members,
+		VariableType * types, void ** values);
 Variable * variable_new_copy(Variable * variable);
 Variable * variable_new_deserialize(size_t * size, char const * data);
 Variable * variable_new_deserialize_buffer(size_t * size,
@@ -59,7 +68,15 @@ void variable_delete(Variable * variable);
 
 /* accessors */
 int variable_get_as(Variable * variable, VariableType type, void * result);
+VariableClass variable_get_class(Variable * variable);
 VariableType variable_get_type(Variable * variable);
+
+int variable_is_array(Variable * variable);
+int variable_is_class(Variable * variable, VariableClass _class);
+int variable_is_compound(Variable * variable);
+int variable_is_instance(Variable * variable, String const * name);
+int variable_is_scalar(Variable * variable);
+int variable_is_type(Variable * variable, VariableType type);
 
 int variable_set(Variable * variable, Variable * from);
 int variable_set_from(Variable * variable, VariableType type, void * value);
