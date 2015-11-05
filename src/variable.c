@@ -80,6 +80,39 @@ Variable * variable_new(VariableType type, void * value)
 }
 
 
+/* variable_new_array */
+Variable * variable_new_array(VariableType type, size_t size, ...)
+{
+	/* FIXME implement */
+	return NULL;
+}
+
+
+/* variable_new_arrayv */
+Variable * variable_new_arrayv(VariableType type, size_t size, void ** values)
+{
+	/* FIXME implement */
+	return NULL;
+}
+
+
+/* variable_new_compound */
+Variable * variable_new_compound(String const * name, size_t members, ...)
+{
+	/* FIXME implement */
+	return NULL;
+}
+
+
+/* variable_new_compoundv */
+Variable * variable_new_compoundv(String const * name, size_t members,
+		VariableType * types, void ** values)
+{
+	/* FIXME implement */
+	return NULL;
+}
+
+
 /* variable_new_copy */
 Variable * variable_new_copy(Variable * variable)
 {
