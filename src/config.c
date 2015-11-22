@@ -163,6 +163,7 @@ void config_foreach(Config * config, ConfigForeachCallback callback,
 static void _foreach_callback(char const * key, void * value, void * data)
 {
 	ConfigForeachData * priv = data;
+	(void) value;
 
 	priv->callback(key, priv->priv);
 }
@@ -352,8 +353,9 @@ int config_reset(Config * config)
 
 static void _delete_foreach(String const * key, void * value, void * data)
 {
-	String * section = (String *)key;
 	Mutator * mutator = value;
+	(void) key;
+	(void) data;
 
 	/* free the values */
 	mutator_foreach(mutator, _delete_foreach_section, NULL);
@@ -364,6 +366,8 @@ static void _delete_foreach_section(String const * key, void * value,
 		void * data)
 {
 	String * v = value;
+	(void) key;
+	(void) data;
 
 	string_delete(v);
 }
