@@ -240,7 +240,7 @@ static PyObject * _libsystem_error_get(PyObject * self, PyObject * args)
 
 	if(!PyArg_ParseTuple(args, ""))
 		return NULL;
-	ret = error_get();
+	ret = error_get(NULL);
 	return Py_BuildValue("s", ret);
 }
 
@@ -248,13 +248,9 @@ static PyObject * _libsystem_error_get(PyObject * self, PyObject * args)
 /* libsystem_error_get_code */
 static PyObject * _libsystem_error_get_code(PyObject * self, PyObject * args)
 {
-	int ret;
-
-	/* XXX doesn't match the original prototype */
 	if(!PyArg_ParseTuple(args, ""))
 		return NULL;
-	error_get_code(&ret);
-	return Py_BuildValue("i", ret);
+	return Py_BuildValue("i", error_get_code());
 }
 
 
