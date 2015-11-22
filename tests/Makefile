@@ -1,4 +1,4 @@
-TARGETS	= $(OBJDIR)array$(EXEEXT) $(OBJDIR)config$(EXEEXT) $(OBJDIR)event$(EXEEXT) $(OBJDIR)includes$(EXEEXT) $(OBJDIR)pylint.log $(OBJDIR)string$(EXEEXT) $(OBJDIR)variable$(EXEEXT) $(OBJDIR)tests.log
+TARGETS	= $(OBJDIR)array$(EXEEXT) $(OBJDIR)config$(EXEEXT) $(OBJDIR)error$(EXEEXT) $(OBJDIR)event$(EXEEXT) $(OBJDIR)includes$(EXEEXT) $(OBJDIR)pylint.log $(OBJDIR)string$(EXEEXT) $(OBJDIR)variable$(EXEEXT) $(OBJDIR)tests.log
 OBJDIR	=
 PREFIX	= /usr/local
 DESTDIR	=
@@ -34,6 +34,13 @@ config_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 $(OBJDIR)config$(EXEEXT): $(config_OBJS)
 	$(CC) -o $(OBJDIR)config$(EXEEXT) $(config_OBJS) $(config_LDFLAGS)
 
+error_OBJS = $(OBJDIR)error.o
+error_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
+error_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
+
+$(OBJDIR)error$(EXEEXT): $(error_OBJS)
+	$(CC) -o $(OBJDIR)error$(EXEEXT) $(error_OBJS) $(error_LDFLAGS)
+
 event_OBJS = $(OBJDIR)event.o
 event_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
 event_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
@@ -65,7 +72,7 @@ variable_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 $(OBJDIR)variable$(EXEEXT): $(variable_OBJS)
 	$(CC) -o $(OBJDIR)variable$(EXEEXT) $(variable_OBJS) $(variable_LDFLAGS)
 
-$(OBJDIR)tests.log: $(OBJDIR)array$(EXEEXT) $(OBJDIR)config$(EXEEXT) config.conf config-noeol.conf $(OBJDIR)event$(EXEEXT) $(OBJDIR)includes$(EXEEXT) python.sh $(OBJDIR)string$(EXEEXT) tests.sh $(OBJDIR)variable$(EXEEXT) $(OBJDIR)../src/libSystem.a
+$(OBJDIR)tests.log: $(OBJDIR)array$(EXEEXT) $(OBJDIR)config$(EXEEXT) config.conf config-noeol.conf $(OBJDIR)error$(EXEEXT) $(OBJDIR)event$(EXEEXT) $(OBJDIR)includes$(EXEEXT) python.sh $(OBJDIR)string$(EXEEXT) tests.sh $(OBJDIR)variable$(EXEEXT) $(OBJDIR)../src/libSystem.a
 	./tests.sh -P "$(PREFIX)" -- "$(OBJDIR)tests.log"
 
 $(OBJDIR)array.o: array.c ../src/array.c
@@ -73,6 +80,9 @@ $(OBJDIR)array.o: array.c ../src/array.c
 
 $(OBJDIR)config.o: config.c ../src/config.c
 	$(CC) $(config_CFLAGS) -o $(OBJDIR)config.o -c config.c
+
+$(OBJDIR)error.o: error.c ../src/error.c
+	$(CC) $(error_CFLAGS) -o $(OBJDIR)error.o -c error.c
 
 $(OBJDIR)event.o: event.c ../src/event.c
 	$(CC) $(event_CFLAGS) -o $(OBJDIR)event.o -c event.c
@@ -87,7 +97,7 @@ $(OBJDIR)variable.o: variable.c ../src/variable.c
 	$(CC) $(variable_CFLAGS) -o $(OBJDIR)variable.o -c variable.c
 
 clean:
-	$(RM) -- $(array_OBJS) $(config_OBJS) $(event_OBJS) $(includes_OBJS) $(pylint.log_OBJS) $(string_OBJS) $(variable_OBJS) $(tests.log_OBJS)
+	$(RM) -- $(array_OBJS) $(config_OBJS) $(error_OBJS) $(event_OBJS) $(includes_OBJS) $(pylint.log_OBJS) $(string_OBJS) $(variable_OBJS) $(tests.log_OBJS)
 	./pylint.sh -c -P "$(PREFIX)" -- "pylint.log"
 	./tests.sh -c -P "$(PREFIX)" -- "tests.log"
 

@@ -110,6 +110,7 @@ dist:
 		$(PACKAGE)-$(VERSION)/src/project.conf \
 		$(PACKAGE)-$(VERSION)/tests/array.c \
 		$(PACKAGE)-$(VERSION)/tests/config.c \
+		$(PACKAGE)-$(VERSION)/tests/error.c \
 		$(PACKAGE)-$(VERSION)/tests/event.c \
 		$(PACKAGE)-$(VERSION)/tests/includes.c \
 		$(PACKAGE)-$(VERSION)/tests/string.c \
