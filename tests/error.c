@@ -30,6 +30,7 @@ static int _test(void)
 	if(error_get_code() != 255)
 		return 2;
 	error_print(NULL);
+	error_print("error");
 	return 0;
 }
 
