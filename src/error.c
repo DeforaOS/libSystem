@@ -109,14 +109,18 @@ static int _print_do(String const * program, ...)
 {
 	int ret = 0;
 	va_list args;
+	String const * error;
 
 	va_start(args, program);
-	if(program != NULL)
+	if(program != NULL && string_length(program) > 0)
 	{
 		fputs(program, stderr);
 		fputs(": ", stderr);
 	}
-	fputs(_error_do(&ret, NULL, args), stderr);
+	if((error = _error_do(&ret, NULL, args)) == NULL
+			|| string_length(error) == 0)
+		error = "Unknown error";
+	fputs(error, stderr);
 	fputc('\n', stderr);
 	va_end(args);
 	return ret;
