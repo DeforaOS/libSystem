@@ -25,8 +25,16 @@
 #include "System/error.h"
 #include "System/mutator.h"
 #include "System/config.h"
+#include "../config.h"
 
 /* constants */
+#ifndef PREFIX
+# define PREFIX		"/usr/local"
+#endif
+#ifndef SYSCONFDIR
+# define SYSCONFDIR	PREFIX "/etc"
+#endif
+
 #define CONFIG_COMMENT '#'
 
 
@@ -339,6 +347,77 @@ static String * _load_value(FILE * fp)
 		return string_new("");
 	str[len] = '\0';
 	return str;
+}
+
+
+/* config_load_preferences */
+int config_load_preferences(Config * config, String const * vendor,
+		String const * package, String const * filename)
+{
+	int ret;
+
+	if((ret = config_load_preferences_system(config, vendor, package,
+					filename)) != 0
+			&& ret != -ENOENT)
+		return ret;
+	if((ret = config_load_preferences_user(config, vendor, package,
+					filename)) != 0
+			&& ret != -ENOENT)
+		return ret;
+	return 0;
+}
+
+
+/* config_load_preferences_system */
+int config_load_preferences_system(Config * config, String const * vendor,
+		String const * package, String const * filename)
+{
+	int ret;
+	String * f;
+
+	if(filename == NULL)
+		return error_set_code(-EINVAL, "%s", strerror(EINVAL));
+	if(vendor != NULL && string_find(vendor, "/") != NULL)
+		return error_set_code(-EPERM, "%s", strerror(EPERM));
+	if(package != NULL && string_find(package, "/") != NULL)
+		return error_set_code(-EPERM, "%s", strerror(EPERM));
+	if((f = string_new_append(SYSCONFDIR, "/",
+					(vendor != NULL) ? vendor : "", "/",
+					(package != NULL) ? package : "", "/",
+					filename, NULL)) == NULL)
+		return error_get_code();
+	ret = config_load(config, f);
+	string_delete(f);
+	return ret;
+}
+
+
+/* config_load_preferences_user */
+int config_load_preferences_user(Config * config, String const * vendor,
+		String const * package, String const * filename)
+{
+	int ret;
+	String const * homedir;
+	String * f;
+
+	if(filename == NULL)
+		return error_set_code(-EINVAL, "%s", strerror(EINVAL));
+	if(vendor != NULL && string_find(vendor, "/") != NULL)
+		return error_set_code(-EPERM, "%s", strerror(EPERM));
+	if(package != NULL && string_find(package, "/") != NULL)
+		return error_set_code(-EPERM, "%s", strerror(EPERM));
+	if(filename != NULL && string_find(filename, "/") != NULL)
+		return error_set_code(-EPERM, "%s", strerror(EPERM));
+	if((homedir = getenv("HOME")) == NULL)
+		return error_set_code(-errno, "%s", strerror(errno));
+	if((f = string_new_append(homedir, "/.config/",
+					(vendor != NULL) ? vendor : "", "/",
+					(package != NULL) ? package : "", "/",
+					filename, NULL)) == NULL)
+		return error_get_code();
+	ret = config_load(config, f);
+	string_delete(f);
+	return ret;
 }
 
 

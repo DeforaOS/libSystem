@@ -47,7 +47,16 @@ void config_foreach_section(Config * config, String const * section,
 		ConfigForeachSectionCallback callback, void * priv);
 
 int config_load(Config * config, String const * filename);
+
+int config_load_preferences(Config * config, String const * vendor,
+		String const * package, String const * filename);
+int config_load_preferences_system(Config * config, String const * vendor,
+		String const * package, String const * filename);
+int config_load_preferences_user(Config * config, String const * vendor,
+		String const * package, String const * filename);
+
 int config_reset(Config * config);
+
 int config_save(Config * config, String const * filename);
 
 #endif /* !LIBSYSTEM_SYSTEM_CONFIG_H */
