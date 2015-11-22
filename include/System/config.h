@@ -58,5 +58,7 @@ int config_load_preferences_user(Config * config, String const * vendor,
 int config_reset(Config * config);
 
 int config_save(Config * config, String const * filename);
+int config_save_preferences_user(Config * config, String const * vendor,
+		String const * package, String const * filename);
 
 #endif /* !LIBSYSTEM_SYSTEM_CONFIG_H */

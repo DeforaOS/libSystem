@@ -15,6 +15,7 @@
 
 
 
+#include <sys/stat.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -529,4 +530,52 @@ static void _save_foreach_section(char const * key, void * value, void * data)
 		return;
 	}
 	save->sep = "\n";
+}
+
+
+/* config_save_preferences_user */
+static int _save_preferences_user_append(String ** f, String const * dir);
+
+int config_save_preferences_user(Config * config, String const * vendor,
+		String const * package, String const * filename)
+{
+	int ret;
+	String const * homedir;
+	String * f;
+
+	if(filename == NULL)
+		return error_set_code(-EINVAL, "%s", strerror(EINVAL));
+	if(vendor != NULL && string_find(vendor, "/") != NULL)
+		return error_set_code(-EPERM, "%s", strerror(EPERM));
+	if(package != NULL && string_find(package, "/") != NULL)
+		return error_set_code(-EPERM, "%s", strerror(EPERM));
+	if(filename != NULL && string_find(filename, "/") != NULL)
+		return error_set_code(-EPERM, "%s", strerror(EPERM));
+	if((homedir = getenv("HOME")) == NULL)
+		return error_set_code(-errno, "%s", strerror(errno));
+	if((f = string_new_append(homedir, "/.config", NULL)) == NULL)
+		return error_get_code();
+	if(vendor != NULL && (ret = _save_preferences_user_append(&f,
+					vendor)) != 0)
+		return ret;
+	if(package != NULL && (ret = _save_preferences_user_append(&f,
+					package)) != 0)
+		return ret;
+	if(string_append(&f, "/") != 0 || string_append(&f, filename) != 0)
+		return error_get_code();
+	ret = config_save(config, f);
+	string_delete(f);
+	return ret;
+}
+
+static int _save_preferences_user_append(String ** f, String const * dir)
+{
+	if(string_append(f, "/") != 0)
+		return error_get_code();
+	if(string_append(f, dir) != 0)
+		return error_get_code();
+	if(mkdir(*f, 0755) != 0
+			&& errno != EEXIST)
+		return error_set_code(-errno, "%s: %s", *f, strerror(errno));
+	return 0;
 }
