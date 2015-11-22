@@ -84,7 +84,7 @@ static PyMethodDef _libsystem_methods[] =
 	{ "error_get", _libsystem_error_get, METH_VARARGS,
 		"Get the last error." },
 	{ "error_get_code", _libsystem_error_get_code, METH_VARARGS,
-		"Get the last error code." },
+		"Get the code for the last error." },
 	{ "error_print", _libsystem_error_print, METH_VARARGS,
 		"Print the last error message." },
 	{ "event_new", _libsystem_event_new, METH_VARARGS,
