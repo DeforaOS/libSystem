@@ -213,7 +213,8 @@ int config_load(Config * config, char const * filename)
 	String * str;
 
 	if((fp = fopen(filename, "r")) == NULL)
-		return error_set_code(1, "%s: %s", filename, strerror(errno));
+		return error_set_code(-errno, "%s: %s", filename,
+				strerror(errno));
 	for(line = 0; (c = fgetc(fp)) != EOF; line++)
 		if(c == CONFIG_COMMENT)
 			/* skip the comment */
@@ -247,7 +248,8 @@ int config_load(Config * config, char const * filename)
 		ret = error_set_code(1, "%s: %s%ld", filename, "Syntax error"
 				" at line ", line);
 	if(fclose(fp) != 0)
-		ret = error_set_code(1, "%s: %s", filename, strerror(errno));
+		ret = error_set_code(-errno, "%s: %s", filename,
+				strerror(errno));
 	return ret;
 }
 
@@ -385,7 +387,8 @@ int config_save(Config * config, char const * filename)
 
 	save.sep = "";
 	if((save.fp = fopen(filename, "w")) == NULL)
-		return error_set_code(1, "%s: %s", filename, strerror(errno));
+		return error_set_code(-errno, "%s: %s", filename,
+				strerror(errno));
 	mutator_foreach(config, _save_foreach_default, &save);
 	mutator_foreach(config, _save_foreach, &save);
 	if(save.fp != NULL && save.sep[0] != '\0'
@@ -395,7 +398,8 @@ int config_save(Config * config, char const * filename)
 		save.fp = NULL;
 	}
 	if(save.fp == NULL || fclose(save.fp) != 0)
-		return error_set_code(1, "%s: %s", filename, strerror(errno));
+		return error_set_code(-errno, "%s: %s", filename,
+				strerror(errno));
 	return 0;
 }
 
