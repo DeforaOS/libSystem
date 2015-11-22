@@ -23,8 +23,8 @@
 
 /* functions */
 /* accessors */
-String const * error_get(void);
-String const * error_get_code(int * code);
+String const * error_get(int * code);
+int error_get_code(void);
 
 void error_set(String const * format, ...);
 int error_set_code(int code, String const * format, ...);

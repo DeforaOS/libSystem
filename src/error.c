@@ -25,41 +25,21 @@
 /* prototypes */
 static String const * _error_do(int * codeptr, String const * format,
 		va_list args);
+static int _error_do_code(int * codeptr);
 
 
 /* public */
 /* accessors */
 /* error_get */
-static String const * _get_do(String const * null, ...);
+static String const * _get_do(int * code, ...);
 
-String const * error_get(void)
+String const * error_get(int * code)
 {
 	/* XXX workaround for portability */
-	return _get_do(NULL);
+	return _get_do(code);
 }
 
-static String const * _get_do(String const * null, ...)
-{
-	String const * ret;
-	va_list args;
-
-	va_start(args, null);
-	ret = _error_do(NULL, NULL, args);
-	va_end(args);
-	return ret;
-}
-
-
-/* error_get_code */
-static String const * _get_code_do(int * code, ...);
-
-String const * error_get_code(int * code)
-{
-	/* XXX workaround for portability */
-	return _get_code_do(code);
-}
-
-static String const * _get_code_do(int * code, ...)
+static String const * _get_do(int * code, ...)
 {
 	String const * ret;
 	va_list args;
@@ -68,6 +48,13 @@ static String const * _get_code_do(int * code, ...)
 	ret = _error_do(code, NULL, args);
 	va_end(args);
 	return ret;
+}
+
+
+/* error_get_code */
+int error_get_code(void)
+{
+	return _error_do_code(NULL);
 }
 
 
@@ -143,16 +130,25 @@ static String const * _error_do(int * codeptr, String const * format,
 		va_list args)
 {
 	static String buf[256] = "";
-	static int code = 0;
 
 	if(format != NULL) /* setting the error */
 	{
 		vsnprintf(buf, sizeof(buf), format, args);
 		if(codeptr != NULL)
-			code = *codeptr;
-		return buf;
+			_error_do_code(codeptr);
 	}
-	if(codeptr != NULL)
-		*codeptr = code;
+	else if(codeptr != NULL)
+		*codeptr = _error_do_code(NULL);
 	return buf;
+}
+
+
+/* error_do_code */
+static int _error_do_code(int * codeptr)
+{
+	static int code = 0;
+
+	if(codeptr != NULL)
+		code = *codeptr;
+	return code;
 }
