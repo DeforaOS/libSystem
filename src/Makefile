@@ -45,7 +45,7 @@ $(OBJDIR)array.o: array.c
 $(OBJDIR)buffer.o: buffer.c
 	$(CC) $(libSystem_CFLAGS) -o $(OBJDIR)buffer.o -c buffer.c
 
-$(OBJDIR)config.o: config.c
+$(OBJDIR)config.o: config.c ../config.h
 	$(CC) $(libSystem_CFLAGS) -o $(OBJDIR)config.o -c config.c
 
 $(OBJDIR)error.o: error.c
