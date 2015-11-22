@@ -102,6 +102,7 @@ FAILED=
 echo "Performing tests:" 1>&2
 _test "array"
 _test "config"
+_test "error"
 _test "event"
 _test "includes"
 _test "string"
