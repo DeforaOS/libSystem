@@ -88,6 +88,8 @@ int error_set_code(int code, String const * format, ...)
 	va_list args;
 
 	va_start(args, format);
+	if(format == NULL)
+		format = "";
 	_error_do(&code, format, args);
 	va_end(args);
 	return code;
