@@ -1,5 +1,5 @@
 PACKAGE	= libSystem
-VERSION	= 0.2.3
+VERSION	= 0.3.0
 SUBDIRS	= data doc include src tests tools
 OBJDIR	=
 PREFIX	= /usr/local
