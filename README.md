@@ -32,6 +32,26 @@ explicitly:
     $ make LDFLAGS="-ldl"
 
 
+Generating Makefiles
+--------------------
+
+Alternatively, it is possible to re-generate the Makefiles for the current
+platform with `configure(1)` from the DeforaOS configure project, found at
+<http://www.defora.org/os/project/16/configure>. The procedure is then as
+follows:
+
+    $ configure
+    $ make
+
+Please refer to the documentation of DeforaOS configure for further
+instructions.
+
+A default set of Makefiles is provided with this project in order to avoid a
+circular dependency, as DeforaOS configure depends on libSystem itself. The
+Makefiles provided target the NetBSD Operating System <http://www.netbsd.org/>
+by default.
+
+
 Python bindings
 ---------------
 
@@ -45,3 +65,7 @@ installed as follows:
 Likewise, an alternate installation directory may be specified:
 
     $ (cd src/python && make PREFIX="/path/to/libSystem" install)
+
+Makefiles can be re-generated for the bindings as well:
+
+    $ configure src/python
