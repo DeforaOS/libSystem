@@ -49,5 +49,7 @@ static int _event_on_idle(void * data)
 /* main */
 int main(int argc, char * argv[])
 {
+	(void) argc;
+
 	return (_event(argv[0]) == 0) ? 0 : 2;
 }

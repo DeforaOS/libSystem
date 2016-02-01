@@ -150,6 +150,7 @@ int main(int argc, char * argv[])
 	int ret = 0;
 	String const variable[] = "variable";
 	String const expected[] = "expected";
+	(void) argc;
 
 	ret |= _test(argv[0], "config.conf", variable, expected);
 	ret |= _test(argv[0], "config-noeol.conf", variable, expected);

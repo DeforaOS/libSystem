@@ -74,7 +74,7 @@ static void _test_foreach(void * value, void * data)
 
 
 /* main */
-int main(int argc, char * argv[])
+int main(void)
 {
 	int ret;
 	Array * array;

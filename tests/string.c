@@ -115,6 +115,7 @@ int main(int argc, char * argv[])
 {
 	int ret = 0;
 	String * s;
+	(void) argc;
 
 	/* test */
 	if((s = string_new(argv[0])) == NULL)
