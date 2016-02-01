@@ -21,6 +21,7 @@
 PROGNAME="tests.sh"
 #executables
 DATE="date"
+PYTHON="python"
 
 
 #functions
@@ -97,18 +98,26 @@ target="$1"
 
 [ "$clean" -ne 0 ]			&& exit 0
 
+tests="array config error event includes string variable"
+failures=
+
+if $PYTHON -c 'import sys
+sys.exit(0)'; then
+	tests="$tests python.sh"
+else
+	failures="$failures python.sh"
+fi
+
 $DATE > "$target"
 FAILED=
 echo "Performing tests:" 1>&2
-_test "array"
-_test "config"
-_test "error"
-_test "event"
-_test "includes"
-_test "string"
-_test "variable"
+for test in $tests; do
+	_test "$test"
+done
 echo "Expected failures:" 1>&2
-_fail "python.sh"
+for test in $failures; do
+	_fail "$test"
+done
 if [ -n "$FAILED" ]; then
 	echo "Failed tests:$FAILED" 1>&2
 	exit 2
