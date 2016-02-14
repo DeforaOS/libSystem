@@ -1,5 +1,5 @@
 SUBDIRS	= gtkdoc
-TARGETS	= $(OBJDIR)configctl.1 $(OBJDIR)configctl.html $(OBJDIR)gtkdoc/libSystem.types $(OBJDIR)gtkdoc/tmpl.stamp $(OBJDIR)gtkdoc/sgml.stamp $(OBJDIR)gtkdoc/html.stamp
+TARGETS	= $(OBJDIR)configctl.1 $(OBJDIR)configctl.html $(OBJDIR)configctl.xml $(OBJDIR)gtkdoc/libSystem.types $(OBJDIR)gtkdoc/tmpl.stamp $(OBJDIR)gtkdoc/sgml.stamp $(OBJDIR)gtkdoc/html.stamp
 OBJDIR	=
 PREFIX	= /usr/local
 DESTDIR	=
@@ -24,6 +24,9 @@ $(OBJDIR)configctl.1: configctl.xml
 $(OBJDIR)configctl.html: configctl.css.xml configctl.xml manual.css.xml
 	./docbook.sh -P "$(PREFIX)" -- "$(OBJDIR)configctl.html"
 
+$(OBJDIR)configctl.xml: ../tools/subst.sh configctl.xml.in
+	../tools/subst.sh -P "$(PREFIX)" -- "$(OBJDIR)configctl.xml"
+
 $(OBJDIR)gtkdoc/libSystem.types:
 	./gtkdoc.sh -P "$(PREFIX)" -- "$(OBJDIR)gtkdoc/libSystem.types"
 
@@ -41,9 +44,10 @@ clean:
 		if [ -n "$(OBJDIR)" ]; then \
 		$(MAKE) OBJDIR="$(OBJDIR)$$i/" clean; \
 		else $(MAKE) clean; fi) || exit; done
-	$(RM) -- $(configctl.1_OBJS) $(configctl.html_OBJS) $(gtkdoc/libSystem.types_OBJS) $(gtkdoc/tmpl.stamp_OBJS) $(gtkdoc/sgml.stamp_OBJS) $(gtkdoc/html.stamp_OBJS)
+	$(RM) -- $(configctl.1_OBJS) $(configctl.html_OBJS) $(configctl.xml_OBJS) $(gtkdoc/libSystem.types_OBJS) $(gtkdoc/tmpl.stamp_OBJS) $(gtkdoc/sgml.stamp_OBJS) $(gtkdoc/html.stamp_OBJS)
 	./docbook.sh -c -P "$(PREFIX)" -- "configctl.1"
 	./docbook.sh -c -P "$(PREFIX)" -- "configctl.html"
+	../tools/subst.sh -c -P "$(PREFIX)" -- "configctl.xml"
 	./gtkdoc.sh -c -P "$(PREFIX)" -- "gtkdoc/libSystem.types"
 	./gtkdoc.sh -c -P "$(PREFIX)" -- "gtkdoc/tmpl.stamp"
 	./gtkdoc.sh -c -P "$(PREFIX)" -- "gtkdoc/sgml.stamp"
@@ -54,9 +58,10 @@ distclean:
 		if [ -n "$(OBJDIR)" ]; then \
 		$(MAKE) OBJDIR="$(OBJDIR)$$i/" distclean; \
 		else $(MAKE) distclean; fi) || exit; done
-	$(RM) -- $(configctl.1_OBJS) $(configctl.html_OBJS) $(gtkdoc/libSystem.types_OBJS) $(gtkdoc/tmpl.stamp_OBJS) $(gtkdoc/sgml.stamp_OBJS) $(gtkdoc/html.stamp_OBJS)
+	$(RM) -- $(configctl.1_OBJS) $(configctl.html_OBJS) $(configctl.xml_OBJS) $(gtkdoc/libSystem.types_OBJS) $(gtkdoc/tmpl.stamp_OBJS) $(gtkdoc/sgml.stamp_OBJS) $(gtkdoc/html.stamp_OBJS)
 	./docbook.sh -c -P "$(PREFIX)" -- "configctl.1"
 	./docbook.sh -c -P "$(PREFIX)" -- "configctl.html"
+	../tools/subst.sh -c -P "$(PREFIX)" -- "configctl.xml"
 	./gtkdoc.sh -c -P "$(PREFIX)" -- "gtkdoc/libSystem.types"
 	./gtkdoc.sh -c -P "$(PREFIX)" -- "gtkdoc/tmpl.stamp"
 	./gtkdoc.sh -c -P "$(PREFIX)" -- "gtkdoc/sgml.stamp"
