@@ -15,7 +15,7 @@ $(OBJDIR)libSystem.pc: libSystem.pc.in ../config.sh
 
 clean:
 	$(RM) -- $(libSystem.pc_OBJS)
-	./pkgconfig.sh -c -P "$(PREFIX)" -- "libSystem.pc"
+	./pkgconfig.sh -c -P "$(PREFIX)" -- "$(OBJDIR)libSystem.pc"
 
 distclean: clean
 	$(RM) -- $(TARGETS)

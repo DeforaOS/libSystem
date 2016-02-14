@@ -45,13 +45,13 @@ clean:
 		$(MAKE) OBJDIR="$(OBJDIR)$$i/" clean; \
 		else $(MAKE) clean; fi) || exit; done
 	$(RM) -- $(configctl.1_OBJS) $(configctl.html_OBJS) $(configctl.xml_OBJS) $(gtkdoc/libSystem.types_OBJS) $(gtkdoc/tmpl.stamp_OBJS) $(gtkdoc/sgml.stamp_OBJS) $(gtkdoc/html.stamp_OBJS)
-	./docbook.sh -c -P "$(PREFIX)" -- "configctl.1"
-	./docbook.sh -c -P "$(PREFIX)" -- "configctl.html"
-	../tools/subst.sh -c -P "$(PREFIX)" -- "configctl.xml"
-	./gtkdoc.sh -c -P "$(PREFIX)" -- "gtkdoc/libSystem.types"
-	./gtkdoc.sh -c -P "$(PREFIX)" -- "gtkdoc/tmpl.stamp"
-	./gtkdoc.sh -c -P "$(PREFIX)" -- "gtkdoc/sgml.stamp"
-	./gtkdoc.sh -c -P "$(PREFIX)" -- "gtkdoc/html.stamp"
+	./docbook.sh -c -P "$(PREFIX)" -- "$(OBJDIR)configctl.1"
+	./docbook.sh -c -P "$(PREFIX)" -- "$(OBJDIR)configctl.html"
+	../tools/subst.sh -c -P "$(PREFIX)" -- "$(OBJDIR)configctl.xml"
+	./gtkdoc.sh -c -P "$(PREFIX)" -- "$(OBJDIR)gtkdoc/libSystem.types"
+	./gtkdoc.sh -c -P "$(PREFIX)" -- "$(OBJDIR)gtkdoc/tmpl.stamp"
+	./gtkdoc.sh -c -P "$(PREFIX)" -- "$(OBJDIR)gtkdoc/sgml.stamp"
+	./gtkdoc.sh -c -P "$(PREFIX)" -- "$(OBJDIR)gtkdoc/html.stamp"
 
 distclean:
 	@for i in $(SUBDIRS); do (cd "$$i" && \
@@ -59,13 +59,13 @@ distclean:
 		$(MAKE) OBJDIR="$(OBJDIR)$$i/" distclean; \
 		else $(MAKE) distclean; fi) || exit; done
 	$(RM) -- $(configctl.1_OBJS) $(configctl.html_OBJS) $(configctl.xml_OBJS) $(gtkdoc/libSystem.types_OBJS) $(gtkdoc/tmpl.stamp_OBJS) $(gtkdoc/sgml.stamp_OBJS) $(gtkdoc/html.stamp_OBJS)
-	./docbook.sh -c -P "$(PREFIX)" -- "configctl.1"
-	./docbook.sh -c -P "$(PREFIX)" -- "configctl.html"
-	../tools/subst.sh -c -P "$(PREFIX)" -- "configctl.xml"
-	./gtkdoc.sh -c -P "$(PREFIX)" -- "gtkdoc/libSystem.types"
-	./gtkdoc.sh -c -P "$(PREFIX)" -- "gtkdoc/tmpl.stamp"
-	./gtkdoc.sh -c -P "$(PREFIX)" -- "gtkdoc/sgml.stamp"
-	./gtkdoc.sh -c -P "$(PREFIX)" -- "gtkdoc/html.stamp"
+	./docbook.sh -c -P "$(PREFIX)" -- "$(OBJDIR)configctl.1"
+	./docbook.sh -c -P "$(PREFIX)" -- "$(OBJDIR)configctl.html"
+	../tools/subst.sh -c -P "$(PREFIX)" -- "$(OBJDIR)configctl.xml"
+	./gtkdoc.sh -c -P "$(PREFIX)" -- "$(OBJDIR)gtkdoc/libSystem.types"
+	./gtkdoc.sh -c -P "$(PREFIX)" -- "$(OBJDIR)gtkdoc/tmpl.stamp"
+	./gtkdoc.sh -c -P "$(PREFIX)" -- "$(OBJDIR)gtkdoc/sgml.stamp"
+	./gtkdoc.sh -c -P "$(PREFIX)" -- "$(OBJDIR)gtkdoc/html.stamp"
 	$(RM) -- $(TARGETS)
 
 install: $(TARGETS)

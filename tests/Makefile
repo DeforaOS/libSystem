@@ -98,8 +98,8 @@ $(OBJDIR)variable.o: variable.c ../src/variable.c
 
 clean:
 	$(RM) -- $(array_OBJS) $(config_OBJS) $(error_OBJS) $(event_OBJS) $(includes_OBJS) $(pylint.log_OBJS) $(string_OBJS) $(variable_OBJS) $(tests.log_OBJS)
-	./pylint.sh -c -P "$(PREFIX)" -- "pylint.log"
-	./tests.sh -c -P "$(PREFIX)" -- "tests.log"
+	./pylint.sh -c -P "$(PREFIX)" -- "$(OBJDIR)pylint.log"
+	./tests.sh -c -P "$(PREFIX)" -- "$(OBJDIR)tests.log"
 
 distclean: clean
 	$(RM) -- $(TARGETS)
