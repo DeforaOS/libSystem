@@ -21,6 +21,7 @@
 PROGNAME="tests.sh"
 #executables
 DATE="date"
+PKGCONFIG="pkg-config"
 PYTHON="python"
 
 
@@ -101,8 +102,7 @@ target="$1"
 tests="array config error event includes string variable"
 failures=
 
-if $PYTHON -c 'import sys
-sys.exit(0)'; then
+if $PKGCONFIG --exists python-2.7; then
 	tests="$tests python.sh"
 else
 	failures="$failures python.sh"
