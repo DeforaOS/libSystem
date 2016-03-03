@@ -10,7 +10,7 @@ CPPFLAGS=
 CFLAGSF	=
 CFLAGS	= -W -Wall -g -O2 -pedantic -fPIE -D_FORTIFY_SOURCE=2 -fstack-protector-all
 LDFLAGSF= -L../src -L$(OBJDIR)../src -Wl,-rpath,$(OBJDIR)../src -lSystem
-LDFLAGS	= -L$(PREFIX)/lib -Wl,-rpath,"$(PWD)/../src" -Wl,-pie -Wl,-z,relro -Wl,-z,now
+LDFLAGS	= -L$(PREFIX)/lib -Wl,-rpath,"$(PWD)/../src" -pie -shared-libgcc -Wl,-z,relro -Wl,-z,now
 EXEEXT	=
 RM	= rm -f
 LN	= ln -f
