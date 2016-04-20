@@ -18,10 +18,10 @@ subdirs:
 		$(MAKE) OBJDIR="$(OBJDIR)$$i/"; \
 		else $(MAKE); fi) || exit; done
 
-$(OBJDIR)configctl.1: configctl.xml
+$(OBJDIR)configctl.1: $(OBJDIR)configctl.xml
 	./docbook.sh -P "$(PREFIX)" -- "$(OBJDIR)configctl.1"
 
-$(OBJDIR)configctl.html: configctl.css.xml configctl.xml manual.css.xml
+$(OBJDIR)configctl.html: configctl.css.xml $(OBJDIR)configctl.xml manual.css.xml
 	./docbook.sh -P "$(PREFIX)" -- "$(OBJDIR)configctl.html"
 
 $(OBJDIR)configctl.xml: ../tools/subst.sh configctl.xml.in

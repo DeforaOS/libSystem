@@ -44,7 +44,7 @@ dist:
 		$(PACKAGE)-$(VERSION)/data/project.conf \
 		$(PACKAGE)-$(VERSION)/doc/Makefile \
 		$(PACKAGE)-$(VERSION)/doc/configctl.css.xml \
-		$(PACKAGE)-$(VERSION)/doc/configctl.xml \
+		$(PACKAGE)-$(VERSION)/doc/configctl.xml.in \
 		$(PACKAGE)-$(VERSION)/doc/docbook.sh \
 		$(PACKAGE)-$(VERSION)/doc/gtkdoc.sh \
 		$(PACKAGE)-$(VERSION)/doc/manual.css.xml \
