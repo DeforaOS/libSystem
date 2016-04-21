@@ -9,10 +9,10 @@ LIBDIR	= $(PREFIX)/lib
 CC	= cc
 CPPFLAGSF= -I ../../include
 CPPFLAGS=
-CFLAGSF	= `pkg-config --cflags python-2.7 libSystem`
+CFLAGSF	= `pkg-config --cflags python-2.7`
 CFLAGS	= -W -Wall -g -O2 -pedantic -fPIC -D_FORTIFY_SOURCE=2 -fstack-protector-all
-LDFLAGSF= `pkg-config --libs python-2.7 libSystem`
-LDFLAGS	= -L.. -L$(LIBDIR) -Wl,-rpath,$(LIBDIR) -Wl,-z,relro -Wl,-z,now
+LDFLAGSF= `pkg-config --libs python-2.7`
+LDFLAGS	= -L$(OBJDIR).. -Wl,-rpath,$(LIBDIR) -Wl,-z,relro -Wl,-z,now
 EXEEXT	=
 AR	= ar
 RANLIB	= ranlib
