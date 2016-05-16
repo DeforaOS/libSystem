@@ -100,7 +100,7 @@ target="$1"
 
 [ "$clean" -ne 0 ]			&& exit 0
 
-tests="array config error event includes string variable"
+tests="array config error event includes pkgconfig.sh string variable"
 failures=
 
 if $PKGCONFIG --exists python-2.7; then
