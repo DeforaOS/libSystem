@@ -119,6 +119,7 @@ dist:
 		$(PACKAGE)-$(VERSION)/tests/Makefile \
 		$(PACKAGE)-$(VERSION)/tests/config.conf \
 		$(PACKAGE)-$(VERSION)/tests/config-noeol.conf \
+		$(PACKAGE)-$(VERSION)/tests/pkgconfig.sh \
 		$(PACKAGE)-$(VERSION)/tests/pylint.sh \
 		$(PACKAGE)-$(VERSION)/tests/python.sh \
 		$(PACKAGE)-$(VERSION)/tests/tests.sh \
