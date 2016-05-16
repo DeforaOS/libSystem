@@ -22,7 +22,6 @@ PROGNAME="tests.sh"
 #executables
 DATE="date"
 PKGCONFIG="pkg-config"
-PYTHON="python"
 
 
 #functions
