@@ -51,7 +51,7 @@ typedef unsigned int VariableClass;
 
 
 /* functions */
-Variable * variable_new(VariableType type, void * value);
+Variable * variable_new(VariableType type, void const * value);
 Variable * variable_new_array(VariableType type, size_t size, ...);
 Variable * variable_new_arrayv(VariableType type, size_t size, void ** values);
 Variable * variable_new_compound(String const * name, size_t members, ...);
@@ -79,7 +79,8 @@ int variable_is_scalar(Variable * variable);
 int variable_is_type(Variable * variable, VariableType type);
 
 int variable_set(Variable * variable, Variable * from);
-int variable_set_from(Variable * variable, VariableType type, void * value);
+int variable_set_from(Variable * variable, VariableType type,
+		void const * value);
 
 /* useful */
 int variable_serialize(Variable * variable, Buffer * buffer, int type);

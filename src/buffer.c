@@ -59,7 +59,7 @@ Buffer * buffer_new(size_t size, char const * data)
 
 
 /* buffer_new_copy */
-Buffer * buffer_new_copy(Buffer * buffer)
+Buffer * buffer_new_copy(Buffer const * buffer)
 {
 	return buffer_new(buffer->size, buffer->data);
 }

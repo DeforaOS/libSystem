@@ -65,7 +65,7 @@ static void _variable_destroy(Variable * variable);
 
 /* public */
 /* variable_new */
-Variable * variable_new(VariableType type, void * value)
+Variable * variable_new(VariableType type, void const * value)
 {
 	Variable * variable;
 
@@ -601,18 +601,19 @@ int variable_set(Variable * variable, Variable * from)
 
 
 /* variable_set_from */
-int variable_set_from(Variable * variable, VariableType type, void * value)
+int variable_set_from(Variable * variable, VariableType type,
+		void const * value)
 {
-	int8_t * i8;
-	uint8_t * u8;
-	int16_t * i16;
-	uint16_t * u16;
-	int32_t * i32;
-	uint32_t * u32;
-	int64_t * i64;
-	uint64_t * u64;
-	float * f;
-	double * d;
+	int8_t const * i8;
+	uint8_t const * u8;
+	int16_t const * i16;
+	uint16_t const * u16;
+	int32_t const * i32;
+	uint32_t const * u32;
+	int64_t const * i64;
+	uint64_t const * u64;
+	float const * f;
+	double const * d;
 	Buffer * b;
 	char const * s;
 
