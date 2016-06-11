@@ -325,7 +325,7 @@ ssize_t string_index(String const * string, String const * key)
 
 
 /* string_ltrim */
-int string_ltrim(String * string, String const * which)
+size_t string_ltrim(String * string, String const * which)
 {
 	size_t i;
 	size_t j;
@@ -386,9 +386,9 @@ int string_replace(String ** string, String const * what, String const * by)
 
 
 /* string_rtrim */
-int string_rtrim(String * string, String const * which)
+size_t string_rtrim(String * string, String const * which)
 {
-	int ret = 0;
+	size_t ret = 0;
 	size_t i;
 	size_t j;
 
@@ -417,13 +417,7 @@ int string_rtrim(String * string, String const * which)
 
 
 /* string_trim */
-int string_trim(String * string, String const * which)
+size_t string_trim(String * string, String const * which)
 {
-	int ret1;
-	int ret2;
-
-	if((ret1 = string_ltrim(string, which)) < 0
-			|| (ret2 = string_rtrim(string, which)) < 0)
-		return -1;
-	return ret1 + ret2;
+	return string_ltrim(string, which) + string_rtrim(string, which);
 }
