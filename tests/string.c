@@ -30,7 +30,7 @@ static int _test(char const * progname, String * s)
 	printf("%s: Testing %s\n", progname, "string_get_length()");
 	if((len = string_get_length(s)) == 0)
 		return 2;
-	printf("\"%s\" => %lu\n", s, len);
+	printf("\"%s\" => %zu\n", s, len);
 	/* string_clear */
 	printf("%s: Testing %s\n", progname, "string_clear()");
 	string_clear(s);
