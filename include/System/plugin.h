@@ -24,6 +24,7 @@
 
 /* Plugin */
 typedef void Plugin;
+typedef void * PluginExport;
 
 typedef struct _PluginHeader
 {
@@ -40,8 +41,10 @@ Plugin * plugin_new(String const * libdir, String const * package,
 Plugin * plugin_new_self(void);
 void plugin_delete(Plugin * plugin);
 
+/* accessors */
+PluginExport plugin_get_export(Plugin * plugin, String const * name);
 
 /* useful */
-void * plugin_lookup(Plugin * plugin, String const * symbol);
+PluginExport plugin_lookup(Plugin * plugin, String const * symbol);
 
 #endif /* !LIBSYSTEM_SYSTEM_PLUGIN_H */
