@@ -9,8 +9,8 @@ LIBDIR	= $(PREFIX)/lib
 CC	= cc
 CPPFLAGSF= -I ../../include
 CPPFLAGS=
-CFLAGSF	= `pkg-config --cflags python-2.7`
-CFLAGS	= -W -Wall -g -O2 -fPIC -D_FORTIFY_SOURCE=2 -fstack-protector-all
+CFLAGSF	= -fPIC `pkg-config --cflags python-2.7`
+CFLAGS	= -W -Wall -g -O2 -D_FORTIFY_SOURCE=2 -fstack-protector-all
 LDFLAGSF= `pkg-config --libs python-2.7`
 LDFLAGS	= -L$(OBJDIR).. -Wl,-rpath,$(LIBDIR) -Wl,-z,relro -Wl,-z,now
 EXEEXT	=
