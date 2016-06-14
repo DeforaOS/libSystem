@@ -8,7 +8,7 @@ CC	= cc
 CPPFLAGSF= -I ../include
 CPPFLAGS=
 CFLAGSF	=
-CFLAGS	= -W -Wall -g -O2 -pedantic -fPIE -D_FORTIFY_SOURCE=2 -fstack-protector-all
+CFLAGS	= -W -Wall -g -O2 -fPIE -D_FORTIFY_SOURCE=2 -fstack-protector-all
 LDFLAGSF= -L$(OBJDIR)../src -Wl,-rpath,$(PREFIX)/lib -lSystem
 LDFLAGS	= -pie -Wl,-z,relro -Wl,-z,now
 EXEEXT	=
