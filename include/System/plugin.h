@@ -18,11 +18,20 @@
 #ifndef LIBSYSTEM_SYSTEM_PLUGIN_H
 # define LIBSYSTEM_SYSTEM_PLUGIN_H
 
+# include "license.h"
 # include "string.h"
 
 
 /* Plugin */
 typedef void Plugin;
+
+typedef struct _PluginHeader
+{
+	char const * name;
+	char const * icon;
+	char const * description;
+	LicenseFlags license;
+} PluginHeader;
 
 
 /* functions */
