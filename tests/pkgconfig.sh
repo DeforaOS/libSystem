@@ -38,20 +38,20 @@ _pkgconfig()
 	packages="$3"
 
 	echo -n "$caption"
-	output=$($PKGCONFIG $options "$packages")
+	output=$(PKG_CONFIG_PATH="$PKG_CONFIG_PATH" $PKGCONFIG $options "$packages")
 	ret=$?
 	echo "$output"
 	return $ret
 }
 
-_pkgconfig "EXISTS:" --exists "$PACKAGE" || exit 2
+_pkgconfig "EXISTS:" --exists "$PACKAGE"			|| exit 2
 
 ret=0
 
-_pkgconfig "VERSION:" --modversion "$PACKAGE" || ret=3
-_pkgconfig "CFLAGS:	" --cflags "$PACKAGE" || ret=4
-_pkgconfig "LIBS:	" --libs "$PACKAGE" || ret=5
-_pkgconfig "PROVIDES:" --print-provides "$PACKAGE" || ret=6
-_pkgconfig "REQUIRES:" --print-requires "$PACKAGE" || ret=7
+_pkgconfig "VERSION:" --modversion "$PACKAGE"			|| ret=3
+_pkgconfig "CFLAGS:	" --cflags "$PACKAGE"			|| ret=4
+_pkgconfig "LIBS:	" --libs "$PACKAGE"			|| ret=5
+_pkgconfig "PROVIDES:" --print-provides "$PACKAGE"		|| ret=6
+_pkgconfig "REQUIRES:" --print-requires "$PACKAGE"		|| ret=7
 
 exit $ret
