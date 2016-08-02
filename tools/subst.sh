@@ -70,7 +70,7 @@ _subst()
 				LDSO="/libexec/ld-elf.so.1"
 			;;
 			Linux)
-				LDSO="/lib/ld-linux-$(uname -p).so.2"
+				LDSO="/lib/ld-linux-$(uname -m | tr _ -).so.2"
 				;;
 			*)
 				LDSO="/libexec/ld.elf_so"
