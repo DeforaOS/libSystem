@@ -385,6 +385,24 @@ int string_replace(String ** string, String const * what, String const * by)
 }
 
 
+/* string_rindex */
+ssize_t string_rindex(String const * string, String const * key)
+{
+	size_t len;
+	size_t keylen;
+	ssize_t i;
+
+	len = string_get_length(string);
+	keylen = string_get_length(key);
+	if(keylen > len)
+		return -1;
+	for(i = len - keylen; i >= 0; i--)
+		if(string_compare_length(&string[i], key, keylen) == 0)
+			return i;
+	return -1;
+}
+
+
 /* string_rtrim */
 size_t string_rtrim(String * string, String const * which)
 {

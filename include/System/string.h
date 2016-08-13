@@ -59,6 +59,7 @@ String ** string_explode(String const * string, String const * separator);
 
 String * string_find(String const * string, String const * key);
 ssize_t string_index(String const * string, String const * key);
+ssize_t string_rindex(String const * string, String const * key);
 
 int string_replace(String ** string, String const * what, String const * by);
 
