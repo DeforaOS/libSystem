@@ -123,6 +123,7 @@ PyMODINIT_FUNC init_libSystem(void)
 static PyObject * _libsystem_config_new(PyObject * self, PyObject * args)
 {
 	Config * config;
+	(void) self;
 
 	if(!PyArg_ParseTuple(args, ""))
 		return NULL;
@@ -237,6 +238,7 @@ static PyObject * _libsystem_config_save(PyObject * self, PyObject * args)
 static PyObject * _libsystem_error_get(PyObject * self, PyObject * args)
 {
 	char const * ret;
+	(void) self;
 
 	if(!PyArg_ParseTuple(args, ""))
 		return NULL;
@@ -248,6 +250,8 @@ static PyObject * _libsystem_error_get(PyObject * self, PyObject * args)
 /* libsystem_error_get_code */
 static PyObject * _libsystem_error_get_code(PyObject * self, PyObject * args)
 {
+	(void) self;
+
 	if(!PyArg_ParseTuple(args, ""))
 		return NULL;
 	return Py_BuildValue("i", error_get_code());
@@ -259,6 +263,7 @@ static PyObject * _libsystem_error_print(PyObject * self, PyObject * args)
 {
 	int ret;
 	char const * program;
+	(void) self;
 
 	if(!PyArg_ParseTuple(args, "s", &program))
 		return NULL;
@@ -272,6 +277,7 @@ static PyObject * _libsystem_error_print(PyObject * self, PyObject * args)
 static PyObject * _libsystem_event_new(PyObject * self, PyObject * args)
 {
 	Event * event;
+	(void) self;
 
 	if(!PyArg_ParseTuple(args, ""))
 		return NULL;
@@ -314,6 +320,7 @@ static PyObject * _libsystem_event_loop(PyObject * self, PyObject * args)
 static PyObject * _libsystem_mutator_new(PyObject * self, PyObject * args)
 {
 	Mutator * mutator;
+	(void) self;
 
 	if(!PyArg_ParseTuple(args, ""))
 		return NULL;
@@ -362,6 +369,7 @@ static PyObject * _libsystem_plugin_new(PyObject * self, PyObject * args)
 	char const * package;
 	char const * type;
 	char const * name;
+	(void) self;
 
 	if(PyArg_ParseTuple(args, ""))
 		plugin = plugin_new_self();
