@@ -396,7 +396,8 @@ ssize_t string_rindex(String const * string, String const * key)
 	ssize_t i;
 
 	len = string_get_length(string);
-	keylen = string_get_length(key);
+	if((keylen = string_get_length(key)) == 0)
+		return len;
 	if(keylen > len)
 		return -1;
 	for(i = len - keylen; i >= 0; i--)
