@@ -30,6 +30,7 @@ static int _test2(String const * string, String * rtrim, int rcount);
 static int _test3(String const * string, String * ltrim, int lcount);
 static int _test4(String const * string, String * trim, int count);
 static int _test5(String const * string, String const * key, ssize_t expected);
+static int _test6(String const * string, String const * key, ssize_t expected);
 
 
 /* functions */
@@ -137,6 +138,23 @@ static int _test5(String const * string, String const * key, ssize_t expected)
 }
 
 
+/* test6 */
+static int _test6(String const * string, String const * key, ssize_t expected)
+{
+	ssize_t res;
+
+	/* string_rindex */
+	printf("%s: Testing %s\n", PROGNAME, "string_rindex()");
+	if((res = string_rindex(string, key)) != expected)
+	{
+		printf("%s: %s, %s, %zd: Test failed (expected: %zd)\n",
+				PROGNAME, string, key, res, expected);
+		return 2;
+	}
+	return 0;
+}
+
+
 /* main */
 int main(int argc, char * argv[])
 {
@@ -198,5 +216,13 @@ int main(int argc, char * argv[])
 	ret |= _test5("2test", "test", 1);
 	ret |= _test5("2test2", "test", 1);
 	ret |= _test5("2test2test2", "test", 1);
+	/* test6 */
+	ret |= _test6("test", "", 4);
+	ret |= _test6("test", "test", 0);
+	ret |= _test6("test", "test2", -1);
+	ret |= _test6("test2", "test", 0);
+	ret |= _test6("2test", "test", 1);
+	ret |= _test6("2test2", "test", 1);
+	ret |= _test6("2test2test2", "test", 6);
 	return ret;
 }
