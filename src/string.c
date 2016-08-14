@@ -312,15 +312,18 @@ String * string_find(String const * string, String const * key)
 ssize_t string_index(String const * string, String const * key)
 {
 	size_t len;
-	ssize_t i;
+	size_t keylen;
+	size_t i;
 
-	len = string_get_length(key);
-	for(i = 0; string[i] != '\0'
-			&& string_compare_length(&string[i], key, len) != 0;
-			i++);
-	if(string[i] == '\0')
+	len = string_get_length(string);
+	if((keylen = string_get_length(key)) == 0)
+		return len;
+	if(keylen > len)
 		return -1;
-	return i;
+	for(i = 0; i <= len - keylen; i++)
+		if(string_compare_length(&string[i], key, keylen) == 0)
+			return i;
+	return -1;
 }
 
 
