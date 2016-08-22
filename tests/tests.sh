@@ -79,7 +79,7 @@ _test()
 #usage
 _usage()
 {
-	echo "Usage: $PROGNAME [-c][-P prefix]" 1>&2
+	echo "Usage: $PROGNAME [-c][-P prefix] target..." 1>&2
 	return 1
 }
 
@@ -101,35 +101,39 @@ while getopts "cP:" name; do
 	esac
 done
 shift $((OPTIND - 1))
-if [ $# -ne 1 ]; then
+if [ $# -eq 0 ]; then
 	_usage
 	exit $?
 fi
-target="$1"
-
-[ "$clean" -ne 0 ]			&& exit 0
 
 tests="array config error event includes pkgconfig.sh string variable"
 failures=
-
-if $PKGCONFIG --exists python-2.7; then
+if $PKGCONFIG --exists "python-2.7"; then
 	tests="$tests python.sh"
 else
 	failures="$failures python.sh"
 fi
 
-$DATE > "$target"
-FAILED=
-echo "Performing tests:" 1>&2
-for test in $tests; do
-	_test "$test"
+while [ $# -ne 0 ]; do
+	target="$1"
+	shift
+
+	[ "$clean" -eq 0 ]					|| break
+
+	$DATE > "$target"
+	FAILED=
+	echo "Performing tests:" 1>&2
+	for test in $tests; do
+		_test "$test"
+	done
+	echo "Expected failures:" 1>&2
+	for test in $failures; do
+		_fail "$test"
+	done
+	if [ -n "$FAILED" ]; then
+		echo "Failed tests:$FAILED" 1>&2
+		exit 2
+	fi
+	echo "All tests completed" 1>&2
 done
-echo "Expected failures:" 1>&2
-for test in $failures; do
-	_fail "$test"
-done
-if [ -n "$FAILED" ]; then
-	echo "Failed tests:$FAILED" 1>&2
-	exit 2
-fi
-echo "All tests completed" 1>&2
+return 0
