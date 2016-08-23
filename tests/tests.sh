@@ -34,6 +34,17 @@ PKGCONFIG="pkg-config"
 
 
 #functions
+#date
+_date()
+{
+	if [ -n "$SOURCE_EPOCH" ]; then
+		$DATE -d "@$SOURCE_EPOCH" '+%a %b %d %T %Z %Y'
+	else
+		$DATE
+	fi
+}
+
+
 #fail
 _fail()
 {
@@ -120,7 +131,7 @@ while [ $# -ne 0 ]; do
 
 	[ "$clean" -eq 0 ]					|| break
 
-	$DATE > "$target"
+	_date > "$target"
 	FAILED=
 	echo "Performing tests:" 1>&2
 	for test in $tests; do
