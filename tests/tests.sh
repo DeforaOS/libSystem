@@ -117,8 +117,14 @@ if [ $# -eq 0 ]; then
 	exit $?
 fi
 
-tests="array config error event includes pkgconfig.sh string variable"
-failures=
+if [ -n "$PKG_CONFIG_SYSROOT_DIR" ]; then
+	#XXX cross-compiling
+	tests="pkgconfig.sh"
+	failures="array config error event includes pkgconfig.sh string variable"
+else
+	tests="array config error event includes pkgconfig.sh string variable"
+	failures=
+fi
 if $PKGCONFIG --exists "python-2.7"; then
 	tests="$tests python.sh"
 else
