@@ -120,7 +120,7 @@ fi
 if [ -n "$PKG_CONFIG_SYSROOT_DIR" ]; then
 	#XXX cross-compiling
 	tests="pkgconfig.sh"
-	failures="array config error event includes pkgconfig.sh string variable"
+	failures=
 else
 	tests="array config error event includes pkgconfig.sh string variable"
 	failures=
