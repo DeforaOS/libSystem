@@ -794,7 +794,8 @@ int variable_serialize(Variable * variable, Buffer * buffer, int type)
 	fprintf(stderr, "DEBUG: %s() %lu\n", __func__, size);
 #endif
 	if(size == 0 && variable->type != VT_NULL)
-		return -error_set_code(1, "Unable to serialize type %u", type);
+		return -error_set_code(1, "Unable to serialize type %u",
+				variable->type);
 	if(type)
 	{
 		/* prefix with the type */
