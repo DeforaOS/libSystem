@@ -46,6 +46,7 @@ struct _Variable
 		double d;
 		Buffer * buffer;
 		String * string;
+		Variable * variable;
 	} u;
 };
 
@@ -321,6 +322,13 @@ Variable * variable_new_deserialize_type(VariableType type, size_t * size,
 	if(b != NULL)
 		buffer_delete(b);
 	return v;
+}
+
+
+/* variable_new_pointer */
+Variable * variable_new_pointer(Variable * variable)
+{
+	return variable_new(VT_POINTER, variable);
 }
 
 
@@ -714,6 +722,9 @@ int variable_set_from(Variable * variable, VariableType type,
 #ifdef DEBUG
 			fprintf(stderr, "DEBUG: %s(\"%s\")\n", __func__, s);
 #endif
+			break;
+		case VT_POINTER:
+			variable->u.variable = (void *)value;
 			break;
 		default:
 			return -1;
