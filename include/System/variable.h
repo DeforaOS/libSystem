@@ -45,7 +45,8 @@ typedef enum _VariableType
 	VT_BUFFER,
 	VT_STRING,
 	VT_ARRAY,
-	VT_COMPOUND
+	VT_COMPOUND,
+	VT_POINTER
 } VariableType;
 
 typedef unsigned int VariableClass;
@@ -64,6 +65,7 @@ Variable * variable_new_deserialize_buffer(size_t * size,
 		Buffer const * buffer);
 Variable * variable_new_deserialize_type(VariableType type, size_t * size,
 		char const * data);
+Variable * variable_new_pointer(Variable * variable);
 void variable_delete(Variable * variable);
 
 
