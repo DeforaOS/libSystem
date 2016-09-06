@@ -18,6 +18,7 @@
 #ifndef LIBSYSTEM_SYSTEM_VARIABLE_H
 # define LIBSYSTEM_SYSTEM_VARIABLE_H
 
+# include <stdbool.h>
 # include <stdint.h>
 # include "buffer.h"
 # include "string.h"
@@ -83,6 +84,6 @@ int variable_set_from(Variable * variable, VariableType type,
 		void const * value);
 
 /* useful */
-int variable_serialize(Variable * variable, Buffer * buffer, int type);
+int variable_serialize(Variable * variable, Buffer * buffer, bool prefix);
 
 #endif /* !LIBSYSTEM_SYSTEM_VARIABLE_H */

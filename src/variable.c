@@ -719,7 +719,7 @@ int variable_set_from(Variable * variable, VariableType type,
 
 /* useful */
 /* variable_serialize */
-int variable_serialize(Variable * variable, Buffer * buffer, int type)
+int variable_serialize(Variable * variable, Buffer * buffer, bool prefix)
 {
 	size_t size = 0;
 	size_t offset;
@@ -796,7 +796,7 @@ int variable_serialize(Variable * variable, Buffer * buffer, int type)
 	if(size == 0 && variable->type != VT_NULL)
 		return -error_set_code(1, "Unable to serialize type %u",
 				variable->type);
-	if(type)
+	if(prefix)
 	{
 		/* prefix with the type */
 		u8 = variable->type;
