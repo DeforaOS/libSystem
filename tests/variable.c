@@ -54,6 +54,7 @@ static int _variable(char const * progname)
 			error_print(progname);
 			ret += 1;
 		}
+		printf("size: %zu\n", variable_get_size(variable));
 		variable_delete(variable);
 	}
 	return ret;
