@@ -72,6 +72,7 @@ void variable_delete(Variable * variable);
 /* accessors */
 int variable_get_as(Variable * variable, VariableType type, void * result);
 VariableClass variable_get_class(Variable * variable);
+size_t variable_get_size(Variable * variable);
 VariableType variable_get_type(Variable * variable);
 
 int variable_is_array(Variable * variable);

@@ -52,12 +52,12 @@ struct _Variable
 
 
 /* constants */
-#define VT_LAST VT_STRING
+#define VT_LAST VT_POINTER
 #define VT_COUNT (VT_LAST + 1)
 static const size_t _variable_sizes[VT_COUNT] = { 0, 1,
 	sizeof(int8_t), sizeof(uint8_t), sizeof(int16_t), sizeof(uint16_t),
 	sizeof(int32_t), sizeof(uint32_t), sizeof(int64_t), sizeof(uint64_t),
-	0, 0, sizeof(uint32_t), 0 };
+	sizeof(uint32_t), sizeof(uint64_t), 0, 0, 0, 0, sizeof(void *) };
 
 
 /* prototypes */
@@ -554,6 +554,36 @@ int variable_get_as(Variable * variable, VariableType type, void * result)
 	}
 	return -error_set_code(1, "Unable to convert from type %u to %u",
 			variable->type, type);
+}
+
+
+/* variable_get_size */
+size_t variable_get_size(Variable * variable)
+{
+	switch(variable->type)
+	{
+		case VT_NULL:
+		case VT_BOOL:
+		case VT_INT8:
+		case VT_UINT8:
+		case VT_INT16:
+		case VT_UINT16:
+		case VT_INT32:
+		case VT_UINT32:
+		case VT_INT64:
+		case VT_UINT64:
+		case VT_FLOAT:
+		case VT_DOUBLE:
+			return _variable_sizes[variable->type];
+		case VT_BUFFER:
+			return buffer_get_size(variable->u.buffer);
+		case VT_STRING:
+			return string_get_length(variable->u.string);
+		case VT_ARRAY:
+		case VT_COMPOUND:
+			/* FIXME implement */
+			return 0;
+	}
 }
 
 
