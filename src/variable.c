@@ -891,6 +891,7 @@ static void _variable_destroy(Variable * variable)
 		case VT_UINT64:
 		case VT_FLOAT:
 		case VT_DOUBLE:
+		case VT_POINTER:
 			break;
 		case VT_BUFFER:
 			buffer_delete(variable->u.buffer);
