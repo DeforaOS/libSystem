@@ -31,6 +31,7 @@
 struct _Variable
 {
 	VariableType type;
+	unsigned long refcnt;
 
 	union
 	{
@@ -77,6 +78,7 @@ Variable * variable_new(VariableType type, void const * value)
 		object_delete(variable);
 		return NULL;
 	}
+	variable->refcnt = 1;
 	return variable;
 }
 
@@ -330,6 +332,8 @@ Variable * variable_new_pointer(Variable * variable)
 /* variable_delete */
 void variable_delete(Variable * variable)
 {
+	if(--(variable->refcnt) > 0)
+		return;
 	_variable_destroy(variable);
 	object_delete(variable);
 }
@@ -754,6 +758,7 @@ int variable_set_from(Variable * variable, VariableType type,
 			break;
 		case VT_POINTER:
 			variable->u.variable = (void *)value;
+			variable->u.variable->refcnt++;
 			break;
 		default:
 			return -1;
@@ -885,13 +890,17 @@ static void _variable_destroy(Variable * variable)
 		case VT_UINT64:
 		case VT_FLOAT:
 		case VT_DOUBLE:
-		case VT_POINTER:
 			break;
 		case VT_BUFFER:
 			buffer_delete(variable->u.buffer);
 			break;
 		case VT_STRING:
 			string_delete(variable->u.string);
+			break;
+		case VT_POINTER:
+			if(variable->u.variable != NULL)
+				if(--(variable->u.variable->refcnt) == 0)
+					variable_delete(variable->u.variable);
 			break;
 	}
 }
