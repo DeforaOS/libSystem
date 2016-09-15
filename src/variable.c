@@ -71,6 +71,7 @@ Variable * variable_new(VariableType type, void const * value)
 
 	if((variable = object_new(sizeof(*variable))) == NULL)
 		return NULL;
+	variable->type = VT_NULL;
 	if(variable_set_from(variable, type, value) != 0)
 	{
 		object_delete(variable);
