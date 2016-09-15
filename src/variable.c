@@ -620,25 +620,25 @@ int variable_set(Variable * variable, Variable * from)
 		case VT_DOUBLE:
 			_variable_destroy(variable);
 			memcpy(&variable->u, &from->u, sizeof(from->u));
-			break;
+			variable->type = from->type;
+			return 0;
 		case VT_BUFFER:
 			if((b = buffer_new_copy(from->u.buffer)) == NULL)
 				return -1;
 			_variable_destroy(variable);
 			variable->u.buffer = b;
-			break;
+			variable->type = from->type;
+			return 0;
 		case VT_STRING:
 			if((s = string_new(from->u.string)) == NULL)
 				return -1;
 			_variable_destroy(variable);
 			variable->u.string = s;
-			break;
-		default:
-			/* FIXME implement */
-			return -error_set_code(-ENOSYS, "%s", strerror(ENOSYS));
+			variable->type = from->type;
+			return 0;
 	}
-	variable->type = from->type;
-	return 0;
+	/* FIXME implement more */
+	return -error_set_code(-ENOSYS, "%s", strerror(ENOSYS));
 }
 
 
