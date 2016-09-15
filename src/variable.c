@@ -579,11 +579,15 @@ size_t variable_get_size(Variable * variable)
 			return buffer_get_size(variable->u.buffer);
 		case VT_STRING:
 			return string_get_length(variable->u.string);
+		case VT_POINTER:
+			return sizeof(variable->u.variable);
+#if 0
+		/* FIXME implement: */
 		case VT_ARRAY:
 		case VT_COMPOUND:
-			/* FIXME implement */
-			return 0;
+#endif
 	}
+	return 0;
 }
 
 
