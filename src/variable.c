@@ -281,7 +281,7 @@ Variable * variable_new_deserialize_type(VariableType type, size_t * size,
 			free(p);
 			if(i32 != 1)
 			{
-				error_set_code(1, "Invalid float value", type);
+				error_set_code(1, "Invalid float value");
 				return NULL;
 			}
 			p = &f;
@@ -291,7 +291,7 @@ Variable * variable_new_deserialize_type(VariableType type, size_t * size,
 			free(p);
 			if(i32 != 1)
 			{
-				error_set_code(1, "Invalid double value", type);
+				error_set_code(1, "Invalid double value");
 				return NULL;
 			}
 			p = &d;
