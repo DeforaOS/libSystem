@@ -263,7 +263,11 @@ Variable * variable_new_deserialize_type(VariableType type, size_t * size,
 		case VT_NULL:
 			break;
 		case VT_BOOL:
-			u8 = u8 ? 1 : 0;
+			if((u8 & 0xfe) != 0x0)
+			{
+				error_set_code(1, "Invalid boolean value");
+				return NULL;
+			}
 			break;
 		case VT_INT8:
 		case VT_UINT8:
