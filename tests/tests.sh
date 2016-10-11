@@ -153,4 +153,4 @@ while [ $# -ne 0 ]; do
 	fi
 	echo "All tests completed" 1>&2
 done
-return 0
+exit 0
