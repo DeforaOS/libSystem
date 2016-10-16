@@ -136,6 +136,10 @@ int array_append(Array * array, void * value)
 	char * p;
 	uint64_t offset = array->size * array->count;
 
+	/* check for overflows */
+	if(UINT64_MAX - offset < array->size
+			|| offset + array->size > SIZE_T_MAX)
+		return -error_set_code(-ERANGE, "%s", strerror(ERANGE));
 	if((p = realloc(array->value, offset + array->size)) == NULL)
 		return error_set_code(-errno, "%s", strerror(errno));
 	array->value = p;
