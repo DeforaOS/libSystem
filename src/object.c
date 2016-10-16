@@ -29,7 +29,7 @@
 /* public */
 /* functions */
 /* object_new */
-void * object_new(size_t size)
+Object * object_new(size_t size)
 {
 	void * object;
 
@@ -46,7 +46,7 @@ void * object_new(size_t size)
 
 
 /* object_delete */
-void object_delete(void * object)
+void object_delete(Object * object)
 {
 #ifdef DEBUG
 	fprintf(stderr, "DEBUG: %s(%p)\n", __func__, object);
