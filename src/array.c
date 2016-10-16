@@ -153,7 +153,7 @@ int array_append(Array * array, void * value)
 int array_remove_pos(Array * array, size_t pos)
 {
 	if(pos >= array->count)
-		return 1;
+		return -error_set_code(-ERANGE, "%s", strerror(ERANGE));
 	array->count--; /* FIXME resize array? */
 	memmove(&array->value[pos * array->size],
 			&array->value[(pos + 1) * array->size],
