@@ -18,6 +18,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 #include <errno.h>
 #include "System/error.h"
 #include "System/object.h"
@@ -40,7 +41,6 @@ struct _Array
 Array * array_new(size_t size)
 {
 	Array * array;
-	uint64_t s = size;
 
 	if((array = object_new(sizeof(*array))) == NULL)
 		return NULL;
@@ -48,7 +48,7 @@ Array * array_new(size_t size)
 	array->size = size;
 	array->value = NULL;
 	/* check for overflows */
-	if(array->size != s)
+	if(UINT32_MAX < SIZE_T_MAX && size > UINT32_MAX)
 	{
 		object_delete(array);
 		return NULL;
@@ -104,18 +104,17 @@ int array_set(Array * array, size_t pos, void * value)
 	uint32_t p = pos + 1;
 	uint64_t offset;
 	uint64_t curpos;
-	size_t size;
 	void * q;
 
 	/* check for overflows */
-	if(p != pos + 1)
+	if(pos >= UINT32_MAX)
 		return -error_set_code(1, "%s", strerror(ERANGE));
 	offset = pos * array->size;
 	if(array->count < p)
 	{
 		/* grow the array */
-		size = offset + array->size;
-		if(size != offset + array->size)
+		if(UINT64_MAX - offset < array->size
+				|| offset + array->size > SIZE_T_MAX)
 			return -error_set_code(-ERANGE, "%s", strerror(ERANGE));
 		if((q = realloc(array->value, offset + array->size)) == NULL)
 			return -error_set_code(-errno, "%s", strerror(errno));
