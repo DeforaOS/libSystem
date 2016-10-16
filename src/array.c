@@ -42,18 +42,17 @@ Array * array_new(size_t size)
 {
 	Array * array;
 
+	/* check for overflows */
+	if(UINT32_MAX < SIZE_T_MAX && size > UINT32_MAX)
+	{
+		error_set_code(-ERANGE, "%s", strerror(ERANGE));
+		return NULL;
+	}
 	if((array = object_new(sizeof(*array))) == NULL)
 		return NULL;
 	array->count = 0;
 	array->size = size;
 	array->value = NULL;
-	/* check for overflows */
-	if(UINT32_MAX < SIZE_T_MAX && size > UINT32_MAX)
-	{
-		error_set_code(-ERANGE, "%s", strerror(ERANGE));
-		object_delete(array);
-		return NULL;
-	}
 	return array;
 }
 
