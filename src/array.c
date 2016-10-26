@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
-
+#include <sys/types.h>
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -43,7 +43,7 @@ Array * array_new(size_t size)
 	Array * array;
 
 	/* check for overflows */
-	if(UINT32_MAX < SIZE_T_MAX && size > UINT32_MAX)
+	if(UINT32_MAX < SIZE_MAX && size > UINT32_MAX)
 	{
 		error_set_code(-ERANGE, "%s", strerror(ERANGE));
 		return NULL;
@@ -114,7 +114,7 @@ int array_set(Array * array, size_t pos, void * value)
 	{
 		/* grow the array */
 		if(UINT64_MAX - offset < array->size
-				|| offset + array->size > SIZE_T_MAX)
+				|| offset + array->size > SIZE_MAX)
 			return -error_set_code(-ERANGE, "%s", strerror(ERANGE));
 		if((q = realloc(array->value, offset + array->size)) == NULL)
 			return -error_set_code(-errno, "%s", strerror(errno));
@@ -138,7 +138,7 @@ int array_append(Array * array, void * value)
 
 	/* check for overflows */
 	if(UINT64_MAX - offset < array->size
-			|| offset + array->size > SIZE_T_MAX)
+			|| offset + array->size > SIZE_MAX)
 		return -error_set_code(-ERANGE, "%s", strerror(ERANGE));
 	if((p = realloc(array->value, offset + array->size)) == NULL)
 		return error_set_code(-errno, "%s", strerror(errno));
