@@ -27,6 +27,7 @@ static char const _libsystem_event_name[] = "libSystem::Event";
 static char const _libsystem_mutator_name[] = "libSystem::Mutator";
 static char const _libsystem_plugin_name[] = "libSystem::Plugin";
 static char const _libsystem_plugin_symbol_name[] = "libSystem::Plugin::symbol";
+static char const _libsystem_string_name[] = "libSystem::String";
 
 
 /* prototypes */
@@ -65,6 +66,16 @@ static void _libsystem_plugin_delete(PyObject * self);
 
 static PyObject * _libsystem_plugin_lookup(PyObject * self, PyObject * args);
 
+/* String */
+static PyObject * _libsystem_string_new(PyObject * self, PyObject * args);
+
+static PyObject * _libsystem_string_get_length(PyObject * self,
+		PyObject * args);
+
+static PyObject * _libsystem_string_find(PyObject * self, PyObject * args);
+static PyObject * _libsystem_string_index(PyObject * self, PyObject * args);
+static PyObject * _libsystem_string_rindex(PyObject * self, PyObject * args);
+
 
 /* variables */
 static PyMethodDef _libsystem_methods[] =
@@ -99,6 +110,16 @@ static PyMethodDef _libsystem_methods[] =
 		"Opens a plug-in (or the current process)." },
 	{ "plugin_lookup", _libsystem_plugin_lookup, METH_VARARGS,
 		"Looks for a particular symbol with the Plugin object." },
+	{ "string_new", _libsystem_string_new, METH_VARARGS,
+		"Instantiates a String object." },
+	{ "string_get_length", _libsystem_string_get_length, METH_VARARGS,
+		"Returns the length of a string." },
+	{ "string_find", _libsystem_string_find, METH_VARARGS,
+		"Looks for the first occurence of a sub-string." },
+	{ "string_index", _libsystem_string_index, METH_VARARGS,
+		"Looks for the first occurence of a sub-string." },
+	{ "string_rindex", _libsystem_string_rindex, METH_VARARGS,
+		"Looks for the last occurence of a sub-string." },
 	{ NULL, NULL, 0, NULL }
 };
 
@@ -412,4 +433,91 @@ static PyObject * _libsystem_plugin_lookup(PyObject * self, PyObject * args)
 		/* XXX differentiate from a real error */
 		return NULL;
 	return PyCapsule_New(ret, _libsystem_plugin_symbol_name, NULL);
+}
+
+
+/* libsystem_string_new */
+static PyObject * _libsystem_string_new(PyObject * self, PyObject * args)
+{
+	String * string;
+	char const * p;
+	(void) self;
+
+	if(PyArg_ParseTuple(args, ""))
+	{
+		if((string = string_new("")) == NULL)
+			return NULL;
+	}
+	else if(!PyArg_ParseTuple(args, "s", &p))
+		return NULL;
+	else if((string = string_new(p)) == NULL)
+		return NULL;
+	return PyCapsule_New(string, _libsystem_string_name, NULL);
+}
+
+
+/* libsystem_string_get_length */
+static PyObject * _libsystem_string_get_length(PyObject * self, PyObject * args)
+{
+	int ret;
+	String * string;
+
+	if(!PyArg_ParseTuple(args, ""))
+		return NULL;
+	if((string = PyCapsule_GetPointer(self, _libsystem_string_name))
+			== NULL)
+		return NULL;
+	ret = string_get_length(string);
+	return Py_BuildValue("i", ret);
+}
+
+
+/* libsystem_string_find */
+static PyObject * _libsystem_string_find(PyObject * self, PyObject * args)
+{
+	char const * ret;
+	String * string;
+	char const * key;
+
+	if((string = PyCapsule_GetPointer(self, _libsystem_string_name))
+			== NULL)
+		return NULL;
+	if(!PyArg_ParseTuple(args, "s", &key))
+		return NULL;
+	ret = string_find(string, key);
+	return Py_BuildValue("s", ret);
+}
+
+
+/* libsystem_string_index */
+static PyObject * _libsystem_string_index(PyObject * self, PyObject * args)
+{
+	int ret;
+	String * string;
+	char const * key;
+
+	if((string = PyCapsule_GetPointer(self, _libsystem_string_name))
+			== NULL)
+		return NULL;
+	if(!PyArg_ParseTuple(args, "s", &key))
+		return NULL;
+	ret = string_index(string, key);
+	return Py_BuildValue("i", ret);
+}
+
+
+/* libsystem_string_rindex */
+static PyObject * _libsystem_string_rindex(PyObject * self, PyObject * args)
+{
+	int ret;
+	String * string;
+	char const * key;
+
+	if((string = PyCapsule_GetPointer(self, _libsystem_string_name))
+			== NULL)
+		return NULL;
+	if(!PyArg_ParseTuple(args, "s", &key))
+		return NULL;
+	ret = string_rindex(string, key);
+	return Py_BuildValue("i", ret);
 }
