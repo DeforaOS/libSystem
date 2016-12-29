@@ -112,6 +112,8 @@ _subst()
 		#create
 		source="${target#$OBJDIR}"
 		source="${source}.in"
+		([ -z "$OBJDIR" ] || $DEBUG $MKDIR -- "${target%/*}") \
+								|| return 2
 		$DEBUG $SED -e "s;@PACKAGE@;$PACKAGE;g" \
 			-e "s;@VERSION@;$VERSION;g" \
 			-e "s;@PREFIX@;$PREFIX;g" \
