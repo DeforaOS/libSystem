@@ -32,6 +32,7 @@ PROGNAME="tests.sh"
 DATE="date"
 GCOV="gcov"
 PKGCONFIG="pkg-config"
+RM="rm -f"
 
 
 #functions
@@ -43,6 +44,14 @@ _date()
 	else
 		$DATE
 	fi
+}
+
+
+#debug
+_debug()
+{
+	echo "$@" 1>&2
+	"$@"
 }
 
 
@@ -137,7 +146,12 @@ while [ $# -ne 0 ]; do
 	target="$1"
 	shift
 
-	[ "$clean" -eq 0 ]					|| break
+	if [ $clean -eq 1 ]; then
+		for test in $tests; do
+			$DEBUG $RM -- "$test.c.gcov" "$test.gcda" "$test.gcno"
+		done
+		break
+	fi
 
 	_date > "$target"
 	FAILED=
