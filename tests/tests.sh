@@ -30,6 +30,7 @@
 PROGNAME="tests.sh"
 #executables
 DATE="date"
+GCOV="gcov"
 PKGCONFIG="pkg-config"
 
 
@@ -58,15 +59,16 @@ _run()
 	test="$1"
 	sep=
 	[ $# -eq 1 ] || sep=" "
+	testexe="./$test"
+	[ -x "$OBJDIR$test" ] && testexe="$OBJDIR$test"
 
 	shift
 	echo -n "$test:" 1>&2
 	(echo
 	echo "Testing: $test" "$@"
-	testexe="./$test"
-	[ -x "$OBJDIR$test" ] && testexe="$OBJDIR$test"
 	LD_LIBRARY_PATH="$OBJDIR../src" "$testexe" "$@") 2>&1
 	res=$?
+	[ -f "$test.gcda" ] && LD_LIBRARY_PATH="$OBJDIR../src" $GCOV "$testexe" 2>&1
 	if [ $res -ne 0 ]; then
 		echo "Test: $test$sep$@: FAIL (error $res)"
 		echo " FAIL" 1>&2
