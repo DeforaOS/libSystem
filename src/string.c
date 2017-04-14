@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <limits.h>
 #include <errno.h>
 #include "System/error.h"
 #include "System/object.h"
@@ -106,9 +107,14 @@ String * string_new_length(String const * string, size_t length)
 #ifdef DEBUG
 	fprintf(stderr, "DEBUG: %s(\"%s\", %zu)\n", __func__, string, length);
 #endif
-	if((ret = object_new(++length)) == NULL)
+	if(length == SIZE_T_MAX)
+	{
+		error_set_code(-ERANGE, "%s", strerror(ERANGE));
 		return NULL;
-	snprintf(ret, length, "%s", (string != NULL) ? string : "");
+	}
+	if((ret = object_new(length + 1)) == NULL)
+		return NULL;
+	snprintf(ret, length + 1, "%s", (string != NULL) ? string : "");
 	return ret;
 }
 
