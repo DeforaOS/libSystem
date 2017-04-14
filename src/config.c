@@ -55,7 +55,7 @@ typedef struct _ConfigForeachSectionData
 typedef struct _ConfigSave
 {
 	FILE * fp;
-	char const * sep;
+	String const * sep;
 } ConfigSave;
 
 
@@ -78,11 +78,11 @@ void config_delete(Config * config)
 
 /* accessors */
 /* config_get */
-char const * config_get(Config * config, char const * section,
-		char const * variable)
+String const * config_get(Config * config, String const * section,
+		String const * variable)
 {
 	Mutator * mutator;
-	char const * value;
+	String const * value;
 
 	if(section == NULL)
 		section = "";
@@ -109,12 +109,12 @@ char const * config_get(Config * config, char const * section,
 
 
 /* config_set */
-int config_set(Config * config, char const * section, char const * variable,
-		char const * value)
+int config_set(Config * config, String const * section, String const * variable,
+		String const * value)
 {
 	Mutator * mutator;
-	char * p;
-	char * newvalue = NULL;
+	String * p;
+	String * newvalue = NULL;
 
 #ifdef DEBUG
 	fprintf(stderr, "DEBUG: %s(\"%s\", \"%s\", \"%s\")\n", __func__,
@@ -155,7 +155,7 @@ int config_set(Config * config, char const * section, char const * variable,
 
 /* useful */
 /* config_foreach */
-static void _foreach_callback(char const * key, void * value, void * data);
+static void _foreach_callback(String const * key, void * value, void * data);
 
 void config_foreach(Config * config, ConfigForeachCallback callback,
 		void * priv)
@@ -167,7 +167,7 @@ void config_foreach(Config * config, ConfigForeachCallback callback,
 	mutator_foreach(config, _foreach_callback, &data);
 }
 
-static void _foreach_callback(char const * key, void * value, void * data)
+static void _foreach_callback(String const * key, void * value, void * data)
 {
 	ConfigForeachData * priv = data;
 	(void) value;
@@ -177,10 +177,10 @@ static void _foreach_callback(char const * key, void * value, void * data)
 
 
 /* config_foreach_section */
-static void _foreach_section_callback(char const * key, void * value,
+static void _foreach_section_callback(String const * key, void * value,
 		void * data);
 
-void config_foreach_section(Config * config, char const * section,
+void config_foreach_section(Config * config, String const * section,
 		ConfigForeachSectionCallback callback, void * priv)
 {
 	Mutator * mutator;
@@ -193,7 +193,7 @@ void config_foreach_section(Config * config, char const * section,
 	mutator_foreach(mutator, _foreach_section_callback, &data);
 }
 
-static void _foreach_section_callback(char const * key, void * value,
+static void _foreach_section_callback(String const * key, void * value,
 		void * data)
 {
 	ConfigForeachSectionData * priv = data;
@@ -208,7 +208,7 @@ static String * _load_section(FILE * fp);
 static String * _load_variable(FILE * fp, int c);
 static String * _load_value(FILE * fp);
 
-int config_load(Config * config, char const * filename)
+int config_load(Config * config, String const * filename)
 {
 	int ret = 0;
 	size_t line;
@@ -270,9 +270,9 @@ static int _load_isprint(int c)
 static String * _load_section(FILE * fp)
 {
 	int c;
-	char * str = NULL;
+	String * str = NULL;
 	size_t len = 0;
-	char * p;
+	String * p;
 
 	while((c = fgetc(fp)) != EOF && c != ']' && _load_isprint(c))
 	{
@@ -325,7 +325,7 @@ static String * _load_value(FILE * fp)
 	int c;
 	String * str = NULL;
 	size_t len = 0;
-	char * p;
+	String * p;
 
 	while((c = fgetc(fp)) != EOF && _load_isprint(c))
 	{
@@ -454,12 +454,12 @@ static void _delete_foreach_section(String const * key, void * value,
 
 
 /* config_save */
-static void _save_foreach_default(char const * section, void * value,
+static void _save_foreach_default(String const * section, void * value,
 		void * data);
-static void _save_foreach(char const * section, void * value, void * data);
-static void _save_foreach_section(char const * key, void * value, void * data);
+static void _save_foreach(String const * section, void * value, void * data);
+static void _save_foreach_section(String const * key, void * value, void * data);
 
-int config_save(Config * config, char const * filename)
+int config_save(Config * config, String const * filename)
 {
 	ConfigSave save;
 
@@ -481,7 +481,7 @@ int config_save(Config * config, char const * filename)
 	return 0;
 }
 
-static void _save_foreach_default(char const * section, void * value,
+static void _save_foreach_default(String const * section, void * value,
 		void * data)
 {
 	ConfigSave * save = data;
@@ -494,7 +494,7 @@ static void _save_foreach_default(char const * section, void * value,
 	mutator_foreach(mutator, _save_foreach_section, save);
 }
 
-static void _save_foreach(char const * section, void * value, void * data)
+static void _save_foreach(String const * section, void * value, void * data)
 {
 	ConfigSave * save = data;
 	Mutator * mutator = value;
@@ -513,10 +513,10 @@ static void _save_foreach(char const * section, void * value, void * data)
 	mutator_foreach(mutator, _save_foreach_section, save);
 }
 
-static void _save_foreach_section(char const * key, void * value, void * data)
+static void _save_foreach_section(String const * key, void * value, void * data)
 {
 	ConfigSave * save = data;
-	char const * val = value;
+	String const * val = value;
 
 	if(save->fp == NULL)
 		return;
