@@ -35,7 +35,7 @@ String * string_new(String const * string)
 
 	if(string == NULL)
 	{
-		error_set_code(1, "%s", strerror(EINVAL));
+		error_set_code(-EINVAL, "%s", strerror(EINVAL));
 		return NULL;
 	}
 	if(string_set(&ret, string) != 0)
@@ -80,7 +80,7 @@ String * string_new_format(String const * format, ...)
 	va_end(ap);
 	if(len < 0)
 	{
-		error_set_code(1, "%s", strerror(errno));
+		error_set_code(-errno, "%s", strerror(errno));
 		return NULL;
 	}
 	s = (size_t)len + 1;
@@ -89,7 +89,7 @@ String * string_new_format(String const * format, ...)
 	va_start(ap, format);
 	if(vsnprintf(ret, s, format, ap) != len)
 	{
-		error_set_code(1, "%s", strerror(errno));
+		error_set_code(-errno, "%s", strerror(errno));
 		object_delete(ret);
 		ret = NULL;
 	}
@@ -185,7 +185,7 @@ int string_append(String ** string, String const * append)
 	size_t alength;
 
 	if(append == NULL)
-		return error_set_code(1, "%s", strerror(EINVAL));
+		return error_set_code(-EINVAL, "%s", strerror(EINVAL));
 	if((alength = string_get_length(append)) == 0)
 		return 0;
 	if(object_resize((Object**)string, slength + alength + 1) != 0)
@@ -267,7 +267,7 @@ String ** string_explode(String const * string, String const * separator)
 #endif
 	if(separator == NULL || (l = string_get_length(separator)) == 0)
 	{
-		error_set_code(1, "%s", strerror(EINVAL));
+		error_set_code(-EINVAL, "%s", strerror(EINVAL));
 		return NULL;
 	}
 	for(i = 0;; i += j + l)
