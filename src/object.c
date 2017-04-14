@@ -33,9 +33,14 @@ Object * object_new(size_t size)
 {
 	void * object;
 
-	if(size == 0 || (object = malloc(size)) == NULL)
+	if(size == 0)
 	{
-		error_set_code(1, "%s", strerror((size == 0) ? EINVAL : errno));
+		error_set_code(-EINVAL, "%s", strerror(EINVAL));
+		return NULL;
+	}
+	if((object = malloc(size)) == NULL)
+	{
+		error_set_code(-errno, "%s", strerror(errno));
 		return NULL;
 	}
 #ifdef DEBUG
@@ -61,7 +66,7 @@ int object_resize(Object ** object, size_t size)
 	void * p;
 
 	if((p = realloc(*object, size)) == NULL)
-		return error_set_code(1, "%s", strerror(errno));
+		return error_set_code(-errno, "%s", strerror(errno));
 	*object = p;
 #ifdef DEBUG
 	fprintf(stderr, "DEBUG: %s(&%p, %zu) => %p\n", __func__, *object, size,
