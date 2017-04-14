@@ -28,7 +28,7 @@ typedef char String;
 
 /* macros */
 /* XXX for compatibility */
-#define string_length(a) string_get_length(a)
+# define string_length(a) string_get_length(a)
 
 
 /* functions */
@@ -41,6 +41,8 @@ String * string_new_replace(String const * string, String const * what,
 void string_delete(String * string);
 
 /* accessors */
+String const * string_get(String const * string);
+# define string_get(a) (a)
 size_t string_get_length(String const * string);
 size_t string_get_size(String const * string);
 

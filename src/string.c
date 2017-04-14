@@ -138,6 +138,15 @@ void string_delete(String * string)
 
 
 /* accessors */
+/* string_get */
+# undef string_get
+String const * string_get(String const * string)
+{
+	return string;
+}
+# define string_get(a) (a)
+
+
 /* string_get_length */
 size_t string_get_length(String const * string)
 {
