@@ -31,6 +31,8 @@ static int _test3(String const * string, String * ltrim, int lcount);
 static int _test4(String const * string, String * trim, int count);
 static int _test5(String const * string, String const * key, ssize_t expected);
 static int _test6(String const * string, String const * key, ssize_t expected);
+static int _test7(String const * string, size_t length,
+		String const * expected);
 
 
 /* functions */
@@ -155,6 +157,27 @@ static int _test6(String const * string, String const * key, ssize_t expected)
 }
 
 
+/* test7 */
+static int _test7(String const * string, size_t length,
+		String const * expected)
+{
+	int ret = 0;
+	String * s;
+
+	printf("%s: Testing %s\n", PROGNAME, "string_new_length()");
+	if((s = string_new_length(string, length)) == NULL)
+		return 2;
+	if(string_compare(s, expected) != 0)
+	{
+		printf("%s: %s, %zu, \"%s\": Test failed (expected: \"%s\")\n",
+				PROGNAME, string, length, s, expected);
+		ret = 2;
+	}
+	string_delete(s);
+	return ret;
+}
+
+
 /* main */
 int main(int argc, char * argv[])
 {
@@ -224,5 +247,12 @@ int main(int argc, char * argv[])
 	ret |= _test6("2test", "test", 1);
 	ret |= _test6("2test2", "test", 1);
 	ret |= _test6("2test2test2", "test", 6);
+	/* test7 */
+	ret |= _test7(NULL, 0, "");
+	ret |= _test7(NULL, 7, "");
+	ret |= _test7("test", 0, "");
+	ret |= _test7("test", 1, "t");
+	ret |= _test7("test", 4, "test");
+	ret |= _test7("test", 7, "test");
 	return ret;
 }
