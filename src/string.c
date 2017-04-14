@@ -108,7 +108,7 @@ String * string_new_length(String const * string, size_t length)
 #endif
 	if((ret = object_new(++length)) == NULL)
 		return NULL;
-	snprintf(ret, length, "%s", string);
+	snprintf(ret, length, "%s", (string != NULL) ? string : "");
 	return ret;
 }
 
