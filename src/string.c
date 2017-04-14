@@ -175,10 +175,9 @@ int string_set(String ** string, String const * string2)
 {
 	size_t len = string_get_length(string2);
 
-	if(object_resize((Object**)string, len + 1) != 0)
+	if(object_resize((Object **)string, len + 1) != 0)
 		return 1;
-	strncpy(*string, string2, len);
-	(*string)[len] = '\0';
+	strcpy(*string, string2);
 	return 0;
 }
 
