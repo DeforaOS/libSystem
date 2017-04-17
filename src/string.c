@@ -76,6 +76,11 @@ String * string_new_format(String const * format, ...)
 	int len;
 	size_t s;
 
+	if(format == NULL)
+	{
+		error_set_code(-EINVAL, "%s", strerror(EINVAL));
+		return NULL;
+	}
 	va_start(ap, format);
 	len = vsnprintf(NULL, 0, format, ap);
 	va_end(ap);
