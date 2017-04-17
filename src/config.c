@@ -279,10 +279,7 @@ static String * _load_section(FILE * fp)
 	{
 		buf[0] = c;
 		if(string_append(&str, buf) != 0)
-		{
-			string_delete(str);
-			return NULL;
-		}
+			break;
 	}
 	if(c != ']')
 	{
@@ -304,10 +301,7 @@ static String * _load_variable(FILE * fp, int c)
 	{
 		buf[0] = c;
 		if(string_append(&str, buf) != 0)
-		{
-			string_delete(str);
-			return NULL;
-		}
+			break;
 	}
 	if(c != '=')
 	{
@@ -327,10 +321,7 @@ static String * _load_value(FILE * fp)
 	{
 		buf[0] = c;
 		if(string_append(&str, buf) != 0)
-		{
-			string_delete(str);
-			return NULL;
-		}
+			break;
 	}
 	if(c != EOF && c != '\n')
 	{
