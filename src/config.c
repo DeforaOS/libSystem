@@ -270,28 +270,25 @@ static int _load_isprint(int c)
 static String * _load_section(FILE * fp)
 {
 	int c;
-	String * str = NULL;
-	size_t len = 0;
-	String * p;
+	String * str;
+	String buf[2] = "\0";
 
+	if((str = string_new("")) == NULL)
+		return NULL;
 	while((c = fgetc(fp)) != EOF && c != ']' && _load_isprint(c))
 	{
-		if((p = realloc(str, sizeof(*str) * (len + 2))) == NULL)
+		buf[0] = c;
+		if(string_append(&str, buf) != 0)
 		{
-			free(str);
+			string_delete(str);
 			return NULL;
 		}
-		str = p;
-		str[len++] = c;
 	}
 	if(c != ']')
 	{
-		free(str);
+		string_delete(str);
 		return NULL;
 	}
-	if(str == NULL)
-		return string_new("");
-	str[len] = '\0';
 	return str;
 }
 
@@ -324,27 +321,24 @@ static String * _load_value(FILE * fp)
 {
 	int c;
 	String * str = NULL;
-	size_t len = 0;
-	String * p;
+	String buf[2] = "\0";
 
 	while((c = fgetc(fp)) != EOF && _load_isprint(c))
 	{
-		if((p = realloc(str, sizeof(*str) * (len + 2))) == NULL)
+		buf[0] = c;
+		if(string_append(&str, buf) != 0)
 		{
-			free(str);
+			string_delete(str);
 			return NULL;
 		}
-		str = p;
-		str[len++] = c;
 	}
 	if(c != EOF && c != '\n')
 	{
-		free(str);
+		string_delete(str);
 		return NULL;
 	}
 	if(str == NULL)
 		return string_new("");
-	str[len] = '\0';
 	return str;
 }
 
