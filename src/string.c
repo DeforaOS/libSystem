@@ -112,7 +112,7 @@ String * string_new_length(String const * string, size_t length)
 #ifdef DEBUG
 	fprintf(stderr, "DEBUG: %s(\"%s\", %zu)\n", __func__, string, length);
 #endif
-	if(length == SIZE_T_MAX)
+	if(length + 1 == 0)
 	{
 		error_set_code(-ERANGE, "%s", strerror(ERANGE));
 		return NULL;
