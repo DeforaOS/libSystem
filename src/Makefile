@@ -11,6 +11,7 @@ CFLAGS	= -W -Wall -g -O2 -D_FORTIFY_SOURCE=2 -fstack-protector
 LDFLAGSF= 
 EXEEXT	=
 AR	= ar
+ARFLAGS	= -rc
 RANLIB	= ranlib
 CCSHARED= $(CC) -shared
 SOEXT	= .so
@@ -27,7 +28,7 @@ libSystem_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
 libSystem_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)  
 
 $(OBJDIR)libSystem.a: $(libSystem_OBJS)
-	$(AR) -rc $(OBJDIR)libSystem.a $(libSystem_OBJS)
+	$(AR) $(ARFLAGS) $(OBJDIR)libSystem.a $(libSystem_OBJS)
 	$(RANLIB) $(OBJDIR)libSystem.a
 
 $(OBJDIR)libSystem$(SOEXT).0.0: $(libSystem_OBJS)
