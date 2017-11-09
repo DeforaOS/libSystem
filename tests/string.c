@@ -178,6 +178,46 @@ static int _test7(String const * string, size_t length,
 }
 
 
+/* test8 */
+static int _test8(String const * string, String const * expected)
+{
+	int ret = 0;
+	String * s;
+
+	printf("%s: Testing %s\n", PROGNAME, "string_tolower()");
+	if((s = string_new(string)) == NULL)
+		return 2;
+	string_tolower(s);
+	if(string_compare(s, expected) != 0)
+	{
+		printf("%s: %s, \"%s\": Test failed (expected: \"%s\")\n",
+				PROGNAME, string, s, expected);
+		ret = 2;
+	}
+	return ret;
+}
+
+
+/* test9 */
+static int _test9(String const * string, String const * expected)
+{
+	int ret = 0;
+	String * s;
+
+	printf("%s: Testing %s\n", PROGNAME, "string_toupper()");
+	if((s = string_new(string)) == NULL)
+		return 2;
+	string_toupper(s);
+	if(string_compare(s, expected) != 0)
+	{
+		printf("%s: %s, \"%s\": Test failed (expected: \"%s\")\n",
+				PROGNAME, string, s, expected);
+		ret = 2;
+	}
+	return ret;
+}
+
+
 /* main */
 int main(int argc, char * argv[])
 {
@@ -254,5 +294,11 @@ int main(int argc, char * argv[])
 	ret |= _test7("test", 1, "t");
 	ret |= _test7("test", 4, "test");
 	ret |= _test7("test", 7, "test");
+	/* test8 */
+	ret |= _test8("abcABC", "abcabc");
+	ret |= _test8("abcABC123", "abcabc123");
+	/* test9 */
+	ret |= _test9("abcABC", "ABCABC");
+	ret |= _test9("abcABC123", "ABCABC123");
 	return ret;
 }
