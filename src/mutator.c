@@ -115,6 +115,8 @@ int mutator_reset(Mutator * mutator)
 static void _reset_foreach(String const * key, void * value, void * data)
 {
 	String * k = (String *)key;
+	(void) value;
+	(void) data;
 
 	string_delete(k);
 }
