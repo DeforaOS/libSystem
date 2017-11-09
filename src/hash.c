@@ -134,14 +134,14 @@ int hash_compare_string(void const * value1, void const * value2)
 
 /* accessors */
 /* hash_count */
-size_t hash_count(Hash * hash)
+size_t hash_count(Hash const * hash)
 {
 	return array_count(hash->entries);
 }
 
 
 /* hash_get */
-void * hash_get(Hash * hash, void const * key)
+void * hash_get(Hash const * hash, void const * key)
 {
 	unsigned int h;
 	size_t i;
@@ -163,11 +163,11 @@ void * hash_get(Hash * hash, void const * key)
 
 
 /* hash_get_key */
-void * hash_get_key(Hash * hash, void const * key)
+void * hash_get_key(Hash const * hash, void const * key)
 {
 	unsigned int h;
 	size_t i;
-	HashEntry * he;
+	HashEntry const * he;
 
 	h = (hash->func != NULL) ? hash->func(key) : 0;
 	for(i = array_count(hash->entries); i > 0; i--)
@@ -224,7 +224,7 @@ struct funcdata
 	void * data;
 };
 
-void hash_foreach(Hash * hash, HashForeach func, void * data)
+void hash_foreach(Hash const * hash, HashForeach func, void * data)
 {
 	struct funcdata fd;
 

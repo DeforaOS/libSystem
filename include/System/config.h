@@ -35,15 +35,15 @@ Config * config_new(void);
 void config_delete(Config * config);
 
 /* accessors */
-String const * config_get(Config * config, String const * section,
+String const * config_get(Config const * config, String const * section,
 		String const * variable);
 int config_set(Config * config, String const * section, String const * variable,
 		String const * value);
 
 /* useful */
-void config_foreach(Config * config, ConfigForeachCallback callback,
+void config_foreach(Config const * config, ConfigForeachCallback callback,
 		void * priv);
-void config_foreach_section(Config * config, String const * section,
+void config_foreach_section(Config const * config, String const * section,
 		ConfigForeachSectionCallback callback, void * priv);
 
 int config_load(Config * config, String const * filename);
@@ -57,8 +57,8 @@ int config_load_preferences_user(Config * config, String const * vendor,
 
 int config_reset(Config * config);
 
-int config_save(Config * config, String const * filename);
-int config_save_preferences_user(Config * config, String const * vendor,
+int config_save(Config const * config, String const * filename);
+int config_save_preferences_user(Config const * config, String const * vendor,
 		String const * package, String const * filename);
 
 #endif /* !LIBSYSTEM_SYSTEM_CONFIG_H */

@@ -42,14 +42,14 @@ void mutator_delete(Mutator * mutator)
 
 /* accessors */
 /* mutator_count */
-size_t mutator_count(Mutator * mutator)
+size_t mutator_count(Mutator const * mutator)
 {
 	return hash_count(mutator);
 }
 
 
 /* mutator_get */
-void * mutator_get(Mutator * mutator, String const * key)
+void * mutator_get(Mutator const * mutator, String const * key)
 {
 	void * ret;
 
@@ -96,7 +96,7 @@ int mutator_set(Mutator * mutator, String const * key, void * value)
 
 
 /* useful */
-void mutator_foreach(Mutator * mutator, MutatorForeach func, void * data)
+void mutator_foreach(Mutator const * mutator, MutatorForeach func, void * data)
 {
 	hash_foreach(mutator, (HashForeach)func, data);
 }

@@ -33,12 +33,12 @@ Mutator * mutator_new(void);
 void mutator_delete(Mutator * mutator);
 
 /* accessors */
-void * mutator_get(Mutator * mutator, String const * key);
+void * mutator_get(Mutator const * mutator, String const * key);
 int mutator_set(Mutator * mutator, String const * key, void * value);
-size_t mutator_count(Mutator * mutator);
+size_t mutator_count(Mutator const * mutator);
 
 /* useful */
-void mutator_foreach(Mutator * mutator, MutatorForeach func, void * data);
+void mutator_foreach(Mutator const * mutator, MutatorForeach func, void * data);
 int mutator_reset(Mutator * mutator);
 
 #endif /* !LIBSYSTEM_SYSTEM_MUTATOR_H */

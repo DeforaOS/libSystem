@@ -39,13 +39,13 @@ extern unsigned int hash_func_string(void const * value);
 extern int hash_compare_string(void const * value1, void const * value2);
 
 /* accessors */
-void * hash_get(Hash * h, void const * key);
-void * hash_get_key(Hash * h, void const * key);
+void * hash_get(Hash const * h, void const * key);
+void * hash_get_key(Hash const * h, void const * key);
 int hash_set(Hash * h, void const * key, void * value);
-size_t hash_count(Hash * hash);
+size_t hash_count(Hash const * hash);
 
 /* useful */
-void hash_foreach(Hash * hash, HashForeach func, void * data);
+void hash_foreach(Hash const * hash, HashForeach func, void * data);
 int hash_reset(Hash * hash);
 
 #endif /* !LIBSYSTEM_SYSTEM_HASH_H */
