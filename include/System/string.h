@@ -69,4 +69,7 @@ size_t string_ltrim(String * string, String const * which);
 size_t string_rtrim(String * string, String const * which);
 size_t string_trim(String * string, String const * which);
 
+void string_tolower(String * string);
+void string_toupper(String * string);
+
 #endif /* !LIBSYSTEM_SYSTEM_STRING_H */

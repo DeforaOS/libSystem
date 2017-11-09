@@ -457,6 +457,26 @@ size_t string_rtrim(String * string, String const * which)
 }
 
 
+/* string_tolower */
+void string_tolower(String * string)
+{
+	size_t i;
+
+	for(i = string_get_length(string); i > 0; i--)
+		string[i - 1] = tolower((unsigned char)string[i - 1]);
+}
+
+
+/* string_toupper */
+void string_toupper(String * string)
+{
+	size_t i;
+
+	for(i = string_get_length(string); i > 0; i--)
+		string[i - 1] = toupper((unsigned char)string[i - 1]);
+}
+
+
 /* string_trim */
 size_t string_trim(String * string, String const * which)
 {
