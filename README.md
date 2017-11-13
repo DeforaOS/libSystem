@@ -23,15 +23,6 @@ To install libSystem in a dedicated directory, like `/path/to/libSystem`:
     $ make PREFIX="/path/to/libSystem" install
 
 
-Platform-specific notes
------------------------
-
-On some GNU/Linux distributions, it may be necessary to link libSystem to libdl
-explicitly:
-
-    $ make LDFLAGS="-ldl"
-
-
 Generating Makefiles
 --------------------
 
