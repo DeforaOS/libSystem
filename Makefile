@@ -127,6 +127,7 @@ dist:
 		$(PACKAGE)-$(VERSION)/tools/configctl.c \
 		$(PACKAGE)-$(VERSION)/tools/COPYING \
 		$(PACKAGE)-$(VERSION)/tools/Makefile \
+		$(PACKAGE)-$(VERSION)/tools/platform.sh \
 		$(PACKAGE)-$(VERSION)/tools/subst.sh \
 		$(PACKAGE)-$(VERSION)/tools/project.conf \
 		$(PACKAGE)-$(VERSION)/Makefile \
