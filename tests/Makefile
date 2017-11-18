@@ -1,4 +1,4 @@
-TARGETS	= $(OBJDIR)array$(EXEEXT) $(OBJDIR)config$(EXEEXT) $(OBJDIR)error$(EXEEXT) $(OBJDIR)event$(EXEEXT) $(OBJDIR)includes$(EXEEXT) $(OBJDIR)pylint.log $(OBJDIR)string$(EXEEXT) $(OBJDIR)variable$(EXEEXT) $(OBJDIR)tests.log
+TARGETS	= $(OBJDIR)array$(EXEEXT) $(OBJDIR)clint.log $(OBJDIR)config$(EXEEXT) $(OBJDIR)error$(EXEEXT) $(OBJDIR)event$(EXEEXT) $(OBJDIR)includes$(EXEEXT) $(OBJDIR)pylint.log $(OBJDIR)string$(EXEEXT) $(OBJDIR)variable$(EXEEXT) $(OBJDIR)tests.log
 OBJDIR	=
 PREFIX	= /usr/local
 DESTDIR	=
@@ -26,6 +26,9 @@ array_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 
 $(OBJDIR)array$(EXEEXT): $(array_OBJS)
 	$(CC) -o $(OBJDIR)array$(EXEEXT) $(array_OBJS) $(array_LDFLAGS)
+
+$(OBJDIR)clint.log: clint.sh
+	./clint.sh -O CPPFLAGS="-I../include `pkg-config --cflags python-2.7`" -P "$(PREFIX)" -- "$(OBJDIR)clint.log"
 
 config_OBJS = $(OBJDIR)config.o
 config_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
@@ -97,7 +100,8 @@ $(OBJDIR)variable.o: variable.c ../src/variable.c
 	$(CC) $(variable_CFLAGS) -o $(OBJDIR)variable.o -c variable.c
 
 clean:
-	$(RM) -- $(array_OBJS) $(config_OBJS) $(error_OBJS) $(event_OBJS) $(includes_OBJS) $(pylint.log_OBJS) $(string_OBJS) $(variable_OBJS) $(tests.log_OBJS)
+	$(RM) -- $(array_OBJS) $(clint.log_OBJS) $(config_OBJS) $(error_OBJS) $(event_OBJS) $(includes_OBJS) $(pylint.log_OBJS) $(string_OBJS) $(variable_OBJS) $(tests.log_OBJS)
+	./clint.sh -O CPPFLAGS="-I../include `pkg-config --cflags python-2.7`" -c -P "$(PREFIX)" -- "$(OBJDIR)clint.log"
 	./pylint.sh -c -P "$(PREFIX)" -- "$(OBJDIR)pylint.log"
 	./tests.sh -c -P "$(PREFIX)" -- "$(OBJDIR)tests.log"
 

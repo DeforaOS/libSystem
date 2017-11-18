@@ -118,6 +118,7 @@ dist:
 		$(PACKAGE)-$(VERSION)/tests/variable.c \
 		$(PACKAGE)-$(VERSION)/tests/COPYING \
 		$(PACKAGE)-$(VERSION)/tests/Makefile \
+		$(PACKAGE)-$(VERSION)/tests/clint.sh \
 		$(PACKAGE)-$(VERSION)/tests/config.conf \
 		$(PACKAGE)-$(VERSION)/tests/config-noeol.conf \
 		$(PACKAGE)-$(VERSION)/tests/pkgconfig.sh \
