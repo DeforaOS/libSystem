@@ -158,6 +158,16 @@ String
 @Returns: 
 
 
+<!-- ##### FUNCTION string_new_format ##### -->
+<para>
+
+</para>
+
+@format: 
+@...: 
+@Returns: 
+
+
 <!-- ##### FUNCTION string_new_length ##### -->
 <para>
 

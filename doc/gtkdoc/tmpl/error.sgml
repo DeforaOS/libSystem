@@ -25,7 +25,7 @@ Error
 
 </para>
 
-@void: 
+@code: 
 @Returns: 
 
 
@@ -34,7 +34,7 @@ Error
 
 </para>
 
-@code: 
+@void: 
 @Returns: 
 
 
