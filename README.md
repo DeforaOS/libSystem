@@ -28,7 +28,7 @@ Generating Makefiles
 
 Alternatively, it is possible to re-generate the Makefiles for the current
 platform with `configure(1)` from the DeforaOS configure project, found at
-<http://www.defora.org/os/project/16/configure>. The procedure is then as
+<https://www.defora.org/os/project/16/configure>. The procedure is then as
 follows:
 
     $ configure
@@ -39,7 +39,7 @@ instructions.
 
 A default set of Makefiles is provided with this project in order to avoid a
 circular dependency, as DeforaOS configure depends on libSystem itself. The
-Makefiles provided target the NetBSD Operating System <http://www.netbsd.org/>
+Makefiles provided target the NetBSD Operating System <https://www.netbsd.org/>
 by default.
 
 
