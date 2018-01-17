@@ -115,7 +115,7 @@ int buffer_set_size(Buffer * buffer, size_t size)
 	char * p;
 
 	if((p = realloc(buffer->data, size)) == NULL && size != 0)
-		return -error_set_code(1, "%s", strerror(errno));
+		return error_set_code(-errno, "%s", strerror(errno));
 	buffer->data = p;
 	if(size > buffer->size)
 		memset(&buffer->data[buffer->size], 0, size - buffer->size);
