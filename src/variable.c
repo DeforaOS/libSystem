@@ -379,6 +379,13 @@ int variable_get_as(Variable * variable, VariableType type, void * result)
 			else if(variable->type == VT_UINT32
 					&& variable->u.uint32 < (1 << 7))
 				i8 = variable->u.uint32;
+			else if(variable->type == VT_INT64
+					&& variable->u.int64 >= -128
+					&& variable->u.int64 < (1 << 7))
+				i8 = variable->u.int64;
+			else if(variable->type == VT_UINT64
+					&& variable->u.uint64 < (1 << 7))
+				i8 = variable->u.uint64;
 			else
 				/* FIXME implement more conversions */
 				break;
@@ -410,6 +417,13 @@ int variable_get_as(Variable * variable, VariableType type, void * result)
 					&& variable->u.uint32
 					< (1 << 8))
 				u8 = variable->u.uint32;
+			else if(variable->type == VT_INT64
+					&& variable->u.int64 >= 0
+					&& variable->u.int64 < (1 << 8))
+				u8 = variable->u.int64;
+			else if(variable->type == VT_UINT64
+					&& variable->u.uint64 < (1 << 8))
+				u8 = variable->u.uint64;
 			else
 				/* FIXME implement more conversions */
 				break;
@@ -429,6 +443,20 @@ int variable_get_as(Variable * variable, VariableType type, void * result)
 				i16 = variable->u.int8;
 			else if(variable->type == VT_UINT8)
 				i16 = variable->u.uint8;
+			else if(variable->type == VT_INT32
+					&& variable->u.int32 >= -32768
+					&& variable->u.int32 < (1 << 15))
+				i16 = variable->u.int32;
+			else if(variable->type == VT_UINT32
+					&& variable->u.uint32 < (1 << 15))
+				i16 = variable->u.uint32;
+			else if(variable->type == VT_INT64
+					&& variable->u.int64 >= -32768
+					&& variable->u.int64 < (1 << 15))
+				i16 = variable->u.int64;
+			else if(variable->type == VT_UINT64
+					&& variable->u.uint64 < (1 << 15))
+				i16 = variable->u.uint64;
 			else
 				/* FIXME implement more conversions */
 				break;
@@ -448,6 +476,20 @@ int variable_get_as(Variable * variable, VariableType type, void * result)
 				u16 = variable->u.int8;
 			else if(variable->type == VT_UINT8)
 				u16 = variable->u.uint8;
+			else if(variable->type == VT_INT32
+					&& variable->u.int32 >= 0
+					&& variable->u.int32 < (1 << 16))
+				u16 = variable->u.int32;
+			else if(variable->type == VT_UINT32
+					&& variable->u.uint32 < (1 << 16))
+				u16 = variable->u.uint32;
+			else if(variable->type == VT_INT64
+					&& variable->u.int64 >= 0
+					&& variable->u.int64 < (1 << 16))
+				u16 = variable->u.int64;
+			else if(variable->type == VT_UINT64
+					&& variable->u.uint64 < (1 << 16))
+				u16 = variable->u.uint64;
 			else
 				/* FIXME implement more conversions */
 				break;
