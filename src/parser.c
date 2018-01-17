@@ -44,6 +44,7 @@ struct _Parser
 	size_t string_pos;
 
 	/* tracking the position */
+	int error;
 	unsigned int line;
 	unsigned int col;
 	int last;
@@ -90,12 +91,18 @@ int parser_scan_filter(Parser * parser)
 	if(parser->lookahead)
 		parser->lookahead--;
 	else if(parser->scanner(&c, parser) != 0)
-		return EOF; /* FIXME report error */
+	{
+		parser->error = 1;
+		return EOF;
+	}
 	for(i = 0; i < parser->filters_cnt; i++)
 	{
 		pfd = &parser->filters[i];
 		if((l = pfd->filter(&c, pfd->data)) < 0)
+		{
+			parser->error = 1;
 			return EOF;
+		}
 		parser->lookahead += l;
 	}
 	parser->last = c;
@@ -188,6 +195,7 @@ static Parser * _new_do(ParserFilter scanner)
 	parser->string = NULL;
 	parser->string_cnt = 0;
 	parser->string_pos = 0;
+	parser->error = 0;
 	parser->line = 1;
 	parser->col = 1;
 	parser->last = EOF;
@@ -263,9 +271,15 @@ int parser_get_token(Parser * parser, Token ** token)
 
 	if((*token = token_new(parser->filename, parser->line, parser->col))
 			== NULL)
-		return 1;
-	if(parser->last == EOF)
-		parser_scan_filter(parser);
+		return -1;
+	if(parser->last == EOF
+			&& parser_scan_filter(parser) == EOF
+			&& parser->error != 0)
+	{
+		token_delete(*token);
+		*token = NULL;
+		return -1;
+	}
 #ifdef DEBUG
 	fprintf(stderr, "DEBUG: %s() %c\n", __func__, parser->last);
 #endif
@@ -280,7 +294,7 @@ int parser_get_token(Parser * parser, Token ** token)
 		return 0; /* there is a token and no error */
 	token_delete(*token);
 	*token = NULL;
-	return (ret >= 0 && parser->last == EOF) ? 0 : 1;
+	return (ret >= 0 && parser->last == EOF) ? 0 : -1;
 }
 
 
