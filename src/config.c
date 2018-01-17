@@ -505,7 +505,6 @@ static void _save_foreach_section(String const * key, void * value, void * data)
 
 	if(save->fp == NULL)
 		return;
-	/* FIXME escape lines with a backslash */
 	if(val == NULL)
 		return;
 	if(fprintf(save->fp, "%s%s=%s", save->sep, key, val) < 0)
