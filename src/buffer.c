@@ -101,7 +101,11 @@ int buffer_set(Buffer * buffer, size_t size, char * data)
 /* buffer_set_data */
 int buffer_set_data(Buffer * buffer, size_t offset, char * data, size_t size)
 {
-	if(offset + size > buffer->size) /* FIXME integer overflow */
+	size_t s = offset + size;
+
+	if(s < offset && s < size)
+		return error_set_code(-ERANGE, "%s", strerror(ERANGE));
+	if(offset + size > buffer->size)
 		if(buffer_set_size(buffer, offset + size) != 0)
 			return -1;
 	memcpy(&buffer->data[offset], data, size);
