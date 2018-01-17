@@ -346,6 +346,8 @@ int variable_get_as(Variable * variable, VariableType type, void * result)
 	uint16_t u16;
 	int32_t i32;
 	uint32_t u32;
+	int64_t i64;
+	uint64_t u64;
 	Buffer ** b;
 	String ** s;
 
@@ -558,15 +560,35 @@ int variable_get_as(Variable * variable, VariableType type, void * result)
 			p = &u32;
 			break;
 		case VT_INT64:
+			size = sizeof(i64);
+			if(variable->type == VT_INT64)
+			{
+				p = &variable->u.int64;
+				break;
+			}
+			if(variable->type == VT_UINT64
+					&& variable->u.int64 <= 0x7fffffffffffffff)
+				i64 = variable->u.int64;
+			else
+				/* FIXME implement more conversions */
+				break;
+			p = &i64;
+			break;
 		case VT_UINT64:
-			/* FIXME consider signedness */
-			if(variable->type == VT_INT64
-					|| variable->type == VT_UINT64)
+			size = sizeof(u64);
+			if(variable->type == VT_UINT64)
 			{
 				size = sizeof(variable->u.uint64);
 				p = &variable->u.uint64;
 				break;
 			}
+			if(variable->type == VT_INT64
+					&& variable->u.int64 >= 0)
+				u64 = variable->u.int64;
+			else
+				/* FIXME implement more conversions */
+				break;
+			p = &u64;
 			break;
 		case VT_FLOAT:
 			if(variable->type == VT_FLOAT)
