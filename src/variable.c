@@ -61,6 +61,7 @@ static const size_t _variable_sizes[VT_COUNT] = { 0, 1,
 /* prototypes */
 static uint16_t _bswap16(uint16_t u);
 static uint32_t _bswap32(uint32_t u);
+static uint64_t _bswap64(uint64_t u);
 
 static void _variable_destroy(Variable * variable);
 
@@ -306,7 +307,7 @@ Variable * variable_new_deserialize_type(VariableType type, size_t * size,
 			break;
 		case VT_INT64:
 		case VT_UINT64:
-			/* FIXME need to be converted */
+			i64 = _bswap64(i64);
 			break;
 		case VT_BUFFER:
 			if((b = buffer_new(s - sizeof(u32), &data[sizeof(u32)]))
@@ -735,7 +736,9 @@ int variable_serialize(Variable * variable, Buffer * buffer, bool prefix)
 	int16_t i16;
 	uint16_t u16;
 	int32_t i32;
+	int64_t i64;
 	uint32_t u32;
+	uint64_t u64;
 	char buf[16];
 
 #ifdef DEBUG
@@ -773,10 +776,14 @@ int variable_serialize(Variable * variable, Buffer * buffer, bool prefix)
 			p = &u32;
 			break;
 		case VT_INT64:
+			size = sizeof(i64);
+			i64 = _bswap64(variable->u.int64);
+			p = &i64;
+			break;
 		case VT_UINT64:
-			/* FIXME convert to network endian */
-			size = sizeof(variable->u.int64);
-			p = &variable->u.int64;
+			size = sizeof(u64);
+			u64 = _bswap64(variable->u.uint64);
+			p = &u64;
 			break;
 		case VT_FLOAT:
 			size = snprintf(buf, sizeof(buf), "%.e", variable->u.f);
@@ -842,6 +849,17 @@ static uint32_t _bswap32(uint32_t u)
 {
 	return ((u & 0xff) << 24) | ((u & 0xff00) << 8)
 		| ((u & 0xff0000) >> 8) | ((u & 0xff000000) >> 24);
+}
+
+
+/* bswap64 */
+static uint64_t _bswap64(uint64_t u)
+{
+	return ((u & 0xff) << 56) | ((u & 0xff00) << 40)
+		| ((u & 0xff0000) << 24) | ((u & 0xff000000) << 8)
+		| ((u & 0xff00000000) >> 8) | ((u & 0xff0000000000) >> 24)
+		| ((u & 0xff000000000000) >> 40)
+		| ((u & 0xff00000000000000) >> 56);
 }
 
 
