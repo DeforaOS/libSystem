@@ -19,7 +19,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
-#include <arpa/inet.h>
 #include "System/error.h"
 #include "System/object.h"
 #include "System/variable.h"
@@ -60,6 +59,9 @@ static const size_t _variable_sizes[VT_COUNT] = { 0, 1,
 
 
 /* prototypes */
+static uint16_t _bswap16(uint16_t u);
+static uint32_t _bswap32(uint32_t u);
+
 static void _variable_destroy(Variable * variable);
 
 
@@ -224,7 +226,7 @@ Variable * variable_new_deserialize_type(VariableType type, size_t * size,
 			if(*size < s)
 				break;
 			memcpy(&u32, data, s);
-			u32 = ntohl(u32);
+			u32 = _bswap32(u32);
 			s += u32;
 			break;
 		case VT_FLOAT:
@@ -274,11 +276,11 @@ Variable * variable_new_deserialize_type(VariableType type, size_t * size,
 			break;
 		case VT_INT16:
 		case VT_UINT16:
-			i16 = ntohs(i16);
+			i16 = _bswap16(i16);
 			break;
 		case VT_INT32:
 		case VT_UINT32:
-			i32 = ntohl(i32);
+			i32 = _bswap32(i32);
 			break;
 		case VT_FLOAT:
 			i32 = sscanf(p, "%e", &f);
@@ -752,22 +754,22 @@ int variable_serialize(Variable * variable, Buffer * buffer, bool prefix)
 			break;
 		case VT_INT16:
 			size = sizeof(i16);
-			i16 = htons(variable->u.int16);
+			i16 = _bswap16(variable->u.int16);
 			p = &i16;
 			break;
 		case VT_UINT16:
 			size = sizeof(u16);
-			u16 = htons(variable->u.uint16);
+			u16 = _bswap16(variable->u.uint16);
 			p = &u16;
 			break;
 		case VT_INT32:
 			size = sizeof(i32);
-			i32 = htonl(variable->u.int32);
+			i32 = _bswap32(variable->u.int32);
 			p = &i32;
 			break;
 		case VT_UINT32:
 			size = sizeof(u32);
-			u32 = htonl(variable->u.uint32);
+			u32 = _bswap32(variable->u.uint32);
 			p = &u32;
 			break;
 		case VT_INT64:
@@ -787,7 +789,7 @@ int variable_serialize(Variable * variable, Buffer * buffer, bool prefix)
 		case VT_BUFFER:
 			size = buffer_get_size(variable->u.buffer);
 			u32 = buffer_get_size(variable->u.buffer);
-			u32 = htonl(u32);
+			u32 = _bswap32(u32);
 			p = buffer_get_data(variable->u.buffer);
 			break;
 		case VT_STRING:
@@ -828,6 +830,21 @@ int variable_serialize(Variable * variable, Buffer * buffer, bool prefix)
 
 
 /* private */
+/* bswap16 */
+static uint16_t _bswap16(uint16_t u)
+{
+	return ((u & 0xff) << 8) | ((u & 0xff00) >> 8);
+}
+
+
+/* bswap32 */
+static uint32_t _bswap32(uint32_t u)
+{
+	return ((u & 0xff) << 24) | ((u & 0xff00) << 8)
+		| ((u & 0xff0000) >> 8) | ((u & 0xff000000) >> 24);
+}
+
+
 /* variable_destroy */
 static void _variable_destroy(Variable * variable)
 {
