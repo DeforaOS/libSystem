@@ -152,12 +152,19 @@ int array_append(Array * array, void * value)
 /* array_remove_pos */
 int array_remove_pos(Array * array, size_t pos)
 {
+	char * p;
+
 	if(pos >= array->count)
 		return -error_set_code(-ERANGE, "%s", strerror(ERANGE));
-	array->count--; /* FIXME resize array? */
+	array->count--;
 	memmove(&array->value[pos * array->size],
 			&array->value[(pos + 1) * array->size],
 			(array->count - pos) * array->size);
+	if((p = realloc(array->value, array->size * array->count)) == NULL
+			&& array->count != 0)
+		/* XXX ignore the error */
+		return 0;
+	array->value = p;
 	return 0;
 }
 
