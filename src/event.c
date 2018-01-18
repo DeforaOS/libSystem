@@ -432,6 +432,7 @@ int event_unregister_timeout(Event * event, EventTimeoutFunc func)
 	}
 	if(gettimeofday(&now, NULL) != 0)
 		return error_set_code(1, "%s", strerror(errno));
+	/* XXX will fail in 2038 on 32-bit platforms */
 	event->timeout.tv_sec = (time_t)LONG_MAX;
 	event->timeout.tv_usec = (suseconds_t)LONG_MAX;
 	for(i = 0; i < array_count(event->timeouts); i++)
