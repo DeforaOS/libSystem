@@ -389,7 +389,7 @@ int variable_get_as(Variable * variable, VariableType type, void * result)
 					&& variable->u.uint64 <= 0x7f)
 				i8 = variable->u.uint64;
 			else
-				/* FIXME implement more conversions */
+				/* TODO implement more conversions */
 				break;
 			p = &i8;
 			break;
@@ -426,7 +426,7 @@ int variable_get_as(Variable * variable, VariableType type, void * result)
 					&& variable->u.uint64 <= 0xff)
 				u8 = variable->u.uint64;
 			else
-				/* FIXME implement more conversions */
+				/* TODO implement more conversions */
 				break;
 			p = &u8;
 			break;
@@ -459,7 +459,7 @@ int variable_get_as(Variable * variable, VariableType type, void * result)
 					&& variable->u.uint64 <= 0x7fff)
 				i16 = variable->u.uint64;
 			else
-				/* FIXME implement more conversions */
+				/* TODO implement more conversions */
 				break;
 			p = &i16;
 			break;
@@ -492,7 +492,7 @@ int variable_get_as(Variable * variable, VariableType type, void * result)
 					&& variable->u.uint64 <= 0xffff)
 				u16 = variable->u.uint64;
 			else
-				/* FIXME implement more conversions */
+				/* TODO implement more conversions */
 				break;
 			p = &u16;
 			break;
@@ -522,7 +522,7 @@ int variable_get_as(Variable * variable, VariableType type, void * result)
 					&& variable->u.uint64 <= 0x7fffffff)
 				i32 = variable->u.uint64;
 			else
-				/* FIXME implement more conversions */
+				/* TODO implement more conversions */
 				break;
 			p = &i32;
 			break;
@@ -554,7 +554,7 @@ int variable_get_as(Variable * variable, VariableType type, void * result)
 					&& variable->u.uint64 <= 0xffffffff)
 				u32 = variable->u.uint64;
 			else
-				/* FIXME implement more conversions */
+				/* TODO implement more conversions */
 				break;
 			size = sizeof(u32);
 			p = &u32;
@@ -570,7 +570,7 @@ int variable_get_as(Variable * variable, VariableType type, void * result)
 					&& variable->u.int64 <= 0x7fffffffffffffff)
 				i64 = variable->u.int64;
 			else
-				/* FIXME implement more conversions */
+				/* TODO implement more conversions */
 				break;
 			p = &i64;
 			break;
@@ -586,7 +586,7 @@ int variable_get_as(Variable * variable, VariableType type, void * result)
 					&& variable->u.int64 >= 0)
 				u64 = variable->u.int64;
 			else
-				/* FIXME implement more conversions */
+				/* TODO implement more conversions */
 				break;
 			p = &u64;
 			break;
