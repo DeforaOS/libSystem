@@ -150,7 +150,7 @@ int event_loop(Event * event)
 	while(event->loop && (timeout != NULL || event->fdmax != -1))
 	{
 		if(select(event->fdmax + 1, &rfds, &wfds, NULL, timeout) < 0)
-			return -error_set_code(1, "%s", strerror(errno));
+			return error_set_code(-errno, "%s", strerror(errno));
 		if(_loop_timeout(event) != 0)
 			return -1;
 		_loop_io(event, event->reads, &rfds);
@@ -174,10 +174,7 @@ static int _loop_timeout(Event * event)
 	EventTimeout * et;
 
 	if(gettimeofday(&now, NULL) != 0)
-	{
-		error_set_code(1, "%s", strerror(errno));
-		return -1;
-	}
+		return error_set_code(-errno, "%s", strerror(errno));
 	event->timeout.tv_sec = (time_t)LONG_MAX;
 	event->timeout.tv_usec = (suseconds_t)LONG_MAX;
 	while(i < array_count(event->timeouts))
@@ -338,7 +335,7 @@ int event_register_timeout(Event * event, struct timeval * timeout,
 	struct timeval now;
 
 	if(gettimeofday(&now, NULL) != 0)
-		return -error_set_code(1, "%s", strerror(errno));
+		return error_set_code(-errno, "%s", strerror(errno));
 	if((eventtimeout = object_new(sizeof(*eventtimeout))) == NULL)
 		return -1;
 	eventtimeout->initial.tv_sec = timeout->tv_sec;
@@ -431,7 +428,7 @@ int event_unregister_timeout(Event * event, EventTimeoutFunc func)
 		object_delete(et);
 	}
 	if(gettimeofday(&now, NULL) != 0)
-		return error_set_code(1, "%s", strerror(errno));
+		return error_set_code(-errno, "%s", strerror(errno));
 	/* XXX will fail in 2038 on 32-bit platforms */
 	event->timeout.tv_sec = (time_t)LONG_MAX;
 	event->timeout.tv_usec = (suseconds_t)LONG_MAX;
