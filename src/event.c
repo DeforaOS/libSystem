@@ -213,7 +213,7 @@ static int _loop_timeout(Event * event)
 			{
 				event->timeout.tv_sec = et->timeout.tv_sec
 					- now.tv_sec;
-				/* FIXME may be needed elsewhere too */
+				/* XXX may be needed elsewhere too */
 				if(et->timeout.tv_usec >= now.tv_usec)
 					event->timeout.tv_usec
 						= et->timeout.tv_usec
