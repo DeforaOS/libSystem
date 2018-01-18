@@ -230,8 +230,8 @@ static int _loop_timeout(Event * event)
 		i++;
 	}
 #ifdef DEBUG
-	fprintf(stderr, "DEBUG: %s() %s%ld%s%ld => 0\n", __func__, "tv_sec=",
-			(long)event->timeout.tv_sec, ", tv_usec=",
+	fprintf(stderr, "DEBUG: %s() %s%lld%s%ld => 0\n", __func__, "tv_sec=",
+			(long long)event->timeout.tv_sec, ", tv_usec=",
 			(long)event->timeout.tv_usec);
 #endif
 	return 0;
@@ -357,8 +357,8 @@ int event_register_timeout(Event * event, struct timeval * timeout,
 				&& event->timeout.tv_usec > timeout->tv_usec))
 	{
 #ifdef DEBUG
-		fprintf(stderr, "DEBUG: %s%s%ld%s%ld%s", __func__, "() tv_sec=",
-				(long)timeout->tv_sec, ", tv_usec=",
+		fprintf(stderr, "DEBUG: %s%s%lld%s%ld%s", __func__, "() tv_sec=",
+				(long long)timeout->tv_sec, ", tv_usec=",
 				(long)timeout->tv_usec, "\n");
 #endif
 		event->timeout.tv_sec = timeout->tv_sec;
