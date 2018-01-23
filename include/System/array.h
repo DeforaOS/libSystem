@@ -23,8 +23,20 @@
 
 /* Array */
 /* macros */
-# define ARRAY(type, name) \
+/* XXX avoid using attributes */
+# define ARRAY(type) \
+	typedef struct _Array type ## Array; \
+	static Array * type ## array_new(void) __attribute__ ((unused)); \
+	static Array * type ## array_new(void) \
+		{ return array_new(sizeof(type)); }
+# define ARRAY2(type, name) \
 	typedef struct _Array name ## Array; \
+	static Array * name ## array_new(void) __attribute__ ((unused)); \
+	static Array * name ## array_new(void) \
+		{ return array_new(sizeof(type)); }
+# define ARRAY3(type, name, prefix) \
+	typedef struct _Array prefix ## Array; \
+	static Array * name ## array_new(void) __attribute__ ((unused)); \
 	static Array * name ## array_new(void) \
 		{ return array_new(sizeof(type)); }
 

@@ -53,7 +53,7 @@ typedef struct _EventTimeout
 	EventTimeoutFunc func;
 	void * data;
 } EventTimeout;
-ARRAY(EventTimeout *, eventtimeout)
+ARRAY2(EventTimeout *, eventtimeout)
 
 typedef struct _EventIO
 {
@@ -61,7 +61,7 @@ typedef struct _EventIO
 	EventIOFunc func;
 	void * data;
 } EventIO;
-ARRAY(EventIO *, eventio)
+ARRAY2(EventIO *, eventio)
 
 struct _Event
 {

@@ -32,7 +32,7 @@ typedef struct _HashEntry
 	void const * key;
 	void * value;
 } HashEntry;
-ARRAY(HashEntry, _hashentry)
+ARRAY2(HashEntry, _hashentry)
 #define HashEntryArray _hashentryArray
 
 

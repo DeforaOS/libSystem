@@ -260,12 +260,10 @@ int string_compare_length(String const * string, String const * string2,
 
 
 /* string_explode */
-/* FIXME return a StringArray instead? */
-String ** string_explode(String const * string, String const * separator)
+StringArray * string_explode(String const * string, String const * separator)
 {
-	String ** ret = NULL;
-	size_t ret_cnt = 0;
-	String ** p;			/* temporary pointer */
+	StringArray * ret;
+	String * p;			/* temporary pointer */
 	size_t i;			/* current position */
 	String const * s;		/* &string[i] */
 	ssize_t j;			/* position of the next separator */
@@ -275,9 +273,12 @@ String ** string_explode(String const * string, String const * separator)
 	fprintf(stderr, "DEBUG: %s(\"%s\", \"%s\")\n", __func__, string,
 			separator);
 #endif
+	if((ret = stringarray_new()) == NULL)
+		return NULL;
 	if(separator == NULL || (l = string_get_length(separator)) == 0)
 	{
 		error_set_code(-EINVAL, "%s", strerror(EINVAL));
+		array_delete(ret);
 		return NULL;
 	}
 	for(i = 0;; i += j + l)
@@ -287,31 +288,34 @@ String ** string_explode(String const * string, String const * separator)
 #ifdef DEBUG
 		fprintf(stderr, "DEBUG: %s(): i=%zu, j=%zd\n", __func__, i, j);
 #endif
-		if((p = realloc(ret, sizeof(*ret) * (ret_cnt + 2))) == NULL)
-			break;
-		ret = p;
 		if(j < 0)
 		{
-			if((ret[ret_cnt++] = string_new(s)) == NULL)
+			if((p = string_new(s)) == NULL
+					|| array_append(ret, p) != 0)
+			{
+				string_delete(p);
 				break;
+			}
 #ifdef DEBUG
 			fprintf(stderr, "DEBUG: %s(): \"%s\"\n", __func__,
 					ret[ret_cnt - 1]);
 #endif
-			ret[ret_cnt++] = NULL;
 			return ret;
 		}
-		if((ret[ret_cnt++] = string_new_length(s, j)) == NULL)
+		if((p = string_new_length(s, j)) == NULL
+				|| array_append(ret, p) != 0)
+		{
+			string_delete(p);
 			break;
+		}
 #ifdef DEBUG
 		fprintf(stderr, "DEBUG: %s(): \"%s\"\n", __func__,
 				ret[ret_cnt - 1]);
 #endif
 	}
 	/* free everything */
-	for(p = ret; *p != NULL; p++)
-		string_delete(*p);
-	free(ret);
+	array_foreach(ret, (ArrayForeach)string_delete, NULL);
+	array_delete(ret);
 	return NULL;
 }
 

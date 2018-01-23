@@ -19,11 +19,14 @@
 # define LIBSYSTEM_SYSTEM_STRING_H
 
 # include <sys/types.h>
+# include "array.h"
 
 
 /* String */
 /* types */
 typedef char String;
+
+ARRAY3(String *, string, String)
 
 
 /* macros */
@@ -57,7 +60,7 @@ int string_compare(String const * string, String const * string2);
 int string_compare_length(String const * string, String const * string2,
 		size_t length);
 
-String ** string_explode(String const * string, String const * separator);
+StringArray * string_explode(String const * string, String const * separator);
 
 String * string_find(String const * string, String const * key);
 ssize_t string_index(String const * string, String const * key);
