@@ -27,7 +27,7 @@ array_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 $(OBJDIR)array$(EXEEXT): $(array_OBJS)
 	$(CC) -o $(OBJDIR)array$(EXEEXT) $(array_OBJS) $(array_LDFLAGS)
 
-$(OBJDIR)clint.log: clint.sh
+$(OBJDIR)clint.log: $(OBJDIR)../src/libSystem.a clint.sh
 	./clint.sh -O CPPFLAGS="-I../include `pkg-config --cflags python-2.7`" -P "$(PREFIX)" -- "$(OBJDIR)clint.log"
 
 config_OBJS = $(OBJDIR)config.o
@@ -51,7 +51,7 @@ event_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 $(OBJDIR)event$(EXEEXT): $(event_OBJS)
 	$(CC) -o $(OBJDIR)event$(EXEEXT) $(event_OBJS) $(event_LDFLAGS)
 
-$(OBJDIR)fixme.log: fixme.sh
+$(OBJDIR)fixme.log: $(OBJDIR)../src/libSystem.a fixme.sh
 	./fixme.sh -P "$(PREFIX)" -- "$(OBJDIR)fixme.log"
 
 includes_OBJS = $(OBJDIR)includes.o
