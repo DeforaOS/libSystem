@@ -45,8 +45,11 @@
 /* types */
 typedef struct _Array Array;
 
+/* XXX the Swap variants are useless here */
 typedef bool (*ArrayFilter)(void * value, void * data);
+typedef bool (*ArrayFilterSwap)(void * data, void * value);
 typedef void (*ArrayForeach)(void * value, void * data);
+typedef void (*ArrayForeachSwap)(void * data, void * value);
 
 
 /* functions */
@@ -66,6 +69,8 @@ int array_append(Array * array, void * value);
 int array_remove_pos(Array * array, size_t pos);
 
 void array_filter(Array * array, ArrayFilter func, void * data);
+void array_filter_swap(Array * array, ArrayFilter func, void * data);
 void array_foreach(Array * array, ArrayForeachSwap func, void * data);
+void array_foreach_swap(Array * array, ArrayForeachSwap func, void * data);
 
 #endif /* !LIBSYSTEM_SYSTEM_ARRAY_H */

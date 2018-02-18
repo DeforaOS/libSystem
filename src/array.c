@@ -187,6 +187,24 @@ void array_filter(Array * array, ArrayFilter func, void * data)
 }
 
 
+/* array_filter_swap */
+void array_filter_swap(Array * array, ArrayFilterSwap func, void * data)
+{
+	uint32_t i;
+	uint64_t offset;
+
+	for(i = 0, offset = 0; i < array->count;)
+		if(func(data, array->value + offset) == false)
+			/* cannot fail */
+			array_remove_pos(array, i);
+		else
+		{
+			i++;
+			offset += array->size;
+		}
+}
+
+
 /* array_foreach */
 void array_foreach(Array * array, ArrayForeach func, void * data)
 {
@@ -195,4 +213,15 @@ void array_foreach(Array * array, ArrayForeach func, void * data)
 
 	for(i = 0, offset = 0; i < array->count; i++, offset += array->size)
 		func(array->value + offset, data);
+}
+
+
+/* array_foreach_swap */
+void array_foreach_swap(Array * array, ArrayForeachSwap func, void * data)
+{
+	uint32_t i;
+	uint64_t offset;
+
+	for(i = 0, offset = 0; i < array->count; i++, offset += array->size)
+		func(data, array->value + offset);
 }
