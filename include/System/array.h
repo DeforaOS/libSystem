@@ -49,6 +49,7 @@ typedef void (*ArrayForeach)(void * value, void * data);
 
 /* functions */
 Array * array_new(size_t size);
+# define array_new_type(object) array_new(sizeof(type))
 void array_delete(Array * array);
 
 /* accessors */
