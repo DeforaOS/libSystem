@@ -28,6 +28,8 @@ ARRAY2(unsigned int, UnsignedInt)
 
 
 /* test */
+static bool _test_filter(void * value, void * data);
+static bool _test_filter_swap(void * data, void * value);
 static void _test_foreach(void * value, void * data);
 static void _test_foreach_swap(void * data, void * value);
 
@@ -69,7 +71,29 @@ static int _test(intArray * array)
 		return 12;
 	if((p = array_get(array, 512)) == NULL || *p != 513)
 		return 13;
+	array_filter(array, _test_filter, NULL);
+	if(array_count(array) != 1022)
+		return 14;
+	array_filter_swap(array, _test_filter_swap, NULL);
+	if(array_count(array) != 0)
+		return 15;
 	return 0;
+}
+
+static bool _test_filter(void * value, void * data)
+{
+	int * i = value;
+	(void) data;
+
+	return (*i != 0) ? true : false;
+}
+
+static bool _test_filter_swap(void * data, void * value)
+{
+	int * i = value;
+	(void) data;
+
+	return (*i != 0) ? false : true;
 }
 
 static void _test_foreach(void * value, void * data)
