@@ -26,6 +26,7 @@
 
 /* test */
 static void _test_foreach(void * value, void * data);
+static void _test_foreach_swap(void * data, void * value);
 
 static int _test(Array * array)
 {
@@ -57,10 +58,14 @@ static int _test(Array * array)
 	array_foreach(array, _test_foreach, &j);
 	if(j != 523776)
 		return 10;
-	if(array_remove_pos(array, 512) != 0)
+	j = 0;
+	array_foreach_swap(array, _test_foreach_swap, &j);
+	if(j != 523776)
 		return 11;
-	if((p = array_get(array, 512)) == NULL || *p != 513)
+	if(array_remove_pos(array, 512) != 0)
 		return 12;
+	if((p = array_get(array, 512)) == NULL || *p != 513)
+		return 13;
 	return 0;
 }
 
@@ -70,6 +75,11 @@ static void _test_foreach(void * value, void * data)
 	int * j = data;
 
 	*j += *i;
+}
+
+static void _test_foreach_swap(void * data, void * value)
+{
+	_test_foreach(value, data);
 }
 
 
