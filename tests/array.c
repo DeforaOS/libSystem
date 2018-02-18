@@ -23,12 +23,15 @@
 # define PROGNAME	"array"
 #endif
 
+ARRAY(int)
+ARRAY2(unsigned int, UnsignedInt)
+
 
 /* test */
 static void _test_foreach(void * value, void * data);
 static void _test_foreach_swap(void * data, void * value);
 
-static int _test(Array * array)
+static int _test(intArray * array)
 {
 	int i;
 	int j;
@@ -87,7 +90,7 @@ static void _test_foreach_swap(void * data, void * value)
 int main(void)
 {
 	int ret;
-	Array * array;
+	intArray * array;
 
 	if((array = array_new(sizeof(int))) == NULL)
 		return 2;
