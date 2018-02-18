@@ -19,6 +19,7 @@
 # define LIBSYSTEM_SYSTEM_ARRAY_H
 
 # include <sys/types.h>
+# include <stdbool.h>
 
 
 /* Array */
@@ -44,6 +45,7 @@
 /* types */
 typedef struct _Array Array;
 
+typedef bool (*ArrayFilter)(void * value, void * data);
 typedef void (*ArrayForeach)(void * value, void * data);
 
 
@@ -63,6 +65,7 @@ int array_set(Array * array, size_t pos, void * value);
 int array_append(Array * array, void * value);
 int array_remove_pos(Array * array, size_t pos);
 
-void array_foreach(Array * array, ArrayForeach func, void * data);
+void array_filter(Array * array, ArrayFilter func, void * data);
+void array_foreach(Array * array, ArrayForeachSwap func, void * data);
 
 #endif /* !LIBSYSTEM_SYSTEM_ARRAY_H */

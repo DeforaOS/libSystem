@@ -169,6 +169,24 @@ int array_remove_pos(Array * array, size_t pos)
 }
 
 
+/* array_filter */
+void array_filter(Array * array, ArrayFilter func, void * data)
+{
+	uint32_t i;
+	uint64_t offset;
+
+	for(i = 0, offset = 0; i < array->count;)
+		if(func(array->value + offset, data) == false)
+			/* cannot fail */
+			array_remove_pos(array, i);
+		else
+		{
+			i++;
+			offset += array->size;
+		}
+}
+
+
 /* array_foreach */
 void array_foreach(Array * array, ArrayForeach func, void * data)
 {
