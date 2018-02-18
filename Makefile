@@ -116,7 +116,6 @@ dist:
 		$(PACKAGE)-$(VERSION)/tests/includes.c \
 		$(PACKAGE)-$(VERSION)/tests/string.c \
 		$(PACKAGE)-$(VERSION)/tests/variable.c \
-		$(PACKAGE)-$(VERSION)/tests/COPYING \
 		$(PACKAGE)-$(VERSION)/tests/Makefile \
 		$(PACKAGE)-$(VERSION)/tests/clint.sh \
 		$(PACKAGE)-$(VERSION)/tests/config.conf \
@@ -128,7 +127,6 @@ dist:
 		$(PACKAGE)-$(VERSION)/tests/tests.sh \
 		$(PACKAGE)-$(VERSION)/tests/project.conf \
 		$(PACKAGE)-$(VERSION)/tools/configctl.c \
-		$(PACKAGE)-$(VERSION)/tools/COPYING \
 		$(PACKAGE)-$(VERSION)/tools/Makefile \
 		$(PACKAGE)-$(VERSION)/tools/platform.sh \
 		$(PACKAGE)-$(VERSION)/tools/subst.sh \
