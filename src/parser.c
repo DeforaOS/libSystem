@@ -52,7 +52,7 @@ struct _Parser
 	/* parsing sources */
 	String * filename;
 	FILE * fp;
-	char * string;
+	String * string;
 	size_t string_cnt;
 	size_t string_pos;
 
@@ -176,7 +176,7 @@ static int _parser_scanner_string(int * c, void * data)
 /* parser_new */
 static Parser * _new_do(ParserFilter scanner);
 
-Parser * parser_new(char const * pathname)
+Parser * parser_new(String const * pathname)
 {
 	Parser * parser;
 
@@ -223,7 +223,7 @@ static Parser * _new_do(ParserFilter scanner)
 
 
 /* parser_new_string */
-Parser * parser_new_string(char const * string, size_t length)
+Parser * parser_new_string(String const * string, size_t length)
 {
 	Parser * parser;
 
@@ -269,7 +269,7 @@ int parser_delete(Parser * parser)
 
 /* accessors */
 /* parser_get_filename */
-char const * parser_get_filename(Parser * parser)
+String const * parser_get_filename(Parser * parser)
 {
 	return parser->filename;
 }

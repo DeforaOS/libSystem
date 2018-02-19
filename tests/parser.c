@@ -34,11 +34,11 @@
 
 
 /* parser */
-static int _parser(char const * progname)
+static int _parser(String const * progname)
 {
 	int ret = 0;
 	Parser * parser;
-	char const * p;
+	String const * p;
 
 	printf("%s: Testing parser_new()\n", progname);
 	fflush(stdout);

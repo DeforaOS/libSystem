@@ -31,6 +31,7 @@
 #ifndef LIBSYSTEM_SYSTEM_PARSER_H
 # define LIBSYSTEM_SYSTEM_PARSER_H
 
+# include "string.h"
 # include "token.h"
 
 
@@ -43,12 +44,12 @@ typedef int (*ParserCallback)(Parser * parser, Token * token, int c,
 
 
 /* functions */
-Parser * parser_new(char const * pathname);
-Parser * parser_new_string(char const * string, size_t length);
+Parser * parser_new(String const * pathname);
+Parser * parser_new_string(String const * string, size_t length);
 int parser_delete(Parser * parser);
 
 /* accessors */
-char const * parser_get_filename(Parser * parser);
+String const * parser_get_filename(Parser * parser);
 int parser_get_token(Parser * parser, Token ** token);
 
 /* useful */
