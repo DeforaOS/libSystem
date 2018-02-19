@@ -29,7 +29,7 @@
 
 
 #include <stddef.h>
-#include <limits.h>
+#include <stdint.h>
 #include "System/array.h"
 #include "System/error.h"
 
