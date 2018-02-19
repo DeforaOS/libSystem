@@ -1,4 +1,4 @@
-TARGETS	= $(OBJDIR)array$(EXEEXT) $(OBJDIR)clint.log $(OBJDIR)config$(EXEEXT) $(OBJDIR)error$(EXEEXT) $(OBJDIR)event$(EXEEXT) $(OBJDIR)fixme.log $(OBJDIR)includes$(EXEEXT) $(OBJDIR)pylint.log $(OBJDIR)string$(EXEEXT) $(OBJDIR)variable$(EXEEXT) $(OBJDIR)tests.log
+TARGETS	= $(OBJDIR)array$(EXEEXT) $(OBJDIR)clint.log $(OBJDIR)config$(EXEEXT) $(OBJDIR)error$(EXEEXT) $(OBJDIR)event$(EXEEXT) $(OBJDIR)fixme.log $(OBJDIR)includes$(EXEEXT) $(OBJDIR)parser$(EXEEXT) $(OBJDIR)pylint.log $(OBJDIR)string$(EXEEXT) $(OBJDIR)variable$(EXEEXT) $(OBJDIR)tests.log
 OBJDIR	=
 PREFIX	= /usr/local
 DESTDIR	=
@@ -64,6 +64,13 @@ includes_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 $(OBJDIR)includes$(EXEEXT): $(includes_OBJS)
 	$(CC) -o $(OBJDIR)includes$(EXEEXT) $(includes_OBJS) $(includes_LDFLAGS)
 
+parser_OBJS = $(OBJDIR)parser.o
+parser_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
+parser_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
+
+$(OBJDIR)parser$(EXEEXT): $(parser_OBJS)
+	$(CC) -o $(OBJDIR)parser$(EXEEXT) $(parser_OBJS) $(parser_LDFLAGS)
+
 $(OBJDIR)pylint.log: ../src/python/libSystem.py pylint.sh
 	./pylint.sh -P "$(PREFIX)" -- "$(OBJDIR)pylint.log"
 
@@ -81,7 +88,7 @@ variable_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 $(OBJDIR)variable$(EXEEXT): $(variable_OBJS)
 	$(CC) -o $(OBJDIR)variable$(EXEEXT) $(variable_OBJS) $(variable_LDFLAGS)
 
-$(OBJDIR)tests.log: $(OBJDIR)array$(EXEEXT) $(OBJDIR)config$(EXEEXT) config.conf config-noeol.conf $(OBJDIR)error$(EXEEXT) $(OBJDIR)event$(EXEEXT) $(OBJDIR)includes$(EXEEXT) pkgconfig.sh python.sh $(OBJDIR)string$(EXEEXT) tests.sh $(OBJDIR)variable$(EXEEXT) $(OBJDIR)../src/libSystem.a ../src/python/libSystem.c
+$(OBJDIR)tests.log: $(OBJDIR)array$(EXEEXT) $(OBJDIR)config$(EXEEXT) config.conf config-noeol.conf $(OBJDIR)error$(EXEEXT) $(OBJDIR)event$(EXEEXT) $(OBJDIR)includes$(EXEEXT) $(OBJDIR)parser$(EXEEXT) pkgconfig.sh python.sh $(OBJDIR)string$(EXEEXT) tests.sh $(OBJDIR)variable$(EXEEXT) $(OBJDIR)../src/libSystem.a ../src/python/libSystem.c
 	./tests.sh -P "$(PREFIX)" -- "$(OBJDIR)tests.log"
 
 $(OBJDIR)array.o: array.c ../src/array.c
@@ -99,6 +106,9 @@ $(OBJDIR)event.o: event.c ../src/event.c
 $(OBJDIR)includes.o: includes.c
 	$(CC) $(includes_CFLAGS) -o $(OBJDIR)includes.o -c includes.c
 
+$(OBJDIR)parser.o: parser.c ../src/parser.c
+	$(CC) $(parser_CFLAGS) -o $(OBJDIR)parser.o -c parser.c
+
 $(OBJDIR)string.o: string.c ../src/string.c
 	$(CC) $(string_CFLAGS) -o $(OBJDIR)string.o -c string.c
 
@@ -106,7 +116,7 @@ $(OBJDIR)variable.o: variable.c ../src/variable.c
 	$(CC) $(variable_CFLAGS) -o $(OBJDIR)variable.o -c variable.c
 
 clean:
-	$(RM) -- $(array_OBJS) $(clint.log_OBJS) $(config_OBJS) $(coverage.log_OBJS) $(error_OBJS) $(event_OBJS) $(fixme.log_OBJS) $(includes_OBJS) $(pylint.log_OBJS) $(string_OBJS) $(variable_OBJS) $(tests.log_OBJS)
+	$(RM) -- $(array_OBJS) $(clint.log_OBJS) $(config_OBJS) $(coverage.log_OBJS) $(error_OBJS) $(event_OBJS) $(fixme.log_OBJS) $(includes_OBJS) $(parser_OBJS) $(pylint.log_OBJS) $(string_OBJS) $(variable_OBJS) $(tests.log_OBJS)
 	./clint.sh -O CPPFLAGS="-I../include `pkg-config --cflags python-2.7`" -c -P "$(PREFIX)" -- "$(OBJDIR)clint.log"
 	./coverage.sh -c -P "$(PREFIX)" -- "$(OBJDIR)coverage.log"
 	./fixme.sh -c -P "$(PREFIX)" -- "$(OBJDIR)fixme.log"

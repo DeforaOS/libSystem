@@ -114,6 +114,7 @@ dist:
 		$(PACKAGE)-$(VERSION)/tests/error.c \
 		$(PACKAGE)-$(VERSION)/tests/event.c \
 		$(PACKAGE)-$(VERSION)/tests/includes.c \
+		$(PACKAGE)-$(VERSION)/tests/parser.c \
 		$(PACKAGE)-$(VERSION)/tests/string.c \
 		$(PACKAGE)-$(VERSION)/tests/variable.c \
 		$(PACKAGE)-$(VERSION)/tests/Makefile \
