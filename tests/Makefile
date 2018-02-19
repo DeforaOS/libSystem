@@ -37,6 +37,9 @@ config_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 $(OBJDIR)config$(EXEEXT): $(config_OBJS)
 	$(CC) -o $(OBJDIR)config$(EXEEXT) $(config_OBJS) $(config_LDFLAGS)
 
+$(OBJDIR)coverage.log: coverage.sh
+	./coverage.sh -P "$(PREFIX)" -- "$(OBJDIR)coverage.log"
+
 error_OBJS = $(OBJDIR)error.o
 error_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
 error_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
@@ -103,8 +106,9 @@ $(OBJDIR)variable.o: variable.c ../src/variable.c
 	$(CC) $(variable_CFLAGS) -o $(OBJDIR)variable.o -c variable.c
 
 clean:
-	$(RM) -- $(array_OBJS) $(clint.log_OBJS) $(config_OBJS) $(error_OBJS) $(event_OBJS) $(fixme.log_OBJS) $(includes_OBJS) $(pylint.log_OBJS) $(string_OBJS) $(variable_OBJS) $(tests.log_OBJS)
+	$(RM) -- $(array_OBJS) $(clint.log_OBJS) $(config_OBJS) $(coverage.log_OBJS) $(error_OBJS) $(event_OBJS) $(fixme.log_OBJS) $(includes_OBJS) $(pylint.log_OBJS) $(string_OBJS) $(variable_OBJS) $(tests.log_OBJS)
 	./clint.sh -O CPPFLAGS="-I../include `pkg-config --cflags python-2.7`" -c -P "$(PREFIX)" -- "$(OBJDIR)clint.log"
+	./coverage.sh -c -P "$(PREFIX)" -- "$(OBJDIR)coverage.log"
 	./fixme.sh -c -P "$(PREFIX)" -- "$(OBJDIR)fixme.log"
 	./pylint.sh -c -P "$(PREFIX)" -- "$(OBJDIR)pylint.log"
 	./tests.sh -c -P "$(PREFIX)" -- "$(OBJDIR)tests.log"

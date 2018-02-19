@@ -120,6 +120,7 @@ dist:
 		$(PACKAGE)-$(VERSION)/tests/clint.sh \
 		$(PACKAGE)-$(VERSION)/tests/config.conf \
 		$(PACKAGE)-$(VERSION)/tests/config-noeol.conf \
+		$(PACKAGE)-$(VERSION)/tests/coverage.sh \
 		$(PACKAGE)-$(VERSION)/tests/fixme.sh \
 		$(PACKAGE)-$(VERSION)/tests/pkgconfig.sh \
 		$(PACKAGE)-$(VERSION)/tests/pylint.sh \
