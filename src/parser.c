@@ -186,9 +186,9 @@ Parser * parser_new(String const * pathname)
 	if((parser = _new_do(_parser_scanner_file)) == NULL)
 		return NULL;
 	if((parser->filename = string_new(pathname)) == NULL)
-		error_set_code(1, "%s", strerror(errno));
+		error_set_code(-errno, "%s", strerror(errno));
 	if((parser->fp = fopen(pathname, "r")) == NULL)
-		error_set_code(1, "%s: %s", pathname, strerror(errno));
+		error_set_code(-errno, "%s: %s", pathname, strerror(errno));
 	if(parser->filename == NULL || parser->fp == NULL)
 	{
 		parser_delete(parser);
@@ -236,7 +236,7 @@ Parser * parser_new_string(String const * string, size_t length)
 	parser->string_cnt = length;
 	if(parser->string == NULL && length != 0)
 	{
-		error_set_code(1, "%s", strerror(errno));
+		error_set_code(-errno, "%s", strerror(errno));
 		parser_delete(parser);
 		return NULL;
 	}
@@ -256,7 +256,7 @@ int parser_delete(Parser * parser)
 #endif
 	if(parser->fp != NULL
 			&& fclose(parser->fp) != 0)
-		ret = error_set_code(1, "%s: %s", parser->filename,
+		ret = error_set_code(-errno, "%s: %s", parser->filename,
 				strerror(errno));
 	string_delete(parser->filename);
 	free(parser->string);
