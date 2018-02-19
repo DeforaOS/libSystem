@@ -60,6 +60,7 @@ _coverage()
 	res=$?
 	#look for any code executed
 	$FIND "$tmpdir/tests" -name '*.gcda' | while read filename; do
+		echo
 		echo "${filename%.gcda}.c:"
 		$GCOV -n "${filename%.gcda}.gcno"
 		#TODO output the GCOV file
