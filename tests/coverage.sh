@@ -59,7 +59,7 @@ _coverage()
 	$MAKE CC="$CC" CFLAGS="$CFLAGS" LDFLAGS="$LDFLAGS" OBJDIR="$tmpdir/tests/" "$tmpdir/tests/$TARGET"
 	res=$?
 	#look for any code executed
-	$FIND "$tmpdir/tests" -name '*.gcda' | while read filename; do
+	$FIND "$tmpdir" -name '*.gcda' | while read filename; do
 		echo
 		echo "${filename%.gcda}.c:"
 		$GCOV -n "${filename%.gcda}.gcno"
