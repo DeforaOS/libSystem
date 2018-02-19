@@ -122,7 +122,7 @@ if [ -n "$PKG_CONFIG_SYSROOT_DIR" ]; then
 	tests="pkgconfig.sh"
 	failures=
 else
-	tests="array config error event includes pkgconfig.sh string variable"
+	tests="array config error event includes parser pkgconfig.sh string variable"
 	failures=
 fi
 if $PKGCONFIG --exists "python-2.7"; then
