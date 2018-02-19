@@ -104,7 +104,7 @@ int array_get_copy(Array * array, size_t pos, void * value)
 	uint64_t offset;
 
 	if(pos >= array->count)
-		return 1;
+		return error_set_code(-ERANGE, "%s", strerror(ERANGE));
 	offset = pos * array->size;
 	memcpy(value, &array->value[offset], array->size);
 	return 0;
@@ -121,16 +121,16 @@ int array_set(Array * array, size_t pos, void * value)
 
 	/* check for overflows */
 	if(pos >= UINT32_MAX)
-		return -error_set_code(1, "%s", strerror(ERANGE));
+		return error_set_code(-ERANGE, "%s", strerror(ERANGE));
 	offset = pos * array->size;
 	if(array->count < p)
 	{
 		/* grow the array */
 		if(UINT64_MAX - offset < array->size
 				|| offset + array->size > SIZE_MAX)
-			return -error_set_code(-ERANGE, "%s", strerror(ERANGE));
+			return error_set_code(-ERANGE, "%s", strerror(ERANGE));
 		if((q = realloc(array->value, offset + array->size)) == NULL)
-			return -error_set_code(-errno, "%s", strerror(errno));
+			return error_set_code(-errno, "%s", strerror(errno));
 		array->value = q;
 		curpos = array->count * array->size;
 		memset(&array->value[curpos], 0, offset - curpos);
@@ -152,7 +152,7 @@ int array_append(Array * array, void * value)
 	/* check for overflows */
 	if(UINT64_MAX - offset < array->size
 			|| offset + array->size > SIZE_MAX)
-		return -error_set_code(-ERANGE, "%s", strerror(ERANGE));
+		return error_set_code(-ERANGE, "%s", strerror(ERANGE));
 	if((p = realloc(array->value, offset + array->size)) == NULL)
 		return error_set_code(-errno, "%s", strerror(errno));
 	array->value = p;
@@ -168,7 +168,7 @@ int array_remove_pos(Array * array, size_t pos)
 	char * p;
 
 	if(pos >= array->count)
-		return -error_set_code(-ERANGE, "%s", strerror(ERANGE));
+		return error_set_code(-ERANGE, "%s", strerror(ERANGE));
 	array->count--;
 	memmove(&array->value[pos * array->size],
 			&array->value[(pos + 1) * array->size],
