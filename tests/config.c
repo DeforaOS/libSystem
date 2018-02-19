@@ -167,6 +167,8 @@ int main(int argc, char * argv[])
 
 	ret = (_test(argv[0], "config-nonexistent.conf", NULL, NULL) != 0)
 		? 0 : -1;
+	ret |= (_test(argv[0], "config-empty.conf", variable, NULL) != 0)
+		? 0 : -1;
 	ret |= _test(argv[0], "config.conf", variable, expected);
 	ret |= _test(argv[0], "config-noeol.conf", variable, expected);
 	ret |= _test2(argv[0], 0, NULL);
