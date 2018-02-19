@@ -29,6 +29,7 @@
 
 
 #include <stddef.h>
+#include <limits.h>
 #include "System/array.h"
 #include "System/error.h"
 
@@ -52,44 +53,47 @@ static int _test(intArray * array)
 	int j;
 	int * p;
 
-	if(array_get(array, 0) != NULL)
+	if(array_get(array, 0) != NULL
+			|| array_get_copy(array, 0, &i) == 0)
 		return 2;
 	i = 0;
 	if(array_set(array, 0, &i) != 0)
 		return 3;
+	if(array_set(array, SIZE_MAX, NULL) == 0)
+		return 4;
 	i = 0xffffffff;
 	if(array_get_copy(array, 0, &i) != 0 || i != 0)
-		return 4;
+		return 5;
 	for(i = 0; i < 1024; i++)
 		if(array_set(array, i, &i) != 0)
-			return 5;
+			return 6;
 	for(i = 0; i < 1024; i++)
 		if(array_get_copy(array, i, &j) != 0)
-			return 6;
-		else if(j != i)
 			return 7;
+		else if(j != i)
+			return 8;
 	if(array_count(array) != 1024)
-		return 8;
-	if((p = array_get(array, 512)) == NULL || *p != 512)
 		return 9;
+	if((p = array_get(array, 512)) == NULL || *p != 512)
+		return 10;
 	j = 0;
 	array_foreach(array, _test_foreach, &j);
 	if(j != 523776)
-		return 10;
+		return 11;
 	j = 0;
 	array_foreach_swap(array, _test_foreach_swap, &j);
 	if(j != 523776)
-		return 11;
-	if(array_remove_pos(array, 512) != 0)
 		return 12;
-	if((p = array_get(array, 512)) == NULL || *p != 513)
+	if(array_remove_pos(array, 512) != 0)
 		return 13;
+	if((p = array_get(array, 512)) == NULL || *p != 513)
+		return 14;
 	array_filter(array, _test_filter, NULL);
 	if(array_count(array) != 1022)
-		return 14;
+		return 15;
 	array_filter_swap(array, _test_filter_swap, NULL);
 	if(array_count(array) != 0)
-		return 15;
+		return 16;
 	return 0;
 }
 
@@ -129,8 +133,10 @@ int main(void)
 	int ret;
 	intArray * array;
 
-	if((array = array_new(sizeof(int))) == NULL)
+	if((array = array_new(SIZE_MAX)) != NULL)
 		return 2;
+	if((array = intarray_new()) == NULL)
+		return 3;
 	if((ret = _test(array)) != 0)
 		error_print(PROGNAME);
 	array_delete(array);
