@@ -160,11 +160,13 @@ static int _test2(char const * progname, size_t size, ...)
 /* main */
 int main(int argc, char * argv[])
 {
-	int ret = 0;
+	int ret;
 	String const variable[] = "variable";
 	String const expected[] = "expected";
 	(void) argc;
 
+	ret = (_test(argv[0], "config-nonexistent.conf", NULL, NULL) != 0)
+		? 0 : -1;
 	ret |= _test(argv[0], "config.conf", variable, expected);
 	ret |= _test(argv[0], "config-noeol.conf", variable, expected);
 	ret |= _test2(argv[0], 0, NULL);
