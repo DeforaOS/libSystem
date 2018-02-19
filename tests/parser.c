@@ -56,6 +56,9 @@ static int _parser(char const * progname)
 		ret = error_print(progname);
 	else if(string_compare(p, "config-empty.conf") != 0)
 		ret = error_print(progname);
+	if(parser_scan(parser) == 0)
+		ret = error_set_print(progname, 2, "%s",
+				"Should not be able to scan");
 	parser_delete(parser);
 	return ret;
 }
