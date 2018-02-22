@@ -102,7 +102,7 @@ size_t buffer_get_size(Buffer const * buffer)
 
 
 /* buffer_set */
-int buffer_set(Buffer * buffer, size_t size, char * data)
+int buffer_set(Buffer * buffer, size_t size, char const * data)
 {
 	if(buffer_set_size(buffer, size) != 0)
 		return -1;

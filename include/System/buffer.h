@@ -46,7 +46,7 @@ void buffer_delete(Buffer * buffer);
 
 /* accessors */
 char * buffer_get_data(Buffer const * buffer);
-int buffer_set(Buffer * buffer, size_t size, char * data);
+int buffer_set(Buffer * buffer, size_t size, char const * data);
 int buffer_set_data(Buffer * buffer, size_t offset, char * data, size_t size);
 
 size_t buffer_get_size(Buffer const * buffer);
