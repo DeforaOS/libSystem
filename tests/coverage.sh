@@ -40,7 +40,7 @@ DATE="date"
 FIND="find"
 GCOV="gcov"
 MAKE="make"
-MKDIR="mkdir"
+MKDIR="mkdir -p"
 MKTEMP="mktemp"
 RM="rm -f"
 
