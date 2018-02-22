@@ -1,4 +1,4 @@
-TARGETS	= $(OBJDIR)array$(EXEEXT) $(OBJDIR)clint.log $(OBJDIR)config$(EXEEXT) $(OBJDIR)error$(EXEEXT) $(OBJDIR)event$(EXEEXT) $(OBJDIR)fixme.log $(OBJDIR)includes$(EXEEXT) $(OBJDIR)parser$(EXEEXT) $(OBJDIR)pylint.log $(OBJDIR)string$(EXEEXT) $(OBJDIR)variable$(EXEEXT) $(OBJDIR)tests.log
+TARGETS	= $(OBJDIR)array$(EXEEXT) $(OBJDIR)buffer$(EXEEXT) $(OBJDIR)clint.log $(OBJDIR)config$(EXEEXT) $(OBJDIR)error$(EXEEXT) $(OBJDIR)event$(EXEEXT) $(OBJDIR)fixme.log $(OBJDIR)includes$(EXEEXT) $(OBJDIR)parser$(EXEEXT) $(OBJDIR)pylint.log $(OBJDIR)string$(EXEEXT) $(OBJDIR)variable$(EXEEXT) $(OBJDIR)tests.log
 OBJDIR	=
 PREFIX	= /usr/local
 DESTDIR	=
@@ -26,6 +26,13 @@ array_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 
 $(OBJDIR)array$(EXEEXT): $(array_OBJS)
 	$(CC) -o $(OBJDIR)array$(EXEEXT) $(array_OBJS) $(array_LDFLAGS)
+
+buffer_OBJS = $(OBJDIR)buffer.o
+buffer_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
+buffer_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
+
+$(OBJDIR)buffer$(EXEEXT): $(buffer_OBJS)
+	$(CC) -o $(OBJDIR)buffer$(EXEEXT) $(buffer_OBJS) $(buffer_LDFLAGS)
 
 $(OBJDIR)clint.log: $(OBJDIR)../src/libSystem.a clint.sh
 	./clint.sh -O CPPFLAGS="-I../include `pkg-config --cflags python-2.7`" -P "$(PREFIX)" -- "$(OBJDIR)clint.log"
@@ -88,11 +95,14 @@ variable_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 $(OBJDIR)variable$(EXEEXT): $(variable_OBJS)
 	$(CC) -o $(OBJDIR)variable$(EXEEXT) $(variable_OBJS) $(variable_LDFLAGS)
 
-$(OBJDIR)tests.log: $(OBJDIR)array$(EXEEXT) $(OBJDIR)config$(EXEEXT) config.conf config-noeol.conf $(OBJDIR)error$(EXEEXT) $(OBJDIR)event$(EXEEXT) $(OBJDIR)includes$(EXEEXT) $(OBJDIR)parser$(EXEEXT) pkgconfig.sh python.sh $(OBJDIR)string$(EXEEXT) tests.sh $(OBJDIR)variable$(EXEEXT) $(OBJDIR)../src/libSystem.a ../src/python/libSystem.c
+$(OBJDIR)tests.log: $(OBJDIR)array$(EXEEXT) $(OBJDIR)buffer$(EXEEXT) $(OBJDIR)config$(EXEEXT) config.conf config-noeol.conf $(OBJDIR)error$(EXEEXT) $(OBJDIR)event$(EXEEXT) $(OBJDIR)includes$(EXEEXT) $(OBJDIR)parser$(EXEEXT) pkgconfig.sh python.sh $(OBJDIR)string$(EXEEXT) tests.sh $(OBJDIR)variable$(EXEEXT) $(OBJDIR)../src/libSystem.a ../src/python/libSystem.c
 	./tests.sh -P "$(PREFIX)" -- "$(OBJDIR)tests.log"
 
 $(OBJDIR)array.o: array.c ../src/array.c
 	$(CC) $(array_CFLAGS) -o $(OBJDIR)array.o -c array.c
+
+$(OBJDIR)buffer.o: buffer.c ../src/buffer.c
+	$(CC) $(buffer_CFLAGS) -o $(OBJDIR)buffer.o -c buffer.c
 
 $(OBJDIR)config.o: config.c ../src/config.c
 	$(CC) $(config_CFLAGS) -o $(OBJDIR)config.o -c config.c
@@ -116,7 +126,7 @@ $(OBJDIR)variable.o: variable.c ../src/variable.c
 	$(CC) $(variable_CFLAGS) -o $(OBJDIR)variable.o -c variable.c
 
 clean:
-	$(RM) -- $(array_OBJS) $(clint.log_OBJS) $(config_OBJS) $(coverage.log_OBJS) $(error_OBJS) $(event_OBJS) $(fixme.log_OBJS) $(includes_OBJS) $(parser_OBJS) $(pylint.log_OBJS) $(string_OBJS) $(variable_OBJS) $(tests.log_OBJS)
+	$(RM) -- $(array_OBJS) $(buffer_OBJS) $(clint.log_OBJS) $(config_OBJS) $(coverage.log_OBJS) $(error_OBJS) $(event_OBJS) $(fixme.log_OBJS) $(includes_OBJS) $(parser_OBJS) $(pylint.log_OBJS) $(string_OBJS) $(variable_OBJS) $(tests.log_OBJS)
 	./clint.sh -O CPPFLAGS="-I../include `pkg-config --cflags python-2.7`" -c -P "$(PREFIX)" -- "$(OBJDIR)clint.log"
 	./coverage.sh -c -P "$(PREFIX)" -- "$(OBJDIR)coverage.log"
 	./fixme.sh -c -P "$(PREFIX)" -- "$(OBJDIR)fixme.log"
