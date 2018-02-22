@@ -106,7 +106,10 @@ int buffer_set(Buffer * buffer, size_t size, char const * data)
 {
 	if(buffer_set_size(buffer, size) != 0)
 		return -1;
-	memcpy(buffer->data, data, size);
+	if(data == NULL)
+		memset(buffer->data, 0, size);
+	else
+		memcpy(buffer->data, data, size);
 	return 0;
 }
 
