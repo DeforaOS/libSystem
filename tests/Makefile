@@ -35,7 +35,7 @@ $(OBJDIR)buffer$(EXEEXT): $(buffer_OBJS)
 	$(CC) -o $(OBJDIR)buffer$(EXEEXT) $(buffer_OBJS) $(buffer_LDFLAGS)
 
 $(OBJDIR)clint.log: $(OBJDIR)../src/libSystem.a clint.sh
-	./clint.sh -O CPPFLAGS="-I../include `pkg-config --cflags python-2.7`" -P "$(PREFIX)" -- "$(OBJDIR)clint.log"
+	./clint.sh -O CPPFLAGS="-I$(DESTDIR)$(PREFIX)/include -I../include `pkg-config --cflags python-2.7`" -P "$(PREFIX)" -- "$(OBJDIR)clint.log"
 
 config_OBJS = $(OBJDIR)config.o
 config_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
@@ -127,7 +127,7 @@ $(OBJDIR)variable.o: variable.c ../src/variable.c
 
 clean:
 	$(RM) -- $(array_OBJS) $(buffer_OBJS) $(clint.log_OBJS) $(config_OBJS) $(coverage.log_OBJS) $(error_OBJS) $(event_OBJS) $(fixme.log_OBJS) $(includes_OBJS) $(parser_OBJS) $(pylint.log_OBJS) $(string_OBJS) $(variable_OBJS) $(tests.log_OBJS)
-	./clint.sh -O CPPFLAGS="-I../include `pkg-config --cflags python-2.7`" -c -P "$(PREFIX)" -- "$(OBJDIR)clint.log"
+	./clint.sh -O CPPFLAGS="-I$(DESTDIR)$(PREFIX)/include -I../include `pkg-config --cflags python-2.7`" -c -P "$(PREFIX)" -- "$(OBJDIR)clint.log"
 	./coverage.sh -c -P "$(PREFIX)" -- "$(OBJDIR)coverage.log"
 	./fixme.sh -c -P "$(PREFIX)" -- "$(OBJDIR)fixme.log"
 	./pylint.sh -c -P "$(PREFIX)" -- "$(OBJDIR)pylint.log"
