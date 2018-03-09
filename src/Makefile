@@ -25,7 +25,7 @@ all: $(TARGETS)
 
 libSystem_OBJS = $(OBJDIR)array.o $(OBJDIR)buffer.o $(OBJDIR)config.o $(OBJDIR)error.o $(OBJDIR)event.o $(OBJDIR)hash.o $(OBJDIR)mutator.o $(OBJDIR)object.o $(OBJDIR)parser.o $(OBJDIR)plugin.o $(OBJDIR)string.o $(OBJDIR)token.o $(OBJDIR)variable.o
 libSystem_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
-libSystem_LDFLAGS = $(LDFLAGSF) $(LDFLAGS) `../tools/platform.sh -l dl`
+libSystem_LDFLAGS = $(LDFLAGSF) $(LDFLAGS) `../tools/platform.sh -O DESTDIR="$(DESTDIR)" -l dl`
 
 $(OBJDIR)libSystem.a: $(libSystem_OBJS)
 	$(AR) $(ARFLAGS) $(OBJDIR)libSystem.a $(libSystem_OBJS)
