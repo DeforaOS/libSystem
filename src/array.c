@@ -70,6 +70,52 @@ Array * array_new(size_t size)
 }
 
 
+/* array_new_filter */
+Array * array_new_filter(Array * array, ArrayFilter func, void * data)
+{
+	Array * a;
+	size_t i;
+	char * value;
+
+	if((a = array_new(array->size)) == NULL)
+		return NULL;
+	for(i = 0; i < array->count; i++)
+	{
+		value = array->value + (array->size * i);
+		if(func(value, data) == true)
+			if(array_append(a, value) != 0)
+			{
+				array_delete(a);
+				return NULL;
+			}
+	}
+	return a;
+}
+
+
+/* array_new_filter_swap */
+Array * array_new_filter_swap(Array * array, ArrayFilterSwap func, void * data)
+{
+	Array * a;
+	size_t i;
+	char * value;
+
+	if((a = array_new(array->size)) == NULL)
+		return NULL;
+	for(i = 0; i < array->count; i++)
+	{
+		value = array->value + (array->size * i);
+		if(func(data, value) == true)
+			if(array_append(a, value) != 0)
+			{
+				array_delete(a);
+				return NULL;
+			}
+	}
+	return a;
+}
+
+
 /* array_delete */
 void array_delete(Array * array)
 {

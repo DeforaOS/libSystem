@@ -67,6 +67,8 @@ typedef void (*ArrayForeachSwap)(void * data, void * value);
 
 /* functions */
 Array * array_new(size_t size);
+Array * array_new_filter(Array * array, ArrayFilter func, void * data);
+Array * array_new_filter_swap(Array * array, ArrayFilterSwap func, void * data);
 # define array_new_type(object) array_new(sizeof(type))
 void array_delete(Array * array);
 
