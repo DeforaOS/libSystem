@@ -52,6 +52,7 @@ static int _test(intArray * array)
 	int i;
 	int j;
 	int * p;
+	intArray * a;
 
 	if(array_get(array, 0) != NULL
 			|| array_get_copy(array, 0, &i) == 0)
@@ -88,12 +89,17 @@ static int _test(intArray * array)
 		return 13;
 	if((p = array_get(array, 512)) == NULL || *p != 513)
 		return 14;
+	if((a = array_new_filter(array, _test_filter, NULL)) == NULL)
+		return 15;
+	if(array_count(a) != 1022)
+		return 16;
+	array_delete(a);
 	array_filter(array, _test_filter, NULL);
 	if(array_count(array) != 1022)
-		return 15;
+		return 17;
 	array_filter_swap(array, _test_filter_swap, NULL);
 	if(array_count(array) != 0)
-		return 16;
+		return 18;
 	return 0;
 }
 
