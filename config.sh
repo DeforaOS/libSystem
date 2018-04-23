@@ -1,5 +1,5 @@
 PACKAGE="libSystem"
-VERSION="0.3.1"
+VERSION="0.4.0"
 
 PREFIX="/usr/local"
 LIBDIR="${PREFIX}/lib"
