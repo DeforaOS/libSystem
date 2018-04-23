@@ -100,7 +100,7 @@ Variable * variable_new(VariableType type, void const * value)
 /* variable_new_array */
 Variable * variable_new_array(VariableType type, size_t size, ...)
 {
-	/* FIXME implement */
+	/* TODO implement */
 	return NULL;
 }
 
@@ -108,7 +108,7 @@ Variable * variable_new_array(VariableType type, size_t size, ...)
 /* variable_new_arrayv */
 Variable * variable_new_arrayv(VariableType type, size_t size, void ** values)
 {
-	/* FIXME implement */
+	/* TODO implement */
 	return NULL;
 }
 
@@ -116,7 +116,7 @@ Variable * variable_new_arrayv(VariableType type, size_t size, void ** values)
 /* variable_new_compound */
 Variable * variable_new_compound(String const * name, size_t members, ...)
 {
-	/* FIXME implement */
+	/* TODO implement */
 	return NULL;
 }
 
@@ -125,7 +125,7 @@ Variable * variable_new_compound(String const * name, size_t members, ...)
 Variable * variable_new_compoundv(String const * name, size_t members,
 		VariableType * types, void ** values)
 {
-	/* FIXME implement */
+	/* TODO implement */
 	return NULL;
 }
 
@@ -689,7 +689,7 @@ int variable_set(Variable * variable, Variable * from)
 			variable->u.string = s;
 			break;
 		default:
-			/* FIXME implement */
+			/* TODO implement */
 			return -error_set_code(-ENOSYS, "%s", strerror(ENOSYS));
 	}
 	variable->type = from->type;
