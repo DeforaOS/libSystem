@@ -158,6 +158,5 @@ while [ $# -gt 0 ]; do
 	target="$1"
 	shift
 
-	_fixme > "$target"
+	_fixme > "$target"					|| exit 2
 done
-exit 0
