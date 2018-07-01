@@ -39,12 +39,20 @@ _platform_library()
 {
 	library="$1"
 	libdir=$(_platform_variable "LIBDIR")
+	path="/lib:/usr/lib:$libdir"
 
-	if [ -f "$DESTDIR/lib/lib$library$SOEXT" \
-		-o -f "$DESTDIR/usr/lib/lib$library$SOEXT" \
-		-o -f "$DESTDIR$libdir/lib$library$SOEXT" ]; then
-		echo "-l$library"
+	if [ -f "$DESTDIR/etc/ld.so.conf" ]; then
+		while read line; do
+			#XXX breaks on whitespace
+			[ -n "${line%#*}" ] && path="$path:$line"
+		done < "$DESTDIR/etc/ld.so.conf"
 	fi
+	(IFS=:; for p in $path; do
+		if [ -f "$DESTDIR$p/lib$library$SOEXT" ]; then
+			echo "-l$library"
+			return
+		fi
+	done)
 }
 
 
