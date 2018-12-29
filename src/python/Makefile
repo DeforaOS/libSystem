@@ -11,10 +11,11 @@ CPPFLAGSF= -I ../../include
 CPPFLAGS=
 CFLAGSF	= -fPIC `pkg-config --cflags python-2.7`
 CFLAGS	= -W -Wall -g -O2 -D_FORTIFY_SOURCE=2 -fstack-protector
-LDFLAGSF= `pkg-config --libs python-2.7`
-LDFLAGS	= -L$(OBJDIR).. -Wl,-rpath,$(LIBDIR) -Wl,-z,relro -Wl,-z,now
+LDFLAGSF= `pkg-config --libs python-2.7` -L$(OBJDIR).. -lSystem
+LDFLAGS	= -Wl,-rpath,$(LIBDIR) -Wl,-z,relro -Wl,-z,now
 EXEEXT	=
 AR	= ar
+ARFLAGS	= -rc
 RANLIB	= ranlib
 CCSHARED= $(CC) -shared
 SOEXT	= .so
@@ -42,7 +43,7 @@ clean:
 distclean: clean
 	$(RM) -- $(TARGETS)
 
-install: $(TARGETS)
+install: all
 	$(MKDIR) $(DESTDIR)$(PREFIX)/lib/python2.7/site-packages
 	$(INSTALL) -m 0755 $(OBJDIR)_libSystem$(SOEXT) $(DESTDIR)$(PREFIX)/lib/python2.7/site-packages/_libSystem$(SOEXT)
 	$(MKDIR) $(DESTDIR)$(PREFIX)/lib/python2.7/site-packages
