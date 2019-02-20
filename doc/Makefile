@@ -44,7 +44,6 @@ clean:
 		if [ -n "$(OBJDIR)" ]; then \
 		$(MAKE) OBJDIR="$(OBJDIR)$$i/" clean; \
 		else $(MAKE) clean; fi) || exit; done
-	$(RM) -- $(configctl.1_OBJS) $(configctl.html_OBJS) $(configctl.xml_OBJS) $(gtkdoc/libSystem.types_OBJS) $(gtkdoc/tmpl.stamp_OBJS) $(gtkdoc/sgml.stamp_OBJS) $(gtkdoc/html.stamp_OBJS)
 	./docbook.sh -c -P "$(PREFIX)" -- "$(OBJDIR)configctl.1"
 	./docbook.sh -c -P "$(PREFIX)" -- "$(OBJDIR)configctl.html"
 	../tools/subst.sh -c -P "$(PREFIX)" -- "$(OBJDIR)configctl.xml"
@@ -58,7 +57,6 @@ distclean:
 		if [ -n "$(OBJDIR)" ]; then \
 		$(MAKE) OBJDIR="$(OBJDIR)$$i/" distclean; \
 		else $(MAKE) distclean; fi) || exit; done
-	$(RM) -- $(configctl.1_OBJS) $(configctl.html_OBJS) $(configctl.xml_OBJS) $(gtkdoc/libSystem.types_OBJS) $(gtkdoc/tmpl.stamp_OBJS) $(gtkdoc/sgml.stamp_OBJS) $(gtkdoc/html.stamp_OBJS)
 	./docbook.sh -c -P "$(PREFIX)" -- "$(OBJDIR)configctl.1"
 	./docbook.sh -c -P "$(PREFIX)" -- "$(OBJDIR)configctl.html"
 	../tools/subst.sh -c -P "$(PREFIX)" -- "$(OBJDIR)configctl.xml"
