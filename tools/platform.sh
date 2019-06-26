@@ -37,6 +37,28 @@ UNAME="uname"
 
 
 #functions
+#_libray_include
+_library_include(){
+	while read line; do
+		#remove trailing comments
+		line="${line%#*}"
+		
+		case "$line" in
+			"include "*)
+				files="${line#include }"
+				for f in $files; do
+					[ -f "$f" ] && _library_include "$f"
+				done;
+				;;
+			*)
+				#XXX breaks on whitespace
+				[ -n "${line}" ] && path="$path:$line"
+				;;
+		esac
+	done < $1
+
+}
+
 #platform_library
 _platform_library()
 {
@@ -44,12 +66,8 @@ _platform_library()
 	libdir=$(_platform_variable "LIBDIR")
 	path="/lib:/usr/lib:$libdir"
 
-	if [ -f "$DESTDIR$LDSOCONF" ]; then
-		paths=$(_library_ldsoconf "$DESTDIR$LDSOCONF")
-		#XXX breaks on whitespace
-		for p in $paths; do
-			path="$path:$p"
-		done
+        if [ -f "$DESTDIR/etc/ld.so.conf" ]; then
+		_library_include "$DESTDIR/etc/ld.so.conf"
 	fi
 	(IFS=:; for p in $path; do
 		if [ -f "$DESTDIR$p/lib$library$SOEXT" ]; then
@@ -58,34 +76,6 @@ _platform_library()
 		fi
 	done)
 }
-
-_library_ldsoconf()
-{
-	ldsoconf="$1"
-
-	while read line; do
-		case "$line" in
-			"#"*)
-				;;
-			"include "*)
-				#remove trailing comments
-				line="${line%#*}"
-
-				#recurse into the file included
-				#XXX does not support globbing
-				filename="${ldsoconf%/*}/${line#include }"
-				[ -f "$filename" ] &&
-					_library_ldsoconf "$filename"
-				;;
-			*)
-				#remove trailing comments
-				line="${line%#*}"
-				echo "$line"
-				;;
-		esac
-	done < "$ldsoconf"
-}
-
 
 #platform_variable
 _platform_variable()
