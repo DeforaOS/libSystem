@@ -1,6 +1,6 @@
 #!/bin/sh
 #$Id$
-#Copyright (c) 2015-2018 Pierre Pronchery <khorben@defora.org>
+#Copyright (c) 2015-2019 Pierre Pronchery <khorben@defora.org>
 #
 #Redistribution and use in source and binary forms, with or without
 #modification, are permitted provided that the following conditions are met:
@@ -25,11 +25,14 @@
 
 
 #variables
-CONFIGSH="${0%/platform.sh}/config.sh"
+CONFIGSH="${0%/platform.sh}/../config.sh"
 DESTDIR=
+LDSOCONF="/etc/ld.so.conf"
 PREFIX="/usr/local"
 PROGNAME="platform.sh"
 SOEXT=".so"
+#executables
+UNAME="uname"
 [ -f "$CONFIGSH" ] && . "$CONFIGSH"
 
 
@@ -41,11 +44,12 @@ _platform_library()
 	libdir=$(_platform_variable "LIBDIR")
 	path="/lib:/usr/lib:$libdir"
 
-	if [ -f "$DESTDIR/etc/ld.so.conf" ]; then
-		while read line; do
-			#XXX breaks on whitespace
-			[ -n "${line%#*}" ] && path="$path:$line"
-		done < "$DESTDIR/etc/ld.so.conf"
+	if [ -f "$DESTDIR$LDSOCONF" ]; then
+		paths=$(_library_ldsoconf "$DESTDIR$LDSOCONF")
+		#XXX breaks on whitespace
+		for p in $paths; do
+			path="$path:$p"
+		done
 	fi
 	(IFS=:; for p in $path; do
 		if [ -f "$DESTDIR$p/lib$library$SOEXT" ]; then
@@ -55,6 +59,33 @@ _platform_library()
 	done)
 }
 
+_library_ldsoconf()
+{
+	ldsoconf="$1"
+
+	while read line; do
+		case "$line" in
+			"#"*)
+				;;
+			"include "*)
+				#remove trailing comments
+				line="${line%#*}"
+
+				#recurse into the file included
+				#XXX does not support globbing
+				filename="${ldsoconf%/*}/${line#include }"
+				[ -f "$filename" ] &&
+					_library_ldsoconf "$filename"
+				;;
+			*)
+				#remove trailing comments
+				line="${line%#*}"
+				echo "$line"
+				;;
+		esac
+	done < "$ldsoconf"
+}
+
 
 #platform_variable
 _platform_variable()
@@ -62,6 +93,24 @@ _platform_variable()
 	variable="$1"
 
 	case "$variable" in
+		ARCH)
+			if [ -n "$ARCH" ]; then
+				echo "$ARCH"
+				return 0
+			fi
+			ARCH=$($UNAME -m)
+			case "$ARCH" in
+				amd64|x86_64)
+					echo "amd64"
+					;;
+				i[3456]86)
+					echo "i386"
+					;;
+				*)
+					echo "unknown"
+					;;
+			esac
+			;;
 		BINDIR)
 			echo "$PREFIX/bin"
 			;;
