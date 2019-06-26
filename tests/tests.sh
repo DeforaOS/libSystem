@@ -117,19 +117,23 @@ if [ $# -eq 0 ]; then
 	exit $?
 fi
 
-if [ -n "$PKG_CONFIG_SYSROOT_DIR" ]; then
-	#XXX cross-compiling
-	tests="pkgconfig.sh"
-	failures=
-else
-	tests="array buffer config error event includes parser pkgconfig.sh string variable"
-	failures=
-fi
-if $PKGCONFIG --exists "python-2.7"; then
-	tests="$tests python.sh"
-else
-	failures="$failures python.sh"
-fi
+tests="array buffer config error event includes parser string variable"
+failures=
+$PKGCONFIG --exists "python-2.7"
+case $? in
+	127)
+		failures="pkgconfig.sh python.sh"
+		;;
+	0)
+		if [ -n "$PKG_CONFIG_SYSROOT_DIR" ]; then
+			#XXX cross-compiling
+			tests="pkgconfig.sh python.sh"
+		fi
+		;;
+	*)
+		failures="$failures python.sh"
+		;;
+esac
 
 while [ $# -ne 0 ]; do
 	target="$1"
