@@ -73,7 +73,11 @@ _library_ldsoconf()
 
 				#recurse into the file included
 				line="${line#include }"
-				files="${ldsoconf%/*}/$line"
+				if [ "${line#/}" = "$line" ]; then
+					files="${ldsoconf%/*}/$line"
+				else
+					files="$DESTDIR${line#include }"
+				fi
 				#XXX breaks on whitespace
 				for filename in $files; do
 					[ -f "$filename" ] &&
