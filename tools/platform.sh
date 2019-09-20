@@ -30,7 +30,7 @@ DESTDIR=
 LDSOCONF="/etc/ld.so.conf"
 PREFIX="/usr/local"
 PROGNAME="platform.sh"
-SOEXT=".so"
+SOEXT=
 #executables
 UNAME="uname"
 [ -f "$CONFIGSH" ] && . "$CONFIGSH"
@@ -140,6 +140,19 @@ _platform_variable()
 		SBINDIR)
 			echo "$PREFIX/sbin"
 			;;
+		SOEXT)
+			case "$($UNAME -s)" in
+				"Darwin")
+					echo ".dylib"
+					;;
+				"MINGW"*)
+					echo ".dll"
+					;;
+				*)
+					echo ".so"
+					;;
+			esac
+			;;
 		SYSCONFDIR)
 			if [ "$PREFIX" = "/usr" ]; then
 				echo "/etc"
@@ -187,6 +200,8 @@ if [ $# -ne 0 ]; then
 	_usage
 	exit $?
 fi
+
+[ -n "$SOEXT" ] || SOEXT=$(_platform_variable SOEXT)
 
 case "$type" in
 	library)
