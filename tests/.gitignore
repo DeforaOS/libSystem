@@ -1,9 +1,12 @@
 /array
+/buffer
 /clint.log
 /config
+/error
 /event
 /fixme.log
 /includes
+/parser
 /pylint.log
 /string
 /tests.log
