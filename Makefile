@@ -1,20 +1,19 @@
 PACKAGE	= libSystem
 VERSION	= 0.4.1
 SUBDIRS	= data doc include src tests tools
-OBJDIR	=
-PREFIX	= /usr/local
-DESTDIR	=
 MKDIR	= mkdir -m 0755 -p
 INSTALL	= install
 RM	= rm -f
+TARGETS	=
 RM	= rm -f
 LN	= ln -f
 TAR	= tar
 TGZEXT	= .tar.gz
 MKDIR	= mkdir -m 0755 -p
+INSTALL	= install
 
 
-all: subdirs
+all: subdirs $(TARGETS)
 
 subdirs:
 	@for i in $(SUBDIRS); do (cd "$$i" && \
@@ -22,6 +21,9 @@ subdirs:
 		([ -d "$(OBJDIR)$$i" ] || $(MKDIR) -- "$(OBJDIR)$$i") && \
 		$(MAKE) OBJDIR="$(OBJDIR)$$i/"; \
 		else $(MAKE); fi) || exit; done
+
+tests:
+	cd tests && (if [ -n "$(OBJDIR)" ]; then $(MAKE) OBJDIR="$(OBJDIR)tests/" "$(OBJDIR)tests/fixme.log"; else $(MAKE) fixme.log; fi)
 
 clean:
 	@for i in $(SUBDIRS); do (cd "$$i" && \
@@ -34,6 +36,7 @@ distclean:
 		if [ -n "$(OBJDIR)" ]; then \
 		$(MAKE) OBJDIR="$(OBJDIR)$$i/" distclean; \
 		else $(MAKE) distclean; fi) || exit; done
+	$(RM) -- $(TARGETS)
 
 dist:
 	$(RM) -r -- $(OBJDIR)$(PACKAGE)-$(VERSION)
@@ -169,4 +172,4 @@ uninstall:
 		else $(MAKE) uninstall; fi) || exit; done
 	$(RM) -- $(DESTDIR)$(PREFIX)/share/doc/$(PACKAGE)/README.md
 
-.PHONY: all subdirs clean distclean dist distcheck install uninstall
+.PHONY: all subdirs clean distclean dist distcheck install uninstall tests
