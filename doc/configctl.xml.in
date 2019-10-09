@@ -133,7 +133,7 @@
 	<refsect1 id="bugs">
 		<title>Bugs</title>
 		<para>Issues can be listed and reported at <ulink
-				url="http://www.defora.org/os/project/bug_list/27/libSystem"/>.</para>
+				url="https://www.defora.org/os/project/bug_list/27/libSystem"/>.</para>
 	</refsect1>
 	<refsect1 id="see_also">
 		<title>See also</title>
