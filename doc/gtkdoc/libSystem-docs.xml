@@ -5,7 +5,7 @@
   <!ENTITY % local.common.attrib "xmlns:xi  CDATA  #FIXED 'http://www.w3.org/2003/XInclude'">
   <!ENTITY server "www.defora.org/doc/gtk-doc/html">
   <!ENTITY title "DeforaOS libSystem">
-  <!ENTITY version "0.1.6">
+  <!ENTITY version "0.4.2">
 ]>
 <book id="index">
   <bookinfo>
