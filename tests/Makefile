@@ -1,4 +1,4 @@
-TARGETS	= $(OBJDIR)array$(EXEEXT) $(OBJDIR)buffer$(EXEEXT) $(OBJDIR)clint.log $(OBJDIR)config$(EXEEXT) $(OBJDIR)error$(EXEEXT) $(OBJDIR)event$(EXEEXT) $(OBJDIR)includes$(EXEEXT) $(OBJDIR)parser$(EXEEXT) $(OBJDIR)pylint.log $(OBJDIR)string$(EXEEXT) $(OBJDIR)variable$(EXEEXT) $(OBJDIR)tests.log
+TARGETS	= $(OBJDIR)array$(EXEEXT) $(OBJDIR)buffer$(EXEEXT) $(OBJDIR)clint.log $(OBJDIR)config$(EXEEXT) $(OBJDIR)coverage.log $(OBJDIR)error$(EXEEXT) $(OBJDIR)event$(EXEEXT) $(OBJDIR)fixme.log $(OBJDIR)includes$(EXEEXT) $(OBJDIR)parser$(EXEEXT) $(OBJDIR)pylint.log $(OBJDIR)string$(EXEEXT) $(OBJDIR)variable$(EXEEXT) $(OBJDIR)tests.log
 OBJDIR	=
 PREFIX	= /usr/local
 DESTDIR	=
@@ -18,7 +18,7 @@ MKDIR	= mkdir -m 0755 -p
 INSTALL	= install
 
 
-all: $(TARGETS)
+all: $(OBJDIR)array$(EXEEXT) $(OBJDIR)buffer$(EXEEXT) $(OBJDIR)clint.log $(OBJDIR)config$(EXEEXT) $(OBJDIR)error$(EXEEXT) $(OBJDIR)event$(EXEEXT) $(OBJDIR)includes$(EXEEXT) $(OBJDIR)parser$(EXEEXT) $(OBJDIR)pylint.log $(OBJDIR)string$(EXEEXT) $(OBJDIR)variable$(EXEEXT) $(OBJDIR)tests.log
 
 array_OBJS = $(OBJDIR)array.o
 array_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)

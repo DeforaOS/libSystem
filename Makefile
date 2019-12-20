@@ -8,7 +8,7 @@ DESTDIR	=
 MKDIR	= mkdir -m 0755 -p
 INSTALL	= install
 RM	= rm -f
-TARGETS	=
+TARGETS	= tests
 RM	= rm -f
 LN	= ln -f
 TAR	= tar
@@ -17,7 +17,7 @@ MKDIR	= mkdir -m 0755 -p
 INSTALL	= install
 
 
-all: subdirs $(TARGETS)
+all: subdirs
 
 subdirs:
 	@for i in $(SUBDIRS); do (cd "$$i" && \
