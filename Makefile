@@ -166,6 +166,8 @@ install: all
 		$(MAKE) OBJDIR="$(OBJDIR)$$i/" install; \
 		else $(MAKE) install; fi) || exit; done
 	$(MKDIR) $(DESTDIR)$(PREFIX)/share/doc/$(PACKAGE)
+	$(INSTALL) -m 0644 COPYING $(DESTDIR)$(PREFIX)/share/doc/$(PACKAGE)/COPYING
+	$(MKDIR) $(DESTDIR)$(PREFIX)/share/doc/$(PACKAGE)
 	$(INSTALL) -m 0644 README.md $(DESTDIR)$(PREFIX)/share/doc/$(PACKAGE)/README.md
 
 uninstall:
@@ -173,6 +175,7 @@ uninstall:
 		if [ -n "$(OBJDIR)" ]; then \
 		$(MAKE) OBJDIR="$(OBJDIR)$$i/" uninstall; \
 		else $(MAKE) uninstall; fi) || exit; done
+	$(RM) -- $(DESTDIR)$(PREFIX)/share/doc/$(PACKAGE)/COPYING
 	$(RM) -- $(DESTDIR)$(PREFIX)/share/doc/$(PACKAGE)/README.md
 
 .PHONY: all subdirs clean distclean dist distcheck install uninstall tests
