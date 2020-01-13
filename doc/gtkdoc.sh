@@ -1,6 +1,6 @@
 #!/bin/sh
 #$Id$
-#Copyright (c) 2012-2015 Pierre Pronchery <khorben@defora.org>
+#Copyright (c) 2012-2020 Pierre Pronchery <khorben@defora.org>
 #
 #Redistribution and use in source and binary forms, with or without
 #modification, are permitted provided that the following conditions are met:
@@ -38,6 +38,7 @@ GTKDOC_SCAN="gtkdoc-scan"
 INSTALL="install -m 0644"
 MKDIR="mkdir -m 0755 -p"
 RM="rm -f"
+RMDIR="rmdir"
 TOUCH="touch"
 
 [ -f "../config.sh" ] && . "../config.sh"
@@ -60,6 +61,48 @@ _error()
 }
 
 
+#gtkdoc_mkdb
+_gtkdoc_mkdb()
+{
+	module="$1"
+	sourcedir="$2"
+	outputdir="$3"
+
+	(cd "$sourcedir" &&
+		$DEBUG $GTKDOC_MKDB --module="$module" \
+				--output-dir="$outputdir" \
+				--output-format="xml" --tmpl-dir="tmpl")
+}
+
+
+#gtkdoc_mktmpl
+_gtkdoc_mktmpl()
+{
+	module="$1"
+	sourcedir="$2"
+	outputdir="$3"
+
+	(cd "$sourcedir" &&
+		$DEBUG $GTKDOC_MKTMPL --module="$module" \
+				--output-dir="$outputdir")
+}
+
+
+#gtkdoc_scan
+_gtkdoc_scan()
+{
+	module="$1"
+	sourcedir="$2"
+	outputdir="$3"
+
+	(cd ".." &&
+		$DEBUG $GTKDOC_SCAN --module="$module" \
+				--source-dir="$sourcedir" \
+				--output-dir="$outputdir")
+#		--rebuild-types
+}
+
+
 #usage
 _usage()
 {
@@ -72,7 +115,7 @@ _usage()
 clean=0
 install=0
 uninstall=0
-while getopts "ciuP:" name; do
+while getopts "ciO:uP:" name; do
 	case "$name" in
 		c)
 			clean=1
@@ -80,6 +123,9 @@ while getopts "ciuP:" name; do
 		i)
 			uninstall=0
 			install=1
+			;;
+		O)
+			export "${OPTARG%%=*}"="${OPTARG#*=}"
 			;;
 		u)
 			install=0
@@ -95,7 +141,7 @@ while getopts "ciuP:" name; do
 	esac
 done
 shift $((OPTIND - 1))
-if [ $# -eq 0 ]; then
+if [ $# -lt 1 ]; then
 	_usage
 	exit $?
 fi
@@ -126,23 +172,25 @@ while [ $# -gt 0 ]; do
 			file="${i##*/}"
 			$DEBUG $RM -- "$instdir/$MODULE/$file"	|| exit 2
 		done
+		if [ -d "$instdir/$MODULE" ]; then
+			$DEBUG $RMDIR -- "$instdir/$MODULE"	|| exit 2
+		fi
 		continue
 	fi
 
 	#create
 	case "$target" in
 		gtkdoc/html.stamp)
-			driver="../$MODULE-docs.xml"
-			if [ -n "$OBJDIR" ]; then
-				driver="gtkdoc/$MODULE-docs.xml"
-				$DEBUG $CP -- "$driver" "${OBJDIR}gtkdoc" \
-								|| exit 2
-			fi
 			output="${OBJDIR}gtkdoc/html"
 			$DEBUG $MKDIR -- "$output"		|| exit 2
+			driver="$MODULE-docs.xml"
+			if [ -n "$OBJDIR" ]; then
+				$DEBUG $CP -- "gtkdoc/$driver" "${OBJDIR}gtkdoc" \
+								|| exit 2
+			fi
 			(cd "$output" &&
 				$DEBUG $GTKDOC_MKHTML "$MODULE" \
-					"${OBJDIR}$driver")
+					"../$driver")
 			#detect when gtk-doc is not available
 			res=$?
 			if [ $res -eq 127 ]; then
@@ -159,41 +207,34 @@ while [ $# -gt 0 ]; do
 					--module-dir="html" \
 					--html-dir="$instdir")	|| exit 2
 			;;
-		gtkdoc/sgml.stamp)
-			output="xml"
-			if [ -n "$OBJDIR" ]; then
-				output="${OBJDIR}gtkdoc/xml"
-				$DEBUG $MKDIR -- "$output"	|| exit 2
-			fi
-			(cd "${OBJDIR}gtkdoc" &&
-				$DEBUG $GTKDOC_MKDB \
-					--module="$MODULE" \
-					--output-dir="$output" \
-					--output-format="xml" \
-					--tmpl-dir="tmpl")
-			;;
 		gtkdoc/tmpl.stamp)
 			output="tmpl"
 			if [ -n "$OBJDIR" ]; then
 				output="${OBJDIR}gtkdoc/tmpl"
 				$DEBUG $MKDIR -- "$output"	|| exit 2
 			fi
-			(cd "${OBJDIR}gtkdoc" &&
-				$DEBUG $GTKDOC_MKTMPL \
-					--module="$MODULE" \
-					--output-dir="$output")
+			_gtkdoc_mktmpl "$MODULE" "${OBJDIR}gtkdoc" "$output"
+			;;
+		gtkdoc/xml.stamp)
+			output="xml"
+			if [ -n "$OBJDIR" ]; then
+				output="${OBJDIR}gtkdoc"
+				sections="gtkdoc/$MODULE-sections.txt"
+				$DEBUG $MKDIR -- "$output/xml"	|| exit 2
+				$DEBUG $CP -- "$sections" "$output" \
+								|| exit 2
+				_gtkdoc_scan "$MODULE" "include" "$output"
+				output="${OBJDIR}gtkdoc/xml"
+			fi
+			_gtkdoc_mkdb "$MODULE" "${OBJDIR}gtkdoc" "$output"
 			;;
 		gtkdoc/*.types)
-			output="doc/gtkdoc"			|| exit 2
+			output="$PWD/gtkdoc"			|| exit 2
 			if [ -n "$OBJDIR" ]; then
 				output="${OBJDIR}gtkdoc"
 				$DEBUG $MKDIR -- "$output"	|| exit 2
 			fi
-			(cd ".." &&
-				$DEBUG $GTKDOC_SCAN \
-					--module="$MODULE" \
-					--source-dir="include" \
-					--output-dir="$output")
+			_gtkdoc_scan "$MODULE" "include" "$output"
 			;;
 		*)
 			_error "$target: Unknown type"
@@ -205,7 +246,7 @@ while [ $# -gt 0 ]; do
 		_error "$target: Could not create documentation"
 		install=0
 	fi
-	$TOUCH "$target"
+	$TOUCH "${OBJDIR}$target"
 
 	#install
 	if [ "$install" -eq 1 ]; then
