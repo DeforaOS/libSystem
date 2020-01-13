@@ -1,5 +1,5 @@
 SUBDIRS	= gtkdoc
-TARGETS	= $(OBJDIR)configctl.1 $(OBJDIR)configctl.html $(OBJDIR)configctl.xml $(OBJDIR)gtkdoc/libSystem.types $(OBJDIR)gtkdoc/tmpl.stamp $(OBJDIR)gtkdoc/sgml.stamp $(OBJDIR)gtkdoc/html.stamp
+TARGETS	= $(OBJDIR)configctl.1 $(OBJDIR)configctl.html $(OBJDIR)configctl.xml $(OBJDIR)gtkdoc/libSystem.types $(OBJDIR)gtkdoc/html.stamp $(OBJDIR)gtkdoc/tmpl.stamp $(OBJDIR)gtkdoc/xml.stamp
 OBJDIR	=
 PREFIX	= /usr/local
 DESTDIR	=
@@ -30,14 +30,14 @@ $(OBJDIR)configctl.xml: ../tools/subst.sh configctl.xml.in
 $(OBJDIR)gtkdoc/libSystem.types:
 	./gtkdoc.sh -P "$(PREFIX)" -- "$(OBJDIR)gtkdoc/libSystem.types"
 
+$(OBJDIR)gtkdoc/html.stamp: gtkdoc.sh gtkdoc/libSystem-docs.xml $(OBJDIR)gtkdoc/tmpl.stamp $(OBJDIR)gtkdoc/xml.stamp
+	./gtkdoc.sh -P "$(PREFIX)" -- "$(OBJDIR)gtkdoc/html.stamp"
+
 $(OBJDIR)gtkdoc/tmpl.stamp: gtkdoc.sh $(OBJDIR)gtkdoc/libSystem.types
 	./gtkdoc.sh -P "$(PREFIX)" -- "$(OBJDIR)gtkdoc/tmpl.stamp"
 
-$(OBJDIR)gtkdoc/sgml.stamp: gtkdoc.sh $(OBJDIR)gtkdoc/tmpl.stamp
-	./gtkdoc.sh -P "$(PREFIX)" -- "$(OBJDIR)gtkdoc/sgml.stamp"
-
-$(OBJDIR)gtkdoc/html.stamp: gtkdoc.sh gtkdoc/libSystem-docs.xml $(OBJDIR)gtkdoc/sgml.stamp $(OBJDIR)gtkdoc/tmpl.stamp
-	./gtkdoc.sh -P "$(PREFIX)" -- "$(OBJDIR)gtkdoc/html.stamp"
+$(OBJDIR)gtkdoc/xml.stamp: gtkdoc.sh $(OBJDIR)gtkdoc/tmpl.stamp
+	./gtkdoc.sh -P "$(PREFIX)" -- "$(OBJDIR)gtkdoc/xml.stamp"
 
 clean:
 	@for i in $(SUBDIRS); do (cd "$$i" && \
@@ -48,9 +48,9 @@ clean:
 	./docbook.sh -c -P "$(PREFIX)" -- "$(OBJDIR)configctl.html"
 	../tools/subst.sh -c -P "$(PREFIX)" -- "$(OBJDIR)configctl.xml"
 	./gtkdoc.sh -c -P "$(PREFIX)" -- "$(OBJDIR)gtkdoc/libSystem.types"
-	./gtkdoc.sh -c -P "$(PREFIX)" -- "$(OBJDIR)gtkdoc/tmpl.stamp"
-	./gtkdoc.sh -c -P "$(PREFIX)" -- "$(OBJDIR)gtkdoc/sgml.stamp"
 	./gtkdoc.sh -c -P "$(PREFIX)" -- "$(OBJDIR)gtkdoc/html.stamp"
+	./gtkdoc.sh -c -P "$(PREFIX)" -- "$(OBJDIR)gtkdoc/tmpl.stamp"
+	./gtkdoc.sh -c -P "$(PREFIX)" -- "$(OBJDIR)gtkdoc/xml.stamp"
 
 distclean:
 	@for i in $(SUBDIRS); do (cd "$$i" && \
@@ -61,9 +61,9 @@ distclean:
 	./docbook.sh -c -P "$(PREFIX)" -- "$(OBJDIR)configctl.html"
 	../tools/subst.sh -c -P "$(PREFIX)" -- "$(OBJDIR)configctl.xml"
 	./gtkdoc.sh -c -P "$(PREFIX)" -- "$(OBJDIR)gtkdoc/libSystem.types"
-	./gtkdoc.sh -c -P "$(PREFIX)" -- "$(OBJDIR)gtkdoc/tmpl.stamp"
-	./gtkdoc.sh -c -P "$(PREFIX)" -- "$(OBJDIR)gtkdoc/sgml.stamp"
 	./gtkdoc.sh -c -P "$(PREFIX)" -- "$(OBJDIR)gtkdoc/html.stamp"
+	./gtkdoc.sh -c -P "$(PREFIX)" -- "$(OBJDIR)gtkdoc/tmpl.stamp"
+	./gtkdoc.sh -c -P "$(PREFIX)" -- "$(OBJDIR)gtkdoc/xml.stamp"
 	$(RM) -- $(TARGETS)
 
 install: all
