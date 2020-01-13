@@ -30,13 +30,13 @@ $(OBJDIR)configctl.xml: ../tools/subst.sh configctl.xml.in
 $(OBJDIR)gtkdoc/libSystem.types:
 	./gtkdoc.sh -P "$(PREFIX)" -- "$(OBJDIR)gtkdoc/libSystem.types"
 
-$(OBJDIR)gtkdoc/tmpl.stamp: $(OBJDIR)gtkdoc/libSystem.types
+$(OBJDIR)gtkdoc/tmpl.stamp: gtkdoc.sh $(OBJDIR)gtkdoc/libSystem.types
 	./gtkdoc.sh -P "$(PREFIX)" -- "$(OBJDIR)gtkdoc/tmpl.stamp"
 
-$(OBJDIR)gtkdoc/sgml.stamp: $(OBJDIR)gtkdoc/tmpl.stamp
+$(OBJDIR)gtkdoc/sgml.stamp: gtkdoc.sh $(OBJDIR)gtkdoc/tmpl.stamp
 	./gtkdoc.sh -P "$(PREFIX)" -- "$(OBJDIR)gtkdoc/sgml.stamp"
 
-$(OBJDIR)gtkdoc/html.stamp: gtkdoc/libSystem-docs.xml $(OBJDIR)gtkdoc/sgml.stamp $(OBJDIR)gtkdoc/tmpl.stamp
+$(OBJDIR)gtkdoc/html.stamp: gtkdoc.sh gtkdoc/libSystem-docs.xml $(OBJDIR)gtkdoc/sgml.stamp $(OBJDIR)gtkdoc/tmpl.stamp
 	./gtkdoc.sh -P "$(PREFIX)" -- "$(OBJDIR)gtkdoc/html.stamp"
 
 clean:
