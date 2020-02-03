@@ -58,6 +58,7 @@ dist:
 		$(PACKAGE)-$(VERSION)/doc/project.conf \
 		$(PACKAGE)-$(VERSION)/doc/gtkdoc/Makefile \
 		$(PACKAGE)-$(VERSION)/doc/gtkdoc/libSystem-docs.xml \
+		$(PACKAGE)-$(VERSION)/doc/gtkdoc/libSystem-sections.txt \
 		$(PACKAGE)-$(VERSION)/doc/gtkdoc/project.conf \
 		$(PACKAGE)-$(VERSION)/doc/gtkdoc/tmpl/Makefile \
 		$(PACKAGE)-$(VERSION)/doc/gtkdoc/tmpl/System.sgml \
