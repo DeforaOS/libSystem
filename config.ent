@@ -1,0 +1,5 @@
+<!ENTITY package "libSystem">
+<!ENTITY version "0.4.2">
+<!ENTITY vendor "DeforaOS">
+<!ENTITY prefix "/usr/local">
+<!ENTITY libdir "/usr/local/lib">
