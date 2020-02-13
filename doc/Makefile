@@ -30,7 +30,7 @@ $(OBJDIR)configctl.xml: ../tools/subst.sh configctl.xml.in
 $(OBJDIR)gtkdoc/libSystem.types:
 	./gtkdoc.sh -P "$(PREFIX)" -- "$(OBJDIR)gtkdoc/libSystem.types"
 
-$(OBJDIR)gtkdoc/html.stamp: gtkdoc.sh gtkdoc/libSystem-docs.xml $(OBJDIR)gtkdoc/tmpl.stamp $(OBJDIR)gtkdoc/xml.stamp
+$(OBJDIR)gtkdoc/html.stamp: gtkdoc.sh gtkdoc/libSystem-docs.xml $(OBJDIR)gtkdoc/tmpl.stamp $(OBJDIR)gtkdoc/xml.stamp gtkdoc/xml/gtkdocentities.ent ../config.ent
 	./gtkdoc.sh -P "$(PREFIX)" -- "$(OBJDIR)gtkdoc/html.stamp"
 
 $(OBJDIR)gtkdoc/tmpl.stamp: gtkdoc.sh $(OBJDIR)gtkdoc/libSystem.types
