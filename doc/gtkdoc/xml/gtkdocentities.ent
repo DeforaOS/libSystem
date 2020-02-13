@@ -1,0 +1,4 @@
+<!ENTITY package_name "libSystem">
+<!ENTITY package_string "DeforaOS libSystem">
+<!ENTITY server "www.defora.org/doc/gtk-doc/html">
+<!ENTITY title "DeforaOS libc">

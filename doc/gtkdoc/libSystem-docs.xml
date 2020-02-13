@@ -3,17 +3,16 @@
                "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd"
 [
   <!ENTITY % local.common.attrib "xmlns:xi  CDATA  #FIXED 'http://www.w3.org/2003/XInclude'">
-  <!ENTITY server "www.defora.org/doc/gtk-doc/html">
-  <!ENTITY title "DeforaOS libSystem">
-  <!ENTITY version "0.4.2">
+  <!ENTITY % gtkdocentities SYSTEM "xml/gtkdocentities.ent">
+  %gtkdocentities;
 ]>
-<book id="index">
+<book id="index" xmlns:xi="http://www.w3.org/2003/XInclude">
   <bookinfo>
-    <title>libSystem Reference Manual</title>
+    <title>&package_name; Reference Manual</title>
     <releaseinfo>
-      for libSystem &version;.
+      for &package_string;.
       The latest version of this documentation can be found on-line at
-      <ulink role="online-location" url="https://&server;/libSystem/index.html">https://&server;/libSystem/</ulink>.
+      <ulink role="online-location" url="https://&server;/&package_name;/">https://&server;/&package_name;/</ulink>.
     </releaseinfo>
   </bookinfo>
 
