@@ -127,12 +127,12 @@ dist:
 		$(PACKAGE)-$(VERSION)/tools/platform.sh \
 		$(PACKAGE)-$(VERSION)/tools/subst.sh \
 		$(PACKAGE)-$(VERSION)/tools/project.conf \
-		$(PACKAGE)-$(VERSION)/Makefile \
 		$(PACKAGE)-$(VERSION)/COPYING \
+		$(PACKAGE)-$(VERSION)/Makefile \
+		$(PACKAGE)-$(VERSION)/README.md \
 		$(PACKAGE)-$(VERSION)/config.ent \
 		$(PACKAGE)-$(VERSION)/config.h \
 		$(PACKAGE)-$(VERSION)/config.sh \
-		$(PACKAGE)-$(VERSION)/README.md \
 		$(PACKAGE)-$(VERSION)/project.conf
 	$(RM) -- $(OBJDIR)$(PACKAGE)-$(VERSION)
 
