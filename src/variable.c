@@ -975,7 +975,7 @@ VariableError variable_copy(Variable * variable, Variable const * from)
 			return _copy_compound(variable, from);
 		default:
 			/* TODO implement */
-			return -error_set_code(-ENOSYS, "%s", strerror(ENOSYS));
+			return error_set_code(-ENOSYS, "%s", strerror(ENOSYS));
 	}
 	variable->type = from->type;
 	return 0;
