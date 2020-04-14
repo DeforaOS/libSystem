@@ -78,6 +78,7 @@ dist:
 		$(PACKAGE)-$(VERSION)/include/System/plugin.h \
 		$(PACKAGE)-$(VERSION)/include/System/string.h \
 		$(PACKAGE)-$(VERSION)/include/System/token.h \
+		$(PACKAGE)-$(VERSION)/include/System/userdata.h \
 		$(PACKAGE)-$(VERSION)/include/System/variable.h \
 		$(PACKAGE)-$(VERSION)/include/System/Makefile \
 		$(PACKAGE)-$(VERSION)/include/System/project.conf \
