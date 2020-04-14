@@ -31,7 +31,7 @@
 #ifndef LIBSYSTEM_SYSTEM_OBJECT_H
 # define LIBSYSTEM_SYSTEM_OBJECT_H
 
-# include <sys/types.h>
+# include <stddef.h>
 
 
 /* Object */
