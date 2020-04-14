@@ -67,10 +67,11 @@ String const * file_get_filename(File * file);
 FileMode file_get_mode(File * file);
 
 /* useful */
-size_t file_read(File * file, void * buf, size_t size, size_t count);
-size_t file_read_buffer(File * file, Buffer * buffer);
-size_t file_write(File * file, void * buf, size_t size, size_t count);
-size_t file_write_buffer(File * file, Buffer * buffer);
+FileError file_read(File * file, void * buf, size_t size, size_t * count);
+FileError file_read_buffer(File * file, Buffer * buffer);
+FileError file_write(File * file, const void * buf, size_t size,
+		size_t * count);
+FileError file_write_buffer(File * file, Buffer const * buffer);
 
 FileError file_seek(File * file, FileSeekMode mode, FileOffset offset);
 

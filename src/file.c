@@ -129,25 +129,30 @@ int file_set_mode(File * file, FileMode mode)
 
 /* useful */
 /* file_read */
-size_t file_read(File * file, void * buf, size_t size, size_t count)
+FileError file_read(File * file, void * buf, size_t size, size_t * count)
 {
-	size_t ret;
+	size_t s;
 
-	ret = fread(buf, size, count, file->fp);
-	if(ferror(file->fp))
-		_file_error(file, errno);
-	return ret;
+	if((s = fread(buf, size, *count, file->fp)) < *count
+			&& ferror(file->fp))
+	{
+		*count = s;
+		return _file_error(file, errno);
+	}
+	return 0;
 }
 
 
 /* file_read_buffer */
-size_t file_read_buffer(File * file, Buffer * buffer)
+FileError file_read_buffer(File * file, Buffer * buffer)
 {
-	size_t ret;
+	int ret;
+	size_t s;
 
-	ret = file_read(file, buffer_get_data(buffer), sizeof(char),
-			buffer_get_size(buffer));
-	buffer_set_size(buffer, ret);
+	s = buffer_get_size(buffer);
+	if((ret = file_read(file, buffer_get_data(buffer), sizeof(char),
+					&s)) != 0)
+		buffer_set_size(buffer, s);
 	return ret;
 }
 
@@ -177,21 +182,26 @@ FileError file_unlink(File * file)
 
 
 /* file_write */
-size_t file_write(File * file, void * buf, size_t size, size_t count)
+FileError file_write(File * file, const void * buf, size_t size, size_t * count)
 {
-	size_t ret;
+	size_t s;
 
-	if((ret = fwrite(buf, size, count, file->fp)) < count)
-		_file_error(file, errno);
-	return ret;
+	if((s = fwrite(buf, size, *count, file->fp)) < *count)
+	{
+		*count = s;
+		return _file_error(file, errno);
+	}
+	return 0;
 }
 
 
 /* file_write_buffer */
-size_t file_write_buffer(File * file, Buffer * buffer)
+FileError file_write_buffer(File * file, Buffer const * buffer)
 {
-	return file_write(file, buffer_get_data(buffer), sizeof(char),
-			buffer_get_size(buffer));
+	size_t size;
+
+	size = buffer_get_size(buffer);
+	return file_write(file, buffer_get_data(buffer), sizeof(char), &size);
 }
 
 
