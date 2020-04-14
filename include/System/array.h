@@ -31,7 +31,7 @@
 #ifndef LIBSYSTEM_SYSTEM_ARRAY_H
 # define LIBSYSTEM_SYSTEM_ARRAY_H
 
-# include <sys/types.h>
+# include <stddef.h>
 # include <stdbool.h>
 
 
