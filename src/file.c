@@ -209,13 +209,48 @@ FileError file_write_buffer(File * file, Buffer const * buffer)
 /* accessors */
 static String const * _file_get_fmode(File * file, FileMode mode)
 {
-	switch(mode)
+	struct
 	{
-		case FILE_MODE_READ:
-			return "r";
-		case FILE_MODE_WRITE:
-			return "w";
-	}
+		FileMode mode;
+		String const * ret;
+	} modes[] =
+	{
+		{ FILE_MODE_WRITE
+			| FILE_MODE_APPEND
+			| FILE_MODE_CREATE,	"a"	},
+		{ FILE_MODE_WRITE
+			| FILE_MODE_APPEND
+			| FILE_MODE_CREATE
+			| FILE_MODE_EXCLUSIVE,	"ax"	},
+		{ FILE_MODE_READ_WRITE
+			| FILE_MODE_APPEND
+			| FILE_MODE_CREATE,	"a+"	},
+		{ FILE_MODE_READ_WRITE
+			| FILE_MODE_APPEND
+			| FILE_MODE_CREATE
+			| FILE_MODE_EXCLUSIVE,	"a+x"	},
+		{ FILE_MODE_READ,		"r"	},
+		{ FILE_MODE_READ_WRITE,		"r+"	},
+		{ FILE_MODE_WRITE
+			| FILE_MODE_CREATE
+			| FILE_MODE_TRUNCATE,	"w"	},
+		{ FILE_MODE_WRITE
+			| FILE_MODE_CREATE
+			| FILE_MODE_TRUNCATE
+			| FILE_MODE_EXCLUSIVE,	"wx"	},
+		{ FILE_MODE_READ_WRITE
+			| FILE_MODE_CREATE
+			| FILE_MODE_TRUNCATE,	"w+"	},
+		{ FILE_MODE_READ_WRITE
+			| FILE_MODE_CREATE
+			| FILE_MODE_TRUNCATE
+			| FILE_MODE_EXCLUSIVE,	"w+x"	},
+	};
+	size_t i;
+
+	for(i = 0; i < sizeof(modes) / sizeof(*modes); i++)
+		if(modes[i].mode == mode)
+			return modes[i].ret;
 	_file_error(file, EINVAL);
 	return NULL;
 }
