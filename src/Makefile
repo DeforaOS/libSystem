@@ -23,7 +23,7 @@ INSTALL	= install
 
 all: $(TARGETS)
 
-libSystem_OBJS = $(OBJDIR)array.o $(OBJDIR)buffer.o $(OBJDIR)config.o $(OBJDIR)error.o $(OBJDIR)event.o $(OBJDIR)hash.o $(OBJDIR)mutator.o $(OBJDIR)object.o $(OBJDIR)parser.o $(OBJDIR)plugin.o $(OBJDIR)string.o $(OBJDIR)token.o $(OBJDIR)variable.o
+libSystem_OBJS = $(OBJDIR)array.o $(OBJDIR)buffer.o $(OBJDIR)config.o $(OBJDIR)error.o $(OBJDIR)event.o $(OBJDIR)file.o $(OBJDIR)hash.o $(OBJDIR)mutator.o $(OBJDIR)object.o $(OBJDIR)parser.o $(OBJDIR)plugin.o $(OBJDIR)string.o $(OBJDIR)token.o $(OBJDIR)variable.o
 libSystem_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
 libSystem_LDFLAGS = $(LDFLAGSF) $(LDFLAGS) `../tools/platform.sh -O DESTDIR="$(DESTDIR)" -l dl` `../tools/platform.sh -O DESTDIR="$(DESTDIR)" -l m`
 
@@ -54,6 +54,9 @@ $(OBJDIR)error.o: error.c
 
 $(OBJDIR)event.o: event.c
 	$(CC) $(libSystem_CFLAGS) -o $(OBJDIR)event.o -c event.c
+
+$(OBJDIR)file.o: file.c
+	$(CC) $(libSystem_CFLAGS) -o $(OBJDIR)file.o -c file.c
 
 $(OBJDIR)hash.o: hash.c
 	$(CC) $(libSystem_CFLAGS) -o $(OBJDIR)hash.o -c hash.c

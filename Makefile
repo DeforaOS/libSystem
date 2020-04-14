@@ -86,6 +86,7 @@ dist:
 		$(PACKAGE)-$(VERSION)/src/config.c \
 		$(PACKAGE)-$(VERSION)/src/error.c \
 		$(PACKAGE)-$(VERSION)/src/event.c \
+		$(PACKAGE)-$(VERSION)/src/file.c \
 		$(PACKAGE)-$(VERSION)/src/hash.c \
 		$(PACKAGE)-$(VERSION)/src/mutator.c \
 		$(PACKAGE)-$(VERSION)/src/object.c \
