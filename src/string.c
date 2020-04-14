@@ -96,6 +96,19 @@ String * string_new_format(String const * format, ...)
 {
 	String * ret;
 	va_list ap;
+
+	va_start(ap, format);
+	ret = string_new_formatv(format, ap);
+	va_end(ap);
+	return ret;
+}
+
+
+/* string_new_formatv */
+String * string_new_formatv(String const * format, va_list ap)
+{
+	String * ret;
+	va_list v;
 	int len;
 	size_t s;
 
@@ -104,9 +117,9 @@ String * string_new_format(String const * format, ...)
 		error_set_code(-EINVAL, "%s", strerror(EINVAL));
 		return NULL;
 	}
-	va_start(ap, format);
-	len = vsnprintf(NULL, 0, format, ap);
-	va_end(ap);
+	va_copy(v, ap);
+	len = vsnprintf(NULL, 0, format, v);
+	va_end(v);
 	if(len < 0)
 	{
 		error_set_code(-errno, "%s", strerror(errno));
@@ -115,14 +128,12 @@ String * string_new_format(String const * format, ...)
 	s = (size_t)len + 1;
 	if((ret = object_new(s)) == NULL)
 		return NULL;
-	va_start(ap, format);
 	if(vsnprintf(ret, s, format, ap) != len)
 	{
 		error_set_code(-errno, "%s", strerror(errno));
 		object_delete(ret);
 		ret = NULL;
 	}
-	va_end(ap);
 	return ret;
 }
 

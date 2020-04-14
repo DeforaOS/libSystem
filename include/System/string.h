@@ -48,6 +48,7 @@ String * string_new(String const * string);
 String * string_new_append(String const * string, ...);
 String * string_new_appendv(String const * string, va_list ap);
 String * string_new_format(String const * format, ...);
+String * string_new_formatv(String const * format, va_list ap);
 String * string_new_length(String const * string, size_t length);
 String * string_new_replace(String const * string, String const * what,
 		String const * by);
