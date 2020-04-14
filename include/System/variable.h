@@ -31,6 +31,7 @@
 #ifndef LIBSYSTEM_SYSTEM_VARIABLE_H
 # define LIBSYSTEM_SYSTEM_VARIABLE_H
 
+# include <stdarg.h>
 # include <stdbool.h>
 # include <stdint.h>
 # include "buffer.h"
@@ -63,15 +64,20 @@ typedef enum _VariableType
 
 typedef unsigned int VariableClass;
 
+typedef int VariableError;
+
 
 /* functions */
-Variable * variable_new(VariableType type, void const * value);
+Variable * variable_new(VariableType type, ...);
+Variable * variable_newv(VariableType type, va_list ap);
 Variable * variable_new_array(VariableType type, size_t size, ...);
-Variable * variable_new_arrayv(VariableType type, size_t size, void ** values);
+Variable * variable_new_arrayv(VariableType type, size_t size, va_list ap);
 Variable * variable_new_compound(String const * name, size_t members, ...);
 Variable * variable_new_compoundv(String const * name, size_t members,
-		VariableType * types, void ** values);
-Variable * variable_new_copy(Variable * variable);
+		va_list ap);
+Variable * variable_new_compound_variables(String const * name, size_t members,
+		Variable ** variables);
+Variable * variable_new_copy(Variable const * from);
 Variable * variable_new_deserialize(size_t * size, char const * data);
 Variable * variable_new_deserialize_buffer(size_t * size,
 		Buffer const * buffer);
@@ -81,22 +87,27 @@ void variable_delete(Variable * variable);
 
 
 /* accessors */
-int variable_get_as(Variable * variable, VariableType type, void * result);
+VariableError variable_get_as(Variable * variable, VariableType type,
+		void * result);
 VariableClass variable_get_class(Variable * variable);
 VariableType variable_get_type(Variable * variable);
 
-int variable_is_array(Variable * variable);
-int variable_is_class(Variable * variable, VariableClass _class);
-int variable_is_compound(Variable * variable);
-int variable_is_instance(Variable * variable, String const * name);
-int variable_is_scalar(Variable * variable);
-int variable_is_type(Variable * variable, VariableType type);
+bool variable_is_array(Variable * variable);
+bool variable_is_class(Variable * variable, VariableClass _class);
+bool variable_is_compound(Variable * variable);
+bool variable_is_instance(Variable * variable, String const * name);
+bool variable_is_scalar(Variable * variable);
+bool variable_is_type(Variable * variable, VariableType type);
 
-int variable_set(Variable * variable, Variable * from);
-int variable_set_from(Variable * variable, VariableType type,
-		void const * value);
+VariableError variable_set(Variable * variable, ...);
+VariableError variable_setv(Variable * variable, va_list ap);
+VariableError variable_set_type(Variable * variable, VariableType type, ...);
+VariableError variable_set_typev(Variable * variable, VariableType type,
+		va_list ap);
 
 /* useful */
-int variable_serialize(Variable * variable, Buffer * buffer, bool prefix);
+VariableError variable_copy(Variable * variable, Variable const * from);
+VariableError variable_serialize(Variable * variable, Buffer * buffer,
+		bool prefix);
 
 #endif /* !LIBSYSTEM_SYSTEM_VARIABLE_H */

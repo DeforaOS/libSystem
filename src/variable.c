@@ -46,6 +46,7 @@ struct _Variable
 
 	union
 	{
+		bool b;
 		int8_t int8;
 		uint8_t uint8;
 		int16_t int16;
@@ -58,6 +59,14 @@ struct _Variable
 		double d;
 		Buffer * buffer;
 		String * string;
+		struct {
+			VariableType type;
+			Array * array;
+		} array;
+		struct {
+			String * name;
+			Array * members;
+		} compound;
 	} u;
 };
 
@@ -81,14 +90,27 @@ static void _variable_destroy(Variable * variable);
 
 /* public */
 /* variable_new */
-Variable * variable_new(VariableType type, void const * value)
+Variable * variable_new(VariableType type, ...)
+{
+	Variable * variable;
+	va_list ap;
+
+	va_start(ap, type);
+	variable = variable_newv(type, ap);
+	va_end(ap);
+	return variable;
+}
+
+
+/* variable_newv */
+Variable * variable_newv(VariableType type, va_list ap)
 {
 	Variable * variable;
 
 	if((variable = object_new(sizeof(*variable))) == NULL)
 		return NULL;
 	variable->type = VT_NULL;
-	if(variable_set_from(variable, type, value) != 0)
+	if(variable_set_typev(variable, type, ap) != 0)
 	{
 		object_delete(variable);
 		return NULL;
@@ -100,61 +122,156 @@ Variable * variable_new(VariableType type, void const * value)
 /* variable_new_array */
 Variable * variable_new_array(VariableType type, size_t size, ...)
 {
-	/* TODO implement */
-	return NULL;
+	Variable * variable;
+	va_list ap;
+
+	va_start(ap, size);
+	variable = variable_new_arrayv(type, size, ap);
+	va_end(ap);
+	return variable;
 }
 
 
 /* variable_new_arrayv */
-Variable * variable_new_arrayv(VariableType type, size_t size, void ** values)
+Variable * variable_new_arrayv(VariableType type, size_t size, va_list ap)
 {
-	/* TODO implement */
-	return NULL;
+	Variable * variable;
+	size_t i;
+	void * p;
+
+	if((variable = variable_new(VT_ARRAY, type, size)) == NULL)
+		return NULL;
+	for(i = 0; i < size; i++)
+	{
+		p = va_arg(ap, void *);
+		if(array_set(variable->u.array.array, i, p) != 0)
+		{
+			variable_delete(variable);
+			return NULL;
+		}
+	}
+	return variable;
 }
 
 
 /* variable_new_compound */
 Variable * variable_new_compound(String const * name, size_t members, ...)
 {
-	/* TODO implement */
-	return NULL;
+	Variable * variable;
+	va_list ap;
+
+	va_start(ap, members);
+	variable = variable_new_compoundv(name, members, ap);
+	va_end(ap);
+	return variable;
 }
 
 
 /* variable_new_compoundv */
 Variable * variable_new_compoundv(String const * name, size_t members,
-		VariableType * types, void ** values)
+		va_list ap)
 {
-	/* TODO implement */
-	return NULL;
+	Variable * variable;
+	size_t i;
+	VariableType type;
+	Variable * v;
+
+	if((variable = variable_new(VT_COMPOUND, name, members)) == NULL)
+		return NULL;
+	for(i = 0; i < members; i++)
+	{
+		type = va_arg(ap, VariableType);
+		if((v = variable_newv(type, ap)) == NULL
+				|| array_set(variable->u.compound.members, i,
+					v) != 0)
+		{
+			variable_delete(variable);
+			return NULL;
+		}
+	}
+	return variable;
+}
+
+
+/* variable_new_compound_variables */
+Variable * variable_new_compound_variables(String const * name, size_t members,
+		Variable ** variables)
+{
+	Variable * variable;
+	size_t i;
+	Variable * v;
+
+	if((variable = variable_new(VT_COMPOUND, name, members)) == NULL)
+		return NULL;
+	for(i = 0; i < members; i++)
+		if((v = variable_new_copy(variables[i])) == NULL
+				|| array_set(variable->u.compound.members, i,
+					v) != 0)
+		{
+			variable_delete(variable);
+			return NULL;
+		}
+	return variable;
 }
 
 
 /* variable_new_copy */
-Variable * variable_new_copy(Variable * variable)
+static Variable * _new_copy_array(Variable const * from);
+
+Variable * variable_new_copy(Variable const * from)
 {
-	switch(variable->type)
+	switch(from->type)
 	{
 		case VT_NULL:
+			return variable_new(from->type);
 		case VT_BOOL:
+			return variable_new(from->type, from->u.b);
 		case VT_INT8:
+			return variable_new(from->type, from->u.int8);
 		case VT_UINT8:
+			return variable_new(from->type, from->u.uint8);
 		case VT_INT16:
+			return variable_new(from->type, from->u.int16);
 		case VT_UINT16:
+			return variable_new(from->type, from->u.uint16);
 		case VT_INT32:
+			return variable_new(from->type, from->u.int32);
 		case VT_UINT32:
+			return variable_new(from->type, from->u.uint32);
 		case VT_INT64:
+			return variable_new(from->type, from->u.int64);
 		case VT_UINT64:
+			return variable_new(from->type, from->u.uint64);
 		case VT_FLOAT:
+			return variable_new(from->type, from->u.f);
 		case VT_DOUBLE:
-			return variable_new(variable->type, &variable->u);
+			return variable_new(from->type, from->u.d);
 		case VT_STRING:
-			return variable_new(variable->type, variable->u.string);
+			return variable_new(from->type, from->u.string);
 		case VT_BUFFER:
-			return variable_new(variable->type, variable->u.buffer);
+			return variable_new(from->type, from->u.buffer);
+		case VT_ARRAY:
+			return _new_copy_array(from);
 	}
-	error_set_code(1, "%s", "Unable to copy this type of variable");
+	error_set_code(1, "%s%u%s", "Unable to copy this type of variable (",
+			from->type, ")");
 	return NULL;
+}
+
+static Variable * _new_copy_array(Variable const * variable)
+{
+	Variable * ret;
+	size_t size;
+
+	size = array_get_size(variable->u.array.array);
+	if((ret = variable_new_array(variable->u.array.type, size)) == NULL)
+		return NULL;
+	if(array_copy(ret->u.array.array, variable->u.array.array) != 0)
+	{
+		variable_delete(ret);
+		return NULL;
+	}
+	return ret;
 }
 
 
@@ -197,15 +314,12 @@ Variable * variable_new_deserialize_type(VariableType type, size_t * size,
 {
 	Variable * v;
 	size_t s;
-	uint8_t u8;
-	int16_t i16;
-	int32_t i32;
 	uint32_t u32;
-	int64_t i64;
+	uint64_t u64;
 	float f;
 	double d;
-	Buffer * b = NULL;
-	void * p = (char *)data;
+	Buffer * b;
+	int res;
 
 #ifdef DEBUG
 	fprintf(stderr, "DEBUG: %s(%u, %lu, %p)\n", __func__, type, *size,
@@ -217,24 +331,15 @@ Variable * variable_new_deserialize_type(VariableType type, size_t * size,
 	switch(type)
 	{
 		case VT_NULL:
-			break;
 		case VT_BOOL:
-			p = (char *)&u8;
-			break;
 		case VT_INT8:
 		case VT_UINT8:
-			break;
 		case VT_INT16:
 		case VT_UINT16:
-			p = (char *)&i16;
-			break;
 		case VT_INT32:
 		case VT_UINT32:
-			p = (char *)&i32;
-			break;
 		case VT_INT64:
 		case VT_UINT64:
-			p = (char *)&i64;
 			break;
 		case VT_BUFFER:
 			if(*size < s)
@@ -246,17 +351,7 @@ Variable * variable_new_deserialize_type(VariableType type, size_t * size,
 		case VT_FLOAT:
 		case VT_DOUBLE:
 		case VT_STRING:
-			for(s = 0; s < *size; s++)
-				if(data[s] != '\0')
-					continue;
-				else if((p = malloc(++s)) == NULL)
-				{
-					error_set_code(-errno, "%s",
-							strerror(errno));
-					return NULL;
-				}
-				else
-					break;
+			for(s = 0; s < *size && data[s] != '\0'; s++);
 			break;
 		default:
 			error_set_code(1, "Unable to deserialize type %u",
@@ -271,71 +366,76 @@ Variable * variable_new_deserialize_type(VariableType type, size_t * size,
 		return NULL;
 	}
 	*size = s;
-	if(p != data)
-		memcpy(p, data, s);
 	/* convert the data if necessary */
 	switch(type)
 	{
 		case VT_NULL:
+			v = variable_new(type);
 			break;
 		case VT_BOOL:
-			if((u8 & 0xfe) != 0x0)
+			if((data[0] & 0xfe) != 0x0)
 			{
 				error_set_code(1, "Invalid boolean value");
 				return NULL;
 			}
+			v = variable_new(type, data[0]);
 			break;
 		case VT_INT8:
 		case VT_UINT8:
+			v = variable_new(type, data[0]);
 			break;
 		case VT_INT16:
 		case VT_UINT16:
-			i16 = _bswap16(i16);
+			v = variable_new(type, data[1] << 8 | data[0]);
 			break;
 		case VT_INT32:
 		case VT_UINT32:
-			i32 = _bswap32(i32);
+			v = variable_new(type, data[3] << 24 | data[2] << 16
+					| data[1] << 8 | data[0]);
 			break;
 		case VT_FLOAT:
-			i32 = sscanf(p, "%e", &f);
-			free(p);
-			if(i32 != 1)
+			res = sscanf(data, "%e", &f);
+			if(res != 1)
 			{
 				error_set_code(1, "Invalid float value");
 				return NULL;
 			}
-			p = &f;
+			v = variable_new(type, f);
 			break;
 		case VT_DOUBLE:
-			i32 = sscanf(p, "%le", &d);
-			free(p);
-			if(i32 != 1)
+			res = sscanf(data, "%le", &d);
+			if(res != 1)
 			{
 				error_set_code(1, "Invalid double value");
 				return NULL;
 			}
-			p = &d;
+			v = variable_new(type, d);
 			break;
 		case VT_STRING:
+			v = variable_new(type, data);
 			break;
 		case VT_INT64:
 		case VT_UINT64:
-			i64 = _bswap64(i64);
+			u64 = (uint64_t)data[7] << 56 | (uint64_t)data[6] << 48
+				| (uint64_t)data[5] << 40
+				| (uint64_t)data[4] << 32
+				| data[3] << 24 | data[2] << 16
+				| data[1] << 8 | data[0];
+			v = variable_new(type, u64);
 			break;
 		case VT_BUFFER:
+			/* XXX avoid copying the buffer */
 			if((b = buffer_new(s - sizeof(u32), &data[sizeof(u32)]))
 					== NULL)
 				return NULL;
-			p = b;
+			v = variable_new(type, b);
+			buffer_delete(b);
 			break;
 		default:
 			error_set_code(1, "Unable to deserialize type %u",
 					type);
 			return NULL;
 	}
-	v = variable_new(type, p);
-	if(b != NULL)
-		buffer_delete(b);
 	return v;
 }
 
@@ -349,7 +449,8 @@ void variable_delete(Variable * variable)
 
 
 /* variable_get_as */
-int variable_get_as(Variable * variable, VariableType type, void * result)
+VariableError variable_get_as(Variable * variable, VariableType type,
+		void * result)
 {
 	size_t size = 0;
 	void * p = NULL;
@@ -654,10 +755,169 @@ VariableType variable_get_type(Variable * variable)
 
 
 /* variable_set */
-int variable_set(Variable * variable, Variable * from)
+VariableError variable_set(Variable * variable, ...)
+{
+	VariableError ret;
+	va_list ap;
+
+	va_start(ap, variable);
+	ret = variable_setv(variable, ap);
+	va_end(ap);
+	return ret;
+}
+
+
+/* variable_setv */
+VariableError variable_setv(Variable * variable, va_list ap)
+{
+	return variable_set_typev(variable, variable->type, ap);
+}
+
+
+/* variable_set_type */
+VariableError variable_set_type(Variable * variable, VariableType type, ...)
+{
+	VariableError ret;
+	va_list ap;
+
+	va_start(ap, type);
+	ret = variable_set_typev(variable, type, ap);
+	va_end(ap);
+	return ret;
+}
+
+
+/* variable_set_typev */
+VariableError variable_set_typev(Variable * variable, VariableType type,
+		va_list ap)
+{
+	int32_t i32;
+	uint32_t u32;
+	int64_t i64;
+	uint64_t u64;
+	double d;
+	Buffer const * b;
+	String const * s;
+
+	/* XXX keep the previous contents in case of error? */
+	_variable_destroy(variable);
+	memset(&variable->u, 0, sizeof(variable->u));
+	switch((variable->type = type))
+	{
+		case VT_NULL:
+			break;
+		case VT_BOOL:
+			u32 = va_arg(ap, uint32_t);
+			variable->u.b = u32 ? true : false;
+#ifdef DEBUG
+			fprintf(stderr, "DEBUG: %s(%s)\n", __func__,
+					variable->u.b ? "true" : "false");
+#endif
+			break;
+		case VT_INT8:
+			i32 = va_arg(ap, int32_t);
+			variable->u.int8 = i32;
+#ifdef DEBUG
+			fprintf(stderr, "DEBUG: %s(%d)\n", __func__,
+					variable->u.int8);
+#endif
+			break;
+		case VT_UINT8:
+			u32 = va_arg(ap, uint32_t);
+			variable->u.uint8 = u32;
+#ifdef DEBUG
+			fprintf(stderr, "DEBUG: %s(%u)\n", __func__,
+					variable->u.uint8);
+#endif
+			break;
+		case VT_INT16:
+			i32 = va_arg(ap, int32_t);
+			variable->u.int16 = i32;
+#ifdef DEBUG
+			fprintf(stderr, "DEBUG: %s(%d)\n", __func__,
+					variable->u.int16);
+#endif
+			break;
+		case VT_UINT16:
+			u32 = va_arg(ap, uint32_t);
+			variable->u.uint16 = u32;
+#ifdef DEBUG
+			fprintf(stderr, "DEBUG: %s(%u)\n", __func__,
+					variable->u.uint16);
+#endif
+			break;
+		case VT_INT32:
+			i32 = va_arg(ap, int32_t);
+			variable->u.int32 = i32;
+#ifdef DEBUG
+			fprintf(stderr, "DEBUG: %s(%d)\n", __func__,
+					variable->u.int32);
+#endif
+			break;
+		case VT_UINT32:
+			u32 = va_arg(ap, uint32_t);
+			variable->u.uint32 = u32;
+#ifdef DEBUG
+			fprintf(stderr, "DEBUG: %s(%u)\n", __func__,
+					variable->u.uint32);
+#endif
+			break;
+		case VT_INT64:
+			i64 = va_arg(ap, int64_t);
+			variable->u.int64 = i64;
+			break;
+		case VT_UINT64:
+			u64 = va_arg(ap, uint64_t);
+			variable->u.uint64 = u64;
+			break;
+		case VT_FLOAT:
+			d = va_arg(ap, double);
+			variable->u.f = d;
+#ifdef DEBUG
+			fprintf(stderr, "DEBUG: %s(%f)\n", __func__,
+					variable->u.f);
+#endif
+			break;
+		case VT_DOUBLE:
+			d = va_arg(ap, double);
+			variable->u.d = d;
+#ifdef DEBUG
+			fprintf(stderr, "DEBUG: %s(%lf)\n", __func__,
+					variable->u.d);
+#endif
+			break;
+		case VT_BUFFER:
+			b = va_arg(ap, Buffer const *);
+			if((variable->u.buffer = buffer_new_copy(b)) == NULL)
+				return -1;
+#ifdef DEBUG
+			fprintf(stderr, "DEBUG: %s(%p)\n", __func__, (void *)b);
+#endif
+			break;
+		case VT_STRING:
+			s = va_arg(ap, String const *);
+			if((variable->u.string = string_new(s)) == NULL)
+				return -1;
+#ifdef DEBUG
+			fprintf(stderr, "DEBUG: %s(\"%s\")\n", __func__, s);
+#endif
+			break;
+		default:
+			return -1;
+	}
+	return 0;
+}
+
+
+/* useful */
+/* variable_copy */
+static VariableError _copy_compound(Variable * variable, Variable const * from);
+
+VariableError variable_copy(Variable * variable, Variable const * from)
 {
 	Buffer * b;
 	String * s;
+	Array * a;
 
 	switch(from->type)
 	{
@@ -688,6 +948,15 @@ int variable_set(Variable * variable, Variable * from)
 			_variable_destroy(variable);
 			variable->u.string = s;
 			break;
+		case VT_ARRAY:
+			if((a = array_new_copy(from->u.array.array)) == NULL)
+				return -1;
+			_variable_destroy(variable);
+			variable->u.array.type = from->u.array.type;
+			variable->u.array.array = a;
+			break;
+		case VT_COMPOUND:
+			return _copy_compound(variable, from);
 		default:
 			/* TODO implement */
 			return -error_set_code(-ENOSYS, "%s", strerror(ENOSYS));
@@ -696,127 +965,49 @@ int variable_set(Variable * variable, Variable * from)
 	return 0;
 }
 
-
-/* variable_set_from */
-int variable_set_from(Variable * variable, VariableType type,
-		void const * value)
+static VariableError _copy_compound(Variable * variable, Variable const * from)
 {
-	int8_t const * i8;
-	uint8_t const * u8;
-	int16_t const * i16;
-	uint16_t const * u16;
-	int32_t const * i32;
-	uint32_t const * u32;
-	int64_t const * i64;
-	uint64_t const * u64;
-	float const * f;
-	double const * d;
-	Buffer * b;
-	char const * s;
+	String * s;
+	Array * members;
+	size_t count;
+	size_t i;
+	Variable * v;
 
-	/* XXX keep the previous contents in case of error? */
-	_variable_destroy(variable);
-	memset(&variable->u, 0, sizeof(variable->u));
-	if(value == NULL)
-		type = VT_NULL;
-	switch((variable->type = type))
+	if(from->u.compound.name == NULL)
+		s = NULL;
+	else if((s = string_new(from->u.compound.name)) == NULL)
+		return -1;
+	if((members = array_new(array_get_size(from->u.compound.members)))
+			== NULL)
 	{
-		case VT_NULL:
-			break;
-		case VT_BOOL:
-			u8 = value;
-			variable->u.uint8 = (*u8 != 0) ? 1 : 0;
-#ifdef DEBUG
-			fprintf(stderr, "DEBUG: %s(%u)\n", __func__,
-					variable->u.uint8);
-#endif
-			break;
-		case VT_INT8:
-			i8 = value;
-			variable->u.int8 = *i8;
-#ifdef DEBUG
-			fprintf(stderr, "DEBUG: %s(%d)\n", __func__,
-					variable->u.int8);
-#endif
-			break;
-		case VT_UINT8:
-			u8 = value;
-			variable->u.uint8 = *u8;
-#ifdef DEBUG
-			fprintf(stderr, "DEBUG: %s(%u)\n", __func__,
-					variable->u.uint8);
-#endif
-			break;
-		case VT_INT16:
-			i16 = value;
-			variable->u.int16 = *i16;
-#ifdef DEBUG
-			fprintf(stderr, "DEBUG: %s(%d)\n", __func__, *i16);
-#endif
-			break;
-		case VT_UINT16:
-			u16 = value;
-			variable->u.uint16 = *u16;
-#ifdef DEBUG
-			fprintf(stderr, "DEBUG: %s(%u)\n", __func__, *u16);
-#endif
-			break;
-		case VT_INT32:
-			i32 = value;
-			variable->u.int32 = *i32;
-#ifdef DEBUG
-			fprintf(stderr, "DEBUG: %s(%d)\n", __func__, *i32);
-#endif
-			break;
-		case VT_UINT32:
-			u32 = value;
-			variable->u.uint32 = *u32;
-#ifdef DEBUG
-			fprintf(stderr, "DEBUG: %s(%u)\n", __func__, *u32);
-#endif
-			break;
-		case VT_INT64:
-			i64 = value;
-			variable->u.int64 = *i64;
-			break;
-		case VT_UINT64:
-			u64 = value;
-			variable->u.uint64 = *u64;
-			break;
-		case VT_FLOAT:
-			f = value;
-			variable->u.f = *f;
-			break;
-		case VT_DOUBLE:
-			d = value;
-			variable->u.d = *d;
-			break;
-		case VT_BUFFER:
-			if((b = buffer_new_copy(value)) == NULL)
-				return -1;
-			variable->u.buffer = b;
-#ifdef DEBUG
-			fprintf(stderr, "DEBUG: %s(%p)\n", __func__, (void *)b);
-#endif
-			break;
-		case VT_STRING:
-			s = value;
-			if((variable->u.string = string_new(s)) == NULL)
-				return -1;
-#ifdef DEBUG
-			fprintf(stderr, "DEBUG: %s(\"%s\")\n", __func__, s);
-#endif
-			break;
-		default:
-			return -1;
+		string_delete(s);
+		return -1;
 	}
+	count = array_count(from->u.compound.members);
+	for(i = 0; i < count; i++)
+		if((v = array_get(from->u.compound.members, i)) == NULL
+				|| (v = variable_new_copy(v)) == NULL
+				|| array_set(members, i, v) != 0)
+			break;
+	if(i != count)
+	{
+		for(count = i, i = 0; i < count; i++)
+			if((v = array_get(members, i)) != NULL)
+				variable_delete(v);
+		array_delete(members);
+		string_delete(s);
+		return -1;
+	}
+	_variable_destroy(variable);
+	variable->u.compound.name = s;
+	variable->u.compound.members = members;
 	return 0;
 }
 
 
-/* useful */
 /* variable_serialize */
-int variable_serialize(Variable * variable, Buffer * buffer, bool prefix)
+VariableError variable_serialize(Variable * variable, Buffer * buffer,
+		bool prefix)
 {
 	size_t size = 0;
 	size_t offset;
@@ -953,6 +1144,8 @@ static uint64_t _bswap64(uint64_t u)
 
 
 /* variable_destroy */
+static void _destroy_compound(Variable * variable);
+
 static void _variable_destroy(Variable * variable)
 {
 	switch(variable->type)
@@ -976,5 +1169,27 @@ static void _variable_destroy(Variable * variable)
 		case VT_STRING:
 			string_delete(variable->u.string);
 			break;
+		case VT_ARRAY:
+			array_delete(variable->u.array.array);
+			break;
+		case VT_COMPOUND:
+			_destroy_compound(variable);
+			break;
 	}
+}
+
+static void _destroy_compound(Variable * variable)
+{
+	size_t count;
+	size_t i;
+	Variable * v;
+
+	string_delete(variable->u.compound.name);
+	count = array_count(variable->u.compound.members);
+	for(i = 0; i < count; i++)
+	{
+		v = array_get(variable->u.compound.members, i);
+		variable_delete(v);
+	}
+	array_delete(variable->u.compound.members);
 }
