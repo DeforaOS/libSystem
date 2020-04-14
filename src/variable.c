@@ -462,6 +462,8 @@ VariableError variable_get_as(Variable * variable, VariableType type,
 	uint32_t u32;
 	int64_t i64;
 	uint64_t u64;
+	float * fp;
+	double * dp;
 	Buffer ** b;
 	String ** s;
 
@@ -705,21 +707,23 @@ VariableError variable_get_as(Variable * variable, VariableType type,
 			p = &u64;
 			break;
 		case VT_FLOAT:
+			fp = result;
 			if(variable->type == VT_FLOAT)
-			{
-				size = sizeof(variable->u.f);
-				p = &variable->u.f;
+				*fp = variable->u.f;
+			else if(variable->type == VT_DOUBLE)
+				*fp = variable->u.d;
+			else
 				break;
-			}
-			break;
+			return 0;
 		case VT_DOUBLE:
-			if(variable->type == VT_DOUBLE)
-			{
-				size = sizeof(variable->u.d);
-				p = &variable->u.d;
+			dp = result;
+			if(variable->type == VT_FLOAT)
+				*dp = variable->u.f;
+			else if(variable->type == VT_DOUBLE)
+				*dp = variable->u.d;
+			else
 				break;
-			}
-			break;
+			return 0;
 		case VT_BUFFER:
 			if(variable->type == VT_BUFFER)
 			{
