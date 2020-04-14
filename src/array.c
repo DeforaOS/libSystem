@@ -70,49 +70,58 @@ Array * array_new(size_t size)
 }
 
 
-/* array_new_filter */
-Array * array_new_filter(Array * array, ArrayFilter func, void * data)
+/* array_new_copy */
+Array * array_new_copy(Array const * from)
 {
-	Array * a;
+	/* FIXME implement */
+	return NULL;
+}
+
+
+/* array_new_filter */
+Array * array_new_filter(Array const * from, ArrayFilter func, UserData * data)
+{
+	Array * array;
 	size_t i;
 	char * value;
 
-	if((a = array_new(array->size)) == NULL)
+	if((array = array_new(from->size)) == NULL)
 		return NULL;
-	for(i = 0; i < array->count; i++)
+	for(i = 0; i < from->count; i++)
 	{
-		value = array->value + (array->size * i);
+		value = from->value + (from->size * i);
 		if(func(value, data) == true)
-			if(array_append(a, value) != 0)
+			if(array_append(array, value) != 0)
 			{
-				array_delete(a);
+				array_delete(array);
 				return NULL;
 			}
 	}
-	return a;
+	return array;
 }
 
 
 /* array_new_filter_swap */
-Array * array_new_filter_swap(Array * array, ArrayFilterSwap func, void * data)
+Array * array_new_filter_swap(Array const * from, ArrayFilterSwap func,
+		UserData * data)
 {
-	Array * a;
+	Array * array;
 	size_t i;
 	char * value;
 
-	if((a = array_new(array->size)) == NULL)
+	if((array = array_new(from->size)) == NULL)
 		return NULL;
-	for(i = 0; i < array->count; i++)
+	for(i = 0; i < from->count; i++)
 	{
-		value = array->value + (array->size * i);
+		value = from->value + (from->size * i);
 		if(func(data, value) == true)
-			if(array_append(a, value) != 0)
+			if(array_append(array, value) != 0)
 			{
-				array_delete(a);
+				array_delete(array);
 				return NULL;
 			}
 	}
-	return a;
+	return array;
 }
 
 
@@ -126,14 +135,14 @@ void array_delete(Array * array)
 
 /* accessors */
 /* array_count */
-size_t array_count(Array * array)
+size_t array_count(Array const * array)
 {
 	return array->count;
 }
 
 
 /* array_get */
-void * array_get(Array * array, size_t pos)
+void * array_get(Array const * array, size_t pos)
 {
 	uint64_t offset;
 
@@ -145,7 +154,7 @@ void * array_get(Array * array, size_t pos)
 
 
 /* array_get_copy */
-int array_get_copy(Array * array, size_t pos, void * value)
+ArrayError array_get_copy(Array const * array, size_t pos, ArrayData * value)
 {
 	uint64_t offset;
 
@@ -157,8 +166,15 @@ int array_get_copy(Array * array, size_t pos, void * value)
 }
 
 
+/* array_get_size */
+size_t array_get_size(Array const * array)
+{
+	return array->size;
+}
+
+
 /* array_set */
-int array_set(Array * array, size_t pos, void * value)
+ArrayError array_set(Array * array, size_t pos, ArrayData * value)
 {
 	uint32_t p = pos + 1;
 	uint64_t offset;
@@ -190,7 +206,7 @@ int array_set(Array * array, size_t pos, void * value)
 
 /* useful */
 /* array_append */
-int array_append(Array * array, void * value)
+ArrayError array_append(Array * array, ArrayData * value)
 {
 	char * p;
 	uint64_t offset = array->size * array->count;
@@ -208,8 +224,24 @@ int array_append(Array * array, void * value)
 }
 
 
+/* array_copy */
+ArrayError array_copy(Array * array, Array const * from)
+{
+	/* FIXME implement */
+	return -1;
+}
+
+
+/* array_prepend */
+ArrayError array_prepend(Array * array, ArrayData * value)
+{
+	/* FIXME implement */
+	return -1;
+}
+
+
 /* array_remove_pos */
-int array_remove_pos(Array * array, size_t pos)
+ArrayError array_remove_pos(Array * array, size_t pos)
 {
 	char * p;
 
@@ -229,7 +261,7 @@ int array_remove_pos(Array * array, size_t pos)
 
 
 /* array_filter */
-void array_filter(Array * array, ArrayFilter func, void * data)
+void array_filter(Array * array, ArrayFilter func, UserData * data)
 {
 	uint32_t i;
 	uint64_t offset;
@@ -247,7 +279,7 @@ void array_filter(Array * array, ArrayFilter func, void * data)
 
 
 /* array_filter_swap */
-void array_filter_swap(Array * array, ArrayFilterSwap func, void * data)
+void array_filter_swap(Array * array, ArrayFilterSwap func, UserData * data)
 {
 	uint32_t i;
 	uint64_t offset;
@@ -265,7 +297,7 @@ void array_filter_swap(Array * array, ArrayFilterSwap func, void * data)
 
 
 /* array_foreach */
-void array_foreach(Array * array, ArrayForeach func, void * data)
+void array_foreach(Array const * array, ArrayForeach func, UserData * data)
 {
 	uint32_t i;
 	uint64_t offset;
@@ -276,7 +308,8 @@ void array_foreach(Array * array, ArrayForeach func, void * data)
 
 
 /* array_foreach_swap */
-void array_foreach_swap(Array * array, ArrayForeachSwap func, void * data)
+void array_foreach_swap(Array const * array, ArrayForeachSwap func,
+		UserData * data)
 {
 	uint32_t i;
 	uint64_t offset;

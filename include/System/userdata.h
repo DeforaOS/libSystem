@@ -1,5 +1,5 @@
 /* $Id$ */
-/* Copyright (c) 2008-2018 Pierre Pronchery <khorben@defora.org> */
+/* Copyright (c) 2020 Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS System libSystem */
 /* All rights reserved.
  *
@@ -28,24 +28,12 @@
 
 
 
-#ifndef LIBSYSTEM_SYSTEM_H
-# define LIBSYSTEM_SYSTEM_H
+#ifndef LIBSYSTEM_SYSTEM_USERDATA_H
+# define LIBSYSTEM_SYSTEM_USERDATA_H
 
 
-# include "System/array.h"
-# include "System/buffer.h"
-# include "System/config.h"
-# include "System/error.h"
-# include "System/event.h"
-# include "System/file.h"
-# include "System/hash.h"
-# include "System/license.h"
-# include "System/mutator.h"
-# include "System/object.h"
-# include "System/parser.h"
-# include "System/plugin.h"
-# include "System/string.h"
-# include "System/userdata.h"
-# include "System/variable.h"
+/* UserData */
+/* types */
+typedef void UserData;
 
-#endif /* !LIBSYSTEM_SYSTEM_H */
+#endif /* !LIBSYSTEM_SYSTEM_USERDATA_H */

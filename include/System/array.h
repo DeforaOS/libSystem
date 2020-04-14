@@ -33,6 +33,7 @@
 
 # include <stddef.h>
 # include <stdbool.h>
+# include "userdata.h"
 
 
 /* Array */
@@ -57,35 +58,42 @@
 
 /* types */
 typedef struct _Array Array;
+typedef void ArrayData;
+typedef int ArrayError;
 
-/* XXX the Swap variants are useless here */
-typedef bool (*ArrayFilter)(void * value, void * data);
-typedef bool (*ArrayFilterSwap)(void * data, void * value);
-typedef void (*ArrayForeach)(void * value, void * data);
-typedef void (*ArrayForeachSwap)(void * data, void * value);
+typedef bool (*ArrayFilter)(ArrayData * value, UserData * data);
+typedef bool (*ArrayFilterSwap)(UserData * data, ArrayData * value);
+typedef void (*ArrayForeach)(ArrayData * value, UserData * data);
+typedef void (*ArrayForeachSwap)(UserData * data, ArrayData * value);
 
 
 /* functions */
 Array * array_new(size_t size);
-Array * array_new_filter(Array * array, ArrayFilter func, void * data);
-Array * array_new_filter_swap(Array * array, ArrayFilterSwap func, void * data);
+Array * array_new_copy(Array const * from);
+Array * array_new_filter(Array const * from, ArrayFilter func, UserData * data);
+Array * array_new_filter_swap(Array const * from, ArrayFilterSwap func,
+		UserData * data);
 # define array_new_type(object) array_new(sizeof(type))
 void array_delete(Array * array);
 
 /* accessors */
-size_t array_count(Array * array);
+size_t array_count(Array const * array);
 
-void * array_get(Array * array, size_t pos);
-int array_get_copy(Array * array, size_t pos, void * value);
-int array_set(Array * array, size_t pos, void * value);
+void * array_get(Array const * array, size_t pos);
+ArrayError array_get_copy(Array const * array, size_t pos, ArrayData * value);
+size_t array_get_size(Array const * array);
+ArrayError array_set(Array * array, size_t pos, ArrayData * value);
 
 /* useful */
-int array_append(Array * array, void * value);
-int array_remove_pos(Array * array, size_t pos);
+ArrayError array_append(Array * array, ArrayData * value);
+ArrayError array_copy(Array * array, Array const * from);
+ArrayError array_prepend(Array * array, ArrayData * value);
+ArrayError array_remove_pos(Array * array, size_t pos);
 
-void array_filter(Array * array, ArrayFilter func, void * data);
-void array_filter_swap(Array * array, ArrayFilter func, void * data);
-void array_foreach(Array * array, ArrayForeachSwap func, void * data);
-void array_foreach_swap(Array * array, ArrayForeachSwap func, void * data);
+void array_filter(Array * array, ArrayFilter func, UserData * data);
+void array_filter_swap(Array * array, ArrayFilter func, UserData * data);
+void array_foreach(Array const * array, ArrayForeachSwap func, UserData * data);
+void array_foreach_swap(Array const * array, ArrayForeachSwap func,
+		UserData * data);
 
 #endif /* !LIBSYSTEM_SYSTEM_ARRAY_H */
