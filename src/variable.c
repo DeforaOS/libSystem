@@ -800,115 +800,127 @@ VariableError variable_set_typev(Variable * variable, VariableType type,
 	int64_t i64;
 	uint64_t u64;
 	double d;
-	Buffer const * b;
-	String const * s;
+	Buffer * b;
+	String * s;
 
-	/* XXX keep the previous contents in case of error? */
-	_variable_destroy(variable);
-	memset(&variable->u, 0, sizeof(variable->u));
-	switch((variable->type = type))
+	switch(type)
 	{
 		case VT_NULL:
+			_variable_destroy(variable);
 			break;
 		case VT_BOOL:
+			_variable_destroy(variable);
 			u32 = va_arg(ap, uint32_t);
-			variable->u.b = u32 ? true : false;
 #ifdef DEBUG
 			fprintf(stderr, "DEBUG: %s(%s)\n", __func__,
-					variable->u.b ? "true" : "false");
+					u32 ? "true" : "false");
 #endif
+			variable->u.b = u32 ? true : false;
 			break;
 		case VT_INT8:
+			_variable_destroy(variable);
 			i32 = va_arg(ap, int32_t);
-			variable->u.int8 = i32;
 #ifdef DEBUG
-			fprintf(stderr, "DEBUG: %s(%d)\n", __func__,
-					variable->u.int8);
+			fprintf(stderr, "DEBUG: %s(%d)\n", __func__, i32);
 #endif
+			variable->u.int8 = i32;
 			break;
 		case VT_UINT8:
+			_variable_destroy(variable);
 			u32 = va_arg(ap, uint32_t);
-			variable->u.uint8 = u32;
 #ifdef DEBUG
-			fprintf(stderr, "DEBUG: %s(%u)\n", __func__,
-					variable->u.uint8);
+			fprintf(stderr, "DEBUG: %s(%u)\n", __func__, u32);
 #endif
+			variable->u.uint8 = u32;
 			break;
 		case VT_INT16:
+			_variable_destroy(variable);
 			i32 = va_arg(ap, int32_t);
-			variable->u.int16 = i32;
 #ifdef DEBUG
-			fprintf(stderr, "DEBUG: %s(%d)\n", __func__,
-					variable->u.int16);
+			fprintf(stderr, "DEBUG: %s(%d)\n", __func__, i32);
 #endif
+			variable->u.int16 = i32;
 			break;
 		case VT_UINT16:
+			_variable_destroy(variable);
 			u32 = va_arg(ap, uint32_t);
-			variable->u.uint16 = u32;
 #ifdef DEBUG
-			fprintf(stderr, "DEBUG: %s(%u)\n", __func__,
-					variable->u.uint16);
+			fprintf(stderr, "DEBUG: %s(%u)\n", __func__, u32);
 #endif
+			variable->u.uint16 = u32;
 			break;
 		case VT_INT32:
+			_variable_destroy(variable);
 			i32 = va_arg(ap, int32_t);
-			variable->u.int32 = i32;
 #ifdef DEBUG
-			fprintf(stderr, "DEBUG: %s(%d)\n", __func__,
-					variable->u.int32);
+			fprintf(stderr, "DEBUG: %s(%d)\n", __func__, i32);
 #endif
+			variable->u.int32 = i32;
 			break;
 		case VT_UINT32:
+			_variable_destroy(variable);
 			u32 = va_arg(ap, uint32_t);
-			variable->u.uint32 = u32;
 #ifdef DEBUG
-			fprintf(stderr, "DEBUG: %s(%u)\n", __func__,
-					variable->u.uint32);
+			fprintf(stderr, "DEBUG: %s(%u)\n", __func__, u32);
 #endif
+			variable->u.uint32 = u32;
 			break;
 		case VT_INT64:
+			_variable_destroy(variable);
 			i64 = va_arg(ap, int64_t);
+#ifdef DEBUG
+			fprintf(stderr, "DEBUG: %s(%ld)\n", __func__, i64);
+#endif
 			variable->u.int64 = i64;
 			break;
 		case VT_UINT64:
+			_variable_destroy(variable);
 			u64 = va_arg(ap, uint64_t);
+#ifdef DEBUG
+			fprintf(stderr, "DEBUG: %s(%lu)\n", __func__, u64);
+#endif
 			variable->u.uint64 = u64;
 			break;
 		case VT_FLOAT:
+			_variable_destroy(variable);
 			d = va_arg(ap, double);
-			variable->u.f = d;
 #ifdef DEBUG
-			fprintf(stderr, "DEBUG: %s(%f)\n", __func__,
-					variable->u.f);
+			fprintf(stderr, "DEBUG: %s(%f)\n", __func__, d);
 #endif
+			variable->u.f = d;
 			break;
 		case VT_DOUBLE:
+			_variable_destroy(variable);
 			d = va_arg(ap, double);
-			variable->u.d = d;
 #ifdef DEBUG
-			fprintf(stderr, "DEBUG: %s(%lf)\n", __func__,
-					variable->u.d);
+			fprintf(stderr, "DEBUG: %s(%lf)\n", __func__, d);
 #endif
+			variable->u.d = d;
 			break;
 		case VT_BUFFER:
-			b = va_arg(ap, Buffer const *);
-			if((variable->u.buffer = buffer_new_copy(b)) == NULL)
-				return -1;
+			b = va_arg(ap, Buffer *);
 #ifdef DEBUG
 			fprintf(stderr, "DEBUG: %s(%p)\n", __func__, (void *)b);
 #endif
+			if((b = buffer_new_copy(b)) == NULL)
+				return -1;
+			_variable_destroy(variable);
+			variable->u.buffer = b;
 			break;
 		case VT_STRING:
-			s = va_arg(ap, String const *);
-			if((variable->u.string = string_new(s)) == NULL)
-				return -1;
+			s = va_arg(ap, String *);
 #ifdef DEBUG
 			fprintf(stderr, "DEBUG: %s(\"%s\")\n", __func__, s);
 #endif
+			if((s = string_new(s)) == NULL)
+				return -1;
+			_variable_destroy(variable);
+			variable->u.string = s;
 			break;
 		default:
-			return -1;
+			return error_set_code(-ENOSYS, "%s", strerror(ENOSYS));
 	}
+	variable->type = type;
 	return 0;
 }
 
