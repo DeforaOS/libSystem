@@ -36,23 +36,23 @@
 /* Error */
 /* private */
 /* prototypes */
-static String const * _error_do(int * codeptr, String const * format,
-		va_list args);
-static int _error_do_code(int * codeptr);
+static String const * _error_do(ErrorCode * code, String const * format,
+		va_list ap);
+static ErrorCode _error_do_code(ErrorCode * code);
 
 
 /* public */
 /* accessors */
 /* error_get */
-static String const * _get_do(int * code, ...);
+static String const * _get_do(ErrorCode * code, ...);
 
-String const * error_get(int * code)
+String const * error_get(ErrorCode * code)
 {
 	/* XXX workaround for portability */
 	return _get_do(code);
 }
 
-static String const * _get_do(int * code, ...)
+static String const * _get_do(ErrorCode * code, ...)
 {
 	String const * ret;
 	va_list args;
@@ -65,7 +65,7 @@ static String const * _get_do(int * code, ...)
 
 
 /* error_get_code */
-int error_get_code(void)
+ErrorCode error_get_code(void)
 {
 	return _error_do_code(NULL);
 }
@@ -74,53 +74,80 @@ int error_get_code(void)
 /* error_set */
 void error_set(String const * format, ...)
 {
-	va_list args;
+	va_list ap;
 
-	va_start(args, format);
-	_error_do(NULL, format, args);
-	va_end(args);
+	va_start(ap, format);
+	error_setv(format, ap);
+	va_end(ap);
+}
+
+
+/* error_setv */
+void error_setv(String const * format, va_list ap)
+{
+	_error_do(NULL, format, ap);
 }
 
 
 /* error_set_code */
-int error_set_code(int code, String const * format, ...)
+ErrorCode error_set_code(ErrorCode code, String const * format, ...)
 {
-	va_list args;
+	ErrorCode ret;
+	va_list ap;
 
-	va_start(args, format);
+	va_start(ap, format);
+	ret = error_set_codev(code, format, ap);
+	va_end(ap);
+	return ret;
+}
+
+
+/* error_set_codev */
+ErrorCode error_set_codev(ErrorCode code, String const * format, va_list ap)
+{
 	if(format == NULL)
 		format = "";
-	_error_do(&code, format, args);
-	va_end(args);
+	_error_do(&code, format, ap);
 	return code;
 }
 
 
 /* error_set_print */
-int error_set_print(String const * program, int code, String const * format, ...)
+ErrorCode error_set_print(String const * program, ErrorCode code,
+		String const * format, ...)
 {
-	va_list args;
+	ErrorCode ret;
+	va_list ap;
 
-	va_start(args, format);
-	_error_do(&code, format, args);
-	va_end(args);
+	va_start(ap, format);
+	ret = error_set_printv(program, code, format, ap);
+	va_end(ap);
+	return ret;
+}
+
+
+/* error_set_printv */
+ErrorCode error_set_printv(String const * program, ErrorCode code,
+		String const * format, va_list ap)
+{
+	_error_do(&code, format, ap);
 	return error_print(program);
 }
 
 
 /* useful */
 /* error_print */
-static int _print_do(String const * program, ...);
+static ErrorCode _print_do(String const * program, ...);
 
-int error_print(String const * program)
+ErrorCode error_print(String const * program)
 {
 	/* XXX workaround for portability */
 	return _print_do(program);
 }
 
-static int _print_do(String const * program, ...)
+static ErrorCode _print_do(String const * program, ...)
 {
-	int ret = 0;
+	ErrorCode ret = 0;
 	va_list args;
 	String const * error;
 
@@ -143,29 +170,29 @@ static int _print_do(String const * program, ...)
 /* private */
 /* functions */
 /* error_do */
-static String const * _error_do(int * codeptr, String const * format,
-		va_list args)
+static String const * _error_do(ErrorCode * code, String const * format,
+		va_list ap)
 {
 	static String buf[256] = "";
 
 	if(format != NULL) /* setting the error */
 	{
-		vsnprintf(buf, sizeof(buf), format, args);
-		if(codeptr != NULL)
-			_error_do_code(codeptr);
+		vsnprintf(buf, sizeof(buf), format, ap);
+		if(code != NULL)
+			_error_do_code(code);
 	}
-	else if(codeptr != NULL)
-		*codeptr = _error_do_code(NULL);
+	else if(code != NULL)
+		*code = _error_do_code(NULL);
 	return buf;
 }
 
 
 /* error_do_code */
-static int _error_do_code(int * codeptr)
+static ErrorCode _error_do_code(ErrorCode * code)
 {
-	static int code = 0;
+	static int _code = 0;
 
-	if(codeptr != NULL)
-		code = *codeptr;
-	return code;
+	if(code != NULL)
+		_code = *code;
+	return _code;
 }

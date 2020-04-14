@@ -34,17 +34,25 @@
 # include "string.h"
 
 
+/* types */
+typedef int ErrorCode;
+
+
 /* functions */
 /* accessors */
-String const * error_get(int * code);
-int error_get_code(void);
+String const * error_get(ErrorCode * code);
+ErrorCode error_get_code(void);
 
 void error_set(String const * format, ...);
-int error_set_code(int code, String const * format, ...);
-int error_set_print(String const * program, int code,
+void error_setv(String const * format, va_list ap);
+ErrorCode error_set_code(ErrorCode code, String const * format, ...);
+ErrorCode error_set_codev(ErrorCode code, String const * format, va_list ap);
+ErrorCode error_set_print(String const * program, ErrorCode code,
 		String const * format, ...);
+ErrorCode error_set_printv(String const * program, ErrorCode code,
+		String const * format, va_list ap);
 
 /* useful */
-int error_print(String const * program);
+ErrorCode error_print(String const * program);
 
 #endif /* !LIBSYSTEM_SYSTEM_ERROR_H */
