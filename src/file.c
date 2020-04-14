@@ -65,6 +65,7 @@ File * file_new(char const * filename, FileMode mode)
 	if((file->fp = fopen(filename, fmode)) == NULL)
 	{
 		file_delete(file);
+		error_set_code(-errno, "%s", strerror(errno));
 		return NULL;
 	}
 	file->mode = mode;
@@ -73,12 +74,13 @@ File * file_new(char const * filename, FileMode mode)
 
 
 /* file_delete */
-int file_delete(File * file)
+FileError file_delete(File * file)
 {
-	int ret = 0;
+	FileError ret = 0;
 
-	if(file->fp != NULL)
-		ret = fclose(file->fp);
+	if(file->fp != NULL
+			&& (ret = fclose(file->fp)) != 0)
+		ret = error_set_code(-errno, "%s", strerror(errno));
 	object_delete(file);
 	return ret;
 }
@@ -115,10 +117,46 @@ ssize_t file_read(File * file, void * buf, size_t size, size_t count)
 }
 
 
+/* file_read_buffer */
+ssize_t file_read_buffer(File * file, Buffer * buffer)
+{
+	ssize_t ret;
+
+	ret = file_read(file, buffer_get_data(buffer), sizeof(char),
+			buffer_get_size(buffer));
+	buffer_set_size(buffer, ret);
+	return ret;
+}
+
+
+/* file_seek */
+FileError file_seek(File * file, FileSeekMode mode, FileOffset offset)
+{
+	switch(mode)
+	{
+		case FILE_SEEK_MODE_CURRENT:
+			return fseek(file->fp, SEEK_CUR, offset);
+		case FILE_SEEK_MODE_END:
+			return fseek(file->fp, SEEK_END, offset);
+		case FILE_SEEK_MODE_SET:
+			return fseek(file->fp, SEEK_SET, offset);
+	}
+	return error_set_code(-ENOSYS, "%s", strerror(ENOSYS));
+}
+
+
 /* file_write */
 ssize_t file_write(File * file, void * buf, size_t size, size_t count)
 {
 	return fwrite(buf, size, count, file->fp);
+}
+
+
+/* file_write_buffer */
+ssize_t file_write_buffer(File * file, Buffer * buffer)
+{
+	return file_write(file, buffer_get_data(buffer), sizeof(char),
+			buffer_get_size(buffer));
 }
 
 

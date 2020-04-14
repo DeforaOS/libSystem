@@ -32,13 +32,22 @@
 # define LIBSYSTEM_SYSTEM_FILE_H
 
 # include <sys/types.h>
+# include "buffer.h"
+# include "string.h"
 
 
 /* types */
 typedef struct _File File;
+typedef int FileError;
 typedef unsigned int FileMode;
+typedef off_t FileOffset;
+typedef enum _FileSeekMode
+{
+	FILE_SEEK_MODE_CURRENT = 0,
+	FILE_SEEK_MODE_END,
+	FILE_SEEK_MODE_SET
+} FileSeekMode;
 
-typedef unsigned int FileSeekMode;
 
 /* constants */
 #define FILE_MODE_READ		0x01
@@ -48,19 +57,22 @@ typedef unsigned int FileSeekMode;
 #define FILE_MODE_EXCLUSIVE	0x40
 #define FILE_MODE_TRUNCATE	0x80
 
+
 /* functions */
-File * file_new(char const * path, FileMode mode);
-int file_delete(File * file);
+File * file_new(String const * path, FileMode mode);
+FileError file_delete(File * file);
 
 /* accessors */
 FileMode file_get_mode(File * file);
 
 /* useful */
 ssize_t file_read(File * file, void * buf, size_t size, size_t count);
+ssize_t file_read_buffer(File * file, Buffer * buffer);
 ssize_t file_write(File * file, void * buf, size_t size, size_t count);
+ssize_t file_write_buffer(File * file, Buffer * buffer);
 
-int file_seek(File * file, FileSeekMode mode, off_t offset);
+FileError file_seek(File * file, FileSeekMode mode, FileOffset offset);
 
-int file_unlink(File * file);
+FileError file_unlink(File * file);
 
 #endif /* !LIBSYSTEM_SYSTEM_FILE_H */
