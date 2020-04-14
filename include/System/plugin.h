@@ -36,7 +36,7 @@
 
 
 /* Plugin */
-typedef void Plugin;
+typedef struct _Plugin Plugin;
 typedef void * PluginExport;
 
 typedef struct _PluginHeader
