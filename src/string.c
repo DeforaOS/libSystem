@@ -61,13 +61,24 @@ String * string_new(String const * string)
 /* string_new_append */
 String * string_new_append(String const * string, ...)
 {
-	String * ret = NULL;
+	String * ret;
 	va_list ap;
+
+	va_start(ap, string);
+	ret = string_new_appendv(string, ap);
+	va_end(ap);
+	return ret;
+}
+
+
+/* string_new_appendv */
+String * string_new_appendv(String const * string, va_list ap)
+{
+	String * ret = NULL;
 
 	if(string == NULL)
 		return string_new("");
 	ret = string_new(string);
-	va_start(ap, string);
 	for(string = va_arg(ap, String *); string != NULL;
 			string = va_arg(ap, String *))
 		if(string_append(&ret, string) != 0)
@@ -76,7 +87,6 @@ String * string_new_append(String const * string, ...)
 			ret = NULL;
 			break;
 		}
-	va_end(ap);
 	return ret;
 }
 
