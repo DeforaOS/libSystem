@@ -107,6 +107,21 @@ int file_set_mode(File * file, FileMode mode)
 #endif
 
 
+/* useful */
+/* file_read */
+ssize_t file_read(File * file, void * buf, size_t size, size_t count)
+{
+	return fread(buf, size, count, file->fp);
+}
+
+
+/* file_write */
+ssize_t file_write(File * file, void * buf, size_t size, size_t count)
+{
+	return fwrite(buf, size, count, file->fp);
+}
+
+
 /* private */
 /* accessors */
 static String const * _file_get_fmode(FileMode mode)

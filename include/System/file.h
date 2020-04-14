@@ -56,8 +56,8 @@ int file_delete(File * file);
 FileMode file_get_mode(File * file);
 
 /* useful */
-ssize_t file_read(File * file, void * buf, size_t size, ssize_t count);
-ssize_t file_write(File * file, void * buf, size_t size, ssize_t count);
+ssize_t file_read(File * file, void * buf, size_t size, size_t count);
+ssize_t file_write(File * file, void * buf, size_t size, size_t count);
 
 int file_seek(File * file, FileSeekMode mode, off_t offset);
 
