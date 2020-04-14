@@ -125,13 +125,13 @@ static int _print_do(String const * program, ...)
 	String const * error;
 
 	va_start(args, program);
-	if(program != NULL && string_length(program) > 0)
+	if(program != NULL && string_get_length(program) > 0)
 	{
 		fputs(program, stderr);
 		fputs(": ", stderr);
 	}
 	if((error = _error_do(&ret, NULL, args)) == NULL
-			|| string_length(error) == 0)
+			|| string_get_length(error) == 0)
 		error = "Unknown error";
 	fputs(error, stderr);
 	fputc('\n', stderr);

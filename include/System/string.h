@@ -32,6 +32,7 @@
 # define LIBSYSTEM_SYSTEM_STRING_H
 
 # include <sys/types.h>
+# include <stdarg.h>
 # include "array.h"
 
 
@@ -40,11 +41,6 @@
 typedef char String;
 
 ARRAY3(String *, string, String)
-
-
-/* macros */
-/* XXX for compatibility */
-# define string_length(a) string_get_length(a)
 
 
 /* functions */
