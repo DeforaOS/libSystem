@@ -28,6 +28,7 @@
 
 
 
+#include <unistd.h>
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
@@ -41,31 +42,40 @@
 /* types */
 struct _File
 {
+	String * filename;
 	FILE * fp;
 	FileMode mode;
 };
 
 
 /* prototypes */
-static String const * _file_get_fmode(FileMode mode);
+/* accessors */
+static String const * _file_get_fmode(File * file, FileMode mode);
+
+/* useful */
+static FileError _file_error(File * file, int error);
 
 
 /* public */
 /* functions */
 /* config_new */
-File * file_new(char const * filename, FileMode mode)
+File * file_new(String const * filename, FileMode mode)
 {
 	File * file;
 	char const * fmode;
 
-	if((fmode = _file_get_fmode(mode)) == NULL)
-		return NULL;
 	if((file = object_new(sizeof(*file))) == NULL)
 		return NULL;
+	if((file->filename = string_new(filename)) == NULL
+			|| (fmode = _file_get_fmode(file, mode)) == NULL)
+	{
+		object_delete(file);
+		return NULL;
+	}
 	if((file->fp = fopen(filename, fmode)) == NULL)
 	{
 		file_delete(file);
-		error_set_code(-errno, "%s", strerror(errno));
+		_file_error(file, errno);
 		return NULL;
 	}
 	file->mode = mode;
@@ -80,13 +90,21 @@ FileError file_delete(File * file)
 
 	if(file->fp != NULL
 			&& (ret = fclose(file->fp)) != 0)
-		ret = error_set_code(-errno, "%s", strerror(errno));
+		ret = _file_error(file, errno);
+	string_delete(file->filename);
 	object_delete(file);
 	return ret;
 }
 
 
 /* accessors */
+/* file_get_filename */
+String const * file_get_filename(File * file)
+{
+	return file->filename;
+}
+
+
 /* file_get_mode */
 FileMode file_get_mode(File * file)
 {
@@ -103,7 +121,7 @@ int file_set_mode(File * file, FileMode mode)
 	if((fmode = _file_get_fmode(mode)) == NULL)
 		return -1;
 	if(freopen(file->fp, fmode) != 0)
-		return error_set_code(-errno, "%s", strerror(errno));
+		return _file_error(file, errno);
 	return 0;
 }
 #endif
@@ -111,16 +129,21 @@ int file_set_mode(File * file, FileMode mode)
 
 /* useful */
 /* file_read */
-ssize_t file_read(File * file, void * buf, size_t size, size_t count)
+size_t file_read(File * file, void * buf, size_t size, size_t count)
 {
-	return fread(buf, size, count, file->fp);
+	size_t ret;
+
+	ret = fread(buf, size, count, file->fp);
+	if(ferror(file->fp))
+		_file_error(file, errno);
+	return ret;
 }
 
 
 /* file_read_buffer */
-ssize_t file_read_buffer(File * file, Buffer * buffer)
+size_t file_read_buffer(File * file, Buffer * buffer)
 {
-	ssize_t ret;
+	size_t ret;
 
 	ret = file_read(file, buffer_get_data(buffer), sizeof(char),
 			buffer_get_size(buffer));
@@ -141,19 +164,31 @@ FileError file_seek(File * file, FileSeekMode mode, FileOffset offset)
 		case FILE_SEEK_MODE_SET:
 			return fseek(file->fp, SEEK_SET, offset);
 	}
-	return error_set_code(-ENOSYS, "%s", strerror(ENOSYS));
+	return _file_error(file, EINVAL);
+}
+
+
+/* file_unlink */
+FileError file_unlink(File * file)
+{
+	return (unlink(file->filename) != 0)
+		? _file_error(file, errno) : 0;
 }
 
 
 /* file_write */
-ssize_t file_write(File * file, void * buf, size_t size, size_t count)
+size_t file_write(File * file, void * buf, size_t size, size_t count)
 {
-	return fwrite(buf, size, count, file->fp);
+	size_t ret;
+
+	if((ret = fwrite(buf, size, count, file->fp)) < count)
+		_file_error(file, errno);
+	return ret;
 }
 
 
 /* file_write_buffer */
-ssize_t file_write_buffer(File * file, Buffer * buffer)
+size_t file_write_buffer(File * file, Buffer * buffer)
 {
 	return file_write(file, buffer_get_data(buffer), sizeof(char),
 			buffer_get_size(buffer));
@@ -162,7 +197,7 @@ ssize_t file_write_buffer(File * file, Buffer * buffer)
 
 /* private */
 /* accessors */
-static String const * _file_get_fmode(FileMode mode)
+static String const * _file_get_fmode(File * file, FileMode mode)
 {
 	switch(mode)
 	{
@@ -171,6 +206,15 @@ static String const * _file_get_fmode(FileMode mode)
 		case FILE_MODE_WRITE:
 			return "w";
 	}
-	error_set_code(-ENOSYS, "%s", strerror(ENOSYS));
+	_file_error(file, EINVAL);
 	return NULL;
+}
+
+
+/* useful */
+/* file_error */
+static FileError _file_error(File * file, int error)
+{
+	return error_set_code(-error, "%s: %s", file->filename,
+			strerror(error));
 }

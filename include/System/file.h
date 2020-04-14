@@ -59,17 +59,18 @@ typedef enum _FileSeekMode
 
 
 /* functions */
-File * file_new(String const * path, FileMode mode);
+File * file_new(String const * filename, FileMode mode);
 FileError file_delete(File * file);
 
 /* accessors */
+String const * file_get_filename(File * file);
 FileMode file_get_mode(File * file);
 
 /* useful */
-ssize_t file_read(File * file, void * buf, size_t size, size_t count);
-ssize_t file_read_buffer(File * file, Buffer * buffer);
-ssize_t file_write(File * file, void * buf, size_t size, size_t count);
-ssize_t file_write_buffer(File * file, Buffer * buffer);
+size_t file_read(File * file, void * buf, size_t size, size_t count);
+size_t file_read_buffer(File * file, Buffer * buffer);
+size_t file_write(File * file, void * buf, size_t size, size_t count);
+size_t file_write_buffer(File * file, Buffer * buffer);
 
 FileError file_seek(File * file, FileSeekMode mode, FileOffset offset);
 
