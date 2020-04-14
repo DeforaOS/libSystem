@@ -52,6 +52,7 @@ typedef enum _FileSeekMode
 /* constants */
 #define FILE_MODE_READ		0x01
 #define FILE_MODE_WRITE		0x02
+#define FILE_MODE_READ_WRITE	0x03
 #define FILE_MODE_APPEND	0x10
 #define FILE_MODE_CREATE	0x20
 #define FILE_MODE_EXCLUSIVE	0x40
