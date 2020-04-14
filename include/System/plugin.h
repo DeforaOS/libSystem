@@ -41,9 +41,9 @@ typedef void * PluginExport;
 
 typedef struct _PluginHeader
 {
-	char const * name;
-	char const * icon;
-	char const * description;
+	String const * name;
+	String const * icon;
+	String const * description;
 	LicenseFlags license;
 } PluginHeader;
 
