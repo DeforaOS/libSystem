@@ -39,11 +39,13 @@ static int _variable(char const * progname)
 	int ret = 0;
 	Variable * variable;
 	const int samples[] = { 0, -1, 1, -127, -128, 126, 127 };
+	const float fsamples[] = { 0.0, -1.0, 1.0 };
 	size_t i;
 	int32_t j;
 	int8_t i8;
 	size_t s;
 	void * p;
+	double d;
 
 	/* variable_new */
 	for(i = 0; i < sizeof(samples) / sizeof(*samples); i++)
@@ -63,6 +65,23 @@ static int _variable(char const * progname)
 		p = &j;
 		if(variable_get_as(variable, VT_INT32, p) != 0
 				|| j != samples[i])
+		{
+			error_print(progname);
+			ret += 1;
+		}
+		variable_delete(variable);
+	}
+	for(i = 0; i < sizeof(fsamples) / sizeof(*fsamples); i++)
+	{
+		if((variable = variable_new(VT_FLOAT, fsamples[i])) == NULL)
+		{
+			error_print(progname);
+			ret += 1;
+			continue;
+		}
+		d = 0.0 / 0.0;
+		if(variable_get_as(variable, VT_DOUBLE, &d) != 0
+				|| d != fsamples[i])
 		{
 			error_print(progname);
 			ret += 1;
