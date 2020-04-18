@@ -68,17 +68,17 @@ struct _Variable
 			String * name;
 			Array * members;
 		} compound;
+		void * pointer;
 	} u;
 };
 
 
 /* constants */
-#define VT_LAST VT_COMPOUND
-#define VT_COUNT (VT_LAST + 1)
 static const size_t _variable_sizes[VT_COUNT] = { 0, 1,
 	sizeof(int8_t), sizeof(uint8_t), sizeof(int16_t), sizeof(uint16_t),
 	sizeof(int32_t), sizeof(uint32_t), sizeof(int64_t), sizeof(uint64_t),
-	sizeof(float), sizeof(double), sizeof(uint32_t), 0, 0, 0 };
+	sizeof(float), sizeof(double), sizeof(uint32_t), 0, 0, 0,
+	sizeof(void *) };
 
 
 /* prototypes */
@@ -253,6 +253,8 @@ Variable * variable_new_copy(Variable const * from)
 			return variable_new(from->type, from->u.buffer);
 		case VT_ARRAY:
 			return _new_copy_array(from);
+		case VT_POINTER:
+			return variable_new(from->type, from->u.pointer);
 	}
 	error_set_code(1, "%s%u%s", "Unable to copy this type of variable (",
 			from->type, ")");
@@ -341,6 +343,7 @@ Variable * variable_new_deserialize_type(VariableType type, size_t * size,
 		case VT_UINT32:
 		case VT_INT64:
 		case VT_UINT64:
+		case VT_POINTER:
 			break;
 		case VT_BUFFER:
 			if(*size < s)
@@ -484,6 +487,7 @@ VariableError variable_get_as(Variable * variable, VariableType type,
 		case VT_UINT64:
 		case VT_FLOAT:
 		case VT_DOUBLE:
+		case VT_POINTER:
 			memcpy(result, p, size);
 			return 0;
 		case VT_BUFFER:
@@ -522,6 +526,7 @@ static VariableType _get_as_convert(Variable * variable, VariableType type,
 	switch(type)
 	{
 		case VT_NULL:
+		case VT_POINTER:
 			break;
 		case VT_INT8:
 			size = sizeof(i8);
@@ -814,6 +819,10 @@ static VariableError _get_as_convert_string(Variable * variable,
 			/* FIXME implement */
 			break;
 #endif
+		case VT_POINTER:
+			return ((*result = string_new_format("%p",
+							v->u.pointer)) != NULL)
+				? 0 : -1;
 	}
 	return -error_set_code(1, "Unable to convert from type %u to %u",
 			variable->type, VT_STRING);
@@ -852,11 +861,14 @@ void * variable_get_pointer(Variable * variable)
 		case VT_BUFFER:
 			return variable->u.buffer;
 		case VT_STRING:
+			/* XXX because of String operations */
 			return &variable->u.string;
 		case VT_ARRAY:
 			return variable->u.array.array;
 		case VT_COMPOUND:
 			return NULL;
+		case VT_POINTER:
+			return &variable->u.pointer;
 	}
 	return NULL;
 }
@@ -1028,6 +1040,10 @@ VariableError variable_set_typev(Variable * variable, VariableType type,
 			_variable_destroy(variable);
 			variable->u.string = s;
 			break;
+		case VT_POINTER:
+			_variable_destroy(variable);
+			variable->u.pointer = va_arg(ap, void *);
+			break;
 		default:
 			return error_set_code(-ENOSYS, "%s", strerror(ENOSYS));
 	}
@@ -1060,6 +1076,7 @@ VariableError variable_copy(Variable * variable, Variable const * from)
 		case VT_UINT64:
 		case VT_FLOAT:
 		case VT_DOUBLE:
+		case VT_POINTER:
 			_variable_destroy(variable);
 			memcpy(&variable->u, &from->u, sizeof(from->u));
 			break;
@@ -1210,6 +1227,12 @@ VariableError variable_serialize(Variable * variable, Buffer * buffer,
 			size = string_get_length(variable->u.string) + 1;
 			p = variable->u.string;
 			break;
+		case VT_POINTER:
+			size = sizeof(u64);
+			u64 = (uint64_t)variable->u.pointer;
+			u64 = _bswap64(u64);
+			p = &u64;
+			break;
 	}
 #ifdef DEBUG
 	fprintf(stderr, "DEBUG: %s() %lu\n", __func__, size);
@@ -1289,6 +1312,7 @@ static void _variable_destroy(Variable * variable)
 		case VT_UINT64:
 		case VT_FLOAT:
 		case VT_DOUBLE:
+		case VT_POINTER:
 			break;
 		case VT_BUFFER:
 			buffer_delete(variable->u.buffer);

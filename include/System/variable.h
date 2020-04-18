@@ -59,8 +59,11 @@ typedef enum _VariableType
 	VT_BUFFER,
 	VT_STRING,
 	VT_ARRAY,
-	VT_COMPOUND
+	VT_COMPOUND,
+	VT_POINTER
 } VariableType;
+# define VT_LAST VT_POINTER
+# define VT_COUNT (VT_LAST + 1)
 
 typedef unsigned int VariableClass;
 
