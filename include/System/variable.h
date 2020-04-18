@@ -90,6 +90,7 @@ void variable_delete(Variable * variable);
 VariableError variable_get_as(Variable * variable, VariableType type,
 		void * result);
 VariableClass variable_get_class(Variable * variable);
+void * variable_get_pointer(Variable * variable);
 VariableType variable_get_type(Variable * variable);
 
 bool variable_is_array(Variable * variable);

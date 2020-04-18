@@ -28,6 +28,7 @@
 
 
 
+#include <inttypes.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -72,12 +73,12 @@ struct _Variable
 
 
 /* constants */
-#define VT_LAST VT_STRING
+#define VT_LAST VT_COMPOUND
 #define VT_COUNT (VT_LAST + 1)
 static const size_t _variable_sizes[VT_COUNT] = { 0, 1,
 	sizeof(int8_t), sizeof(uint8_t), sizeof(int16_t), sizeof(uint16_t),
 	sizeof(int32_t), sizeof(uint32_t), sizeof(int64_t), sizeof(uint64_t),
-	0, 0, sizeof(uint32_t), 0 };
+	sizeof(float), sizeof(double), sizeof(uint32_t), 0, 0, 0 };
 
 
 /* prototypes */
@@ -449,7 +450,60 @@ void variable_delete(Variable * variable)
 
 
 /* variable_get_as */
+static VariableType _get_as_convert(Variable * variable, VariableType type,
+		void * result);
+static VariableError _get_as_convert_string(Variable * variable,
+		String ** result);
+
 VariableError variable_get_as(Variable * variable, VariableType type,
+		void * result)
+{
+	void * p;
+	size_t size;
+	Buffer ** b;
+	String ** s;
+	Array ** a;
+
+	if(variable->type != type)
+		return _get_as_convert(variable, type, result);
+	p = variable_get_pointer(variable);
+	size = (type < sizeof(_variable_sizes) / sizeof(*_variable_sizes))
+		? _variable_sizes[type] : 0;
+	switch(type)
+	{
+		case VT_NULL:
+			return 0;
+		case VT_BOOL:
+		case VT_INT8:
+		case VT_UINT8:
+		case VT_INT16:
+		case VT_UINT16:
+		case VT_INT32:
+		case VT_UINT32:
+		case VT_INT64:
+		case VT_UINT64:
+		case VT_FLOAT:
+		case VT_DOUBLE:
+			memcpy(result, p, size);
+			return 0;
+		case VT_BUFFER:
+			b = result;
+			return (*b = buffer_new_copy(variable->u.buffer))
+				!= NULL ? 0 : -1;
+		case VT_STRING:
+			s = result;
+			return (*s = string_new(variable->u.string)) != NULL
+				? 0 : -1;
+		case VT_ARRAY:
+			a = result;
+			return (*a = array_new_copy(variable->u.array.array))
+				!= NULL ? 0 : -1;
+	}
+	/* FIXME implement the rest */
+	return -1;
+}
+
+static VariableType _get_as_convert(Variable * variable, VariableType type,
 		void * result)
 {
 	size_t size = 0;
@@ -464,22 +518,13 @@ VariableError variable_get_as(Variable * variable, VariableType type,
 	uint64_t u64;
 	float * fp;
 	double * dp;
-	Buffer ** b;
-	String ** s;
 
 	switch(type)
 	{
 		case VT_NULL:
-			if(variable->type == VT_NULL)
-				return 0;
 			break;
 		case VT_INT8:
 			size = sizeof(i8);
-			if(variable->type == VT_INT8)
-			{
-				p = &variable->u.int8;
-				break;
-			}
 			if(variable->type == VT_UINT8
 					&& variable->u.uint8 <= 0x7f)
 				i8 = variable->u.uint8;
@@ -548,11 +593,6 @@ VariableError variable_get_as(Variable * variable, VariableType type,
 			break;
 		case VT_INT16:
 			size = sizeof(i16);
-			if(variable->type == VT_INT16)
-			{
-				p = &variable->u.int16;
-				break;
-			}
 			if(variable->type == VT_UINT16
 					&& variable->u.uint16 <= 0x7fff)
 				i16 = variable->u.uint16;
@@ -581,11 +621,6 @@ VariableError variable_get_as(Variable * variable, VariableType type,
 			break;
 		case VT_UINT16:
 			size = sizeof(u16);
-			if(variable->type == VT_UINT16)
-			{
-				p = &variable->u.uint16;
-				break;
-			}
 			if(variable->type == VT_INT16 && variable->u.int16 >= 0)
 				u16 = variable->u.int16;
 			else if(variable->type == VT_INT8
@@ -614,11 +649,6 @@ VariableError variable_get_as(Variable * variable, VariableType type,
 			break;
 		case VT_INT32:
 			size = sizeof(i32);
-			if(variable->type == VT_INT32)
-			{
-				p = &variable->u.int32;
-				break;
-			}
 			if(variable->type == VT_UINT32
 					&& variable->u.uint32 <= 0x7fffffff)
 				i32 = variable->u.uint32;
@@ -644,11 +674,6 @@ VariableError variable_get_as(Variable * variable, VariableType type,
 			break;
 		case VT_UINT32:
 			size = sizeof(u32);
-			if(variable->type == VT_UINT32)
-			{
-				p = &variable->u.uint32;
-				break;
-			}
 			if(variable->type == VT_INT32
 					&& variable->u.int32 >= 0)
 				u32 = variable->u.int32;
@@ -677,11 +702,6 @@ VariableError variable_get_as(Variable * variable, VariableType type,
 			break;
 		case VT_INT64:
 			size = sizeof(i64);
-			if(variable->type == VT_INT64)
-			{
-				p = &variable->u.int64;
-				break;
-			}
 			if(variable->type == VT_UINT64
 					&& variable->u.int64 <= 0x7fffffffffffffff)
 				i64 = variable->u.int64;
@@ -692,12 +712,6 @@ VariableError variable_get_as(Variable * variable, VariableType type,
 			break;
 		case VT_UINT64:
 			size = sizeof(u64);
-			if(variable->type == VT_UINT64)
-			{
-				size = sizeof(variable->u.uint64);
-				p = &variable->u.uint64;
-				break;
-			}
 			if(variable->type == VT_INT64
 					&& variable->u.int64 >= 0)
 				u64 = variable->u.int64;
@@ -708,38 +722,25 @@ VariableError variable_get_as(Variable * variable, VariableType type,
 			break;
 		case VT_FLOAT:
 			fp = result;
-			if(variable->type == VT_FLOAT)
-				*fp = variable->u.f;
-			else if(variable->type == VT_DOUBLE)
+			if(variable->type == VT_DOUBLE)
 				*fp = variable->u.d;
 			else
+				/* TODO implement more conversions */
 				break;
 			return 0;
 		case VT_DOUBLE:
 			dp = result;
 			if(variable->type == VT_FLOAT)
 				*dp = variable->u.f;
-			else if(variable->type == VT_DOUBLE)
-				*dp = variable->u.d;
 			else
+				/* TODO implement more conversions */
 				break;
 			return 0;
 		case VT_BUFFER:
-			if(variable->type == VT_BUFFER)
-			{
-				b = result;
-				*b = buffer_new_copy(variable->u.buffer);
-				return 0;
-			}
+			/* TODO serialize the variable */
 			break;
 		case VT_STRING:
-			if(variable->type == VT_STRING)
-			{
-				s = result;
-				*s = string_new(variable->u.string);
-				return 0;
-			}
-			break;
+			return _get_as_convert_string(variable, result);
 	}
 	if(size != 0 && p != NULL)
 	{
@@ -748,6 +749,116 @@ VariableError variable_get_as(Variable * variable, VariableType type,
 	}
 	return -error_set_code(1, "Unable to convert from type %u to %u",
 			variable->type, type);
+}
+
+static VariableError _get_as_convert_string(Variable * variable,
+		String ** result)
+{
+	Variable * v = variable;
+
+	switch(v->type)
+	{
+		case VT_NULL:
+			*result = NULL;
+			return 0;
+		case VT_BOOL:
+			return ((*result = string_new(v->u.b
+							? "true" : "false"))
+					!= NULL) ? 0 : -1;
+		case VT_INT8:
+			return ((*result = string_new_format("%" PRId8,
+							v->u.int8)) != NULL)
+				? 0 : -1;
+		case VT_UINT8:
+			return ((*result = string_new_format("%" PRIu8,
+							v->u.uint8)) != NULL)
+				? 0 : -1;
+		case VT_INT16:
+			return ((*result = string_new_format("%" PRId16,
+							v->u.int16)) != NULL)
+				? 0 : -1;
+		case VT_UINT16:
+			return ((*result = string_new_format("%" PRIu16,
+							v->u.uint16)) != NULL)
+				? 0 : -1;
+		case VT_INT32:
+			return ((*result = string_new_format("%" PRId32,
+							v->u.int32)) != NULL)
+				? 0 : -1;
+		case VT_UINT32:
+			return ((*result = string_new_format("%" PRIu32,
+							v->u.uint32)) != NULL)
+				? 0 : -1;
+		case VT_INT64:
+			return ((*result = string_new_format("%" PRId64,
+							v->u.int64)) != NULL)
+				? 0 : -1;
+		case VT_UINT64:
+			return ((*result = string_new_format("%" PRIu64,
+							v->u.uint64)) != NULL)
+				? 0 : -1;
+		case VT_FLOAT:
+			return ((*result = string_new_format("%f", v->u.f))
+					!= NULL) ? 0 : -1;
+		case VT_DOUBLE:
+			return ((*result = string_new_format("%f", v->u.d))
+					!= NULL) ? 0 : -1;
+		case VT_STRING:
+			/* cannot happen */
+		case VT_COMPOUND:
+			/* no possible conversion */
+			break;
+#if 0
+		case VT_ARRAY:
+		case VT_BUFFER:
+			/* FIXME implement */
+			break;
+#endif
+	}
+	return -error_set_code(1, "Unable to convert from type %u to %u",
+			variable->type, VT_STRING);
+}
+
+
+/* variable_get_pointer */
+void * variable_get_pointer(Variable * variable)
+{
+	switch(variable->type)
+	{
+		case VT_NULL:
+			return NULL;
+		case VT_BOOL:
+			return &variable->u.b;
+		case VT_INT8:
+			return &variable->u.int8;
+		case VT_UINT8:
+			return &variable->u.uint8;
+		case VT_INT16:
+			return &variable->u.int16;
+		case VT_UINT16:
+			return &variable->u.uint16;
+		case VT_INT32:
+			return &variable->u.int32;
+		case VT_UINT32:
+			return &variable->u.uint32;
+		case VT_INT64:
+			return &variable->u.int64;
+		case VT_UINT64:
+			return &variable->u.uint64;
+		case VT_FLOAT:
+			return &variable->u.f;
+		case VT_DOUBLE:
+			return &variable->u.d;
+		case VT_BUFFER:
+			return variable->u.buffer;
+		case VT_STRING:
+			return &variable->u.string;
+		case VT_ARRAY:
+			return variable->u.array.array;
+		case VT_COMPOUND:
+			return NULL;
+	}
+	return NULL;
 }
 
 
