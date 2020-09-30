@@ -115,7 +115,8 @@ int buffer_set(Buffer * buffer, size_t size, char const * data)
 
 
 /* buffer_set_data */
-int buffer_set_data(Buffer * buffer, size_t offset, char * data, size_t size)
+int buffer_set_data(Buffer * buffer, size_t offset, char const * data,
+		size_t size)
 {
 	size_t s = offset + size;
 
