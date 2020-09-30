@@ -176,7 +176,7 @@ void * hash_get(Hash const * hash, void const * key)
 
 
 /* hash_get_key */
-void * hash_get_key(Hash const * hash, void const * key)
+void const * hash_get_key(Hash const * hash, void const * key)
 {
 	unsigned int h;
 	size_t i;
