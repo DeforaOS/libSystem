@@ -124,6 +124,10 @@ dist:
 		$(PACKAGE)-$(VERSION)/tests/python.sh \
 		$(PACKAGE)-$(VERSION)/tests/tests.sh \
 		$(PACKAGE)-$(VERSION)/tests/project.conf \
+		$(PACKAGE)-$(VERSION)/tests/afl/config.c \
+		$(PACKAGE)-$(VERSION)/tests/afl/Makefile \
+		$(PACKAGE)-$(VERSION)/tests/afl/config-input/config.conf \
+		$(PACKAGE)-$(VERSION)/tests/afl/project.conf \
 		$(PACKAGE)-$(VERSION)/tools/configctl.c \
 		$(PACKAGE)-$(VERSION)/tools/Makefile \
 		$(PACKAGE)-$(VERSION)/tools/platform.sh \
