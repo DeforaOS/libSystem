@@ -1,3 +1,4 @@
+SUBDIRS	= afl
 TARGETS	= $(OBJDIR)array$(EXEEXT) $(OBJDIR)buffer$(EXEEXT) $(OBJDIR)clint.log $(OBJDIR)config$(EXEEXT) $(OBJDIR)coverage.log $(OBJDIR)error$(EXEEXT) $(OBJDIR)event$(EXEEXT) $(OBJDIR)fixme.log $(OBJDIR)includes$(EXEEXT) $(OBJDIR)parser$(EXEEXT) $(OBJDIR)pylint.log $(OBJDIR)string$(EXEEXT) $(OBJDIR)variable$(EXEEXT) $(OBJDIR)tests.log
 OBJDIR	=
 PREFIX	= /usr/local
@@ -18,7 +19,14 @@ MKDIR	= mkdir -m 0755 -p
 INSTALL	= install
 
 
-all: $(OBJDIR)array$(EXEEXT) $(OBJDIR)buffer$(EXEEXT) $(OBJDIR)config$(EXEEXT) $(OBJDIR)error$(EXEEXT) $(OBJDIR)event$(EXEEXT) $(OBJDIR)includes$(EXEEXT) $(OBJDIR)parser$(EXEEXT) $(OBJDIR)pylint.log $(OBJDIR)string$(EXEEXT) $(OBJDIR)variable$(EXEEXT)
+all: subdirs $(OBJDIR)array$(EXEEXT) $(OBJDIR)buffer$(EXEEXT) $(OBJDIR)config$(EXEEXT) $(OBJDIR)error$(EXEEXT) $(OBJDIR)event$(EXEEXT) $(OBJDIR)includes$(EXEEXT) $(OBJDIR)parser$(EXEEXT) $(OBJDIR)pylint.log $(OBJDIR)string$(EXEEXT) $(OBJDIR)variable$(EXEEXT)
+
+subdirs:
+	@for i in $(SUBDIRS); do (cd "$$i" && \
+		if [ -n "$(OBJDIR)" ]; then \
+		([ -d "$(OBJDIR)$$i" ] || $(MKDIR) -- "$(OBJDIR)$$i") && \
+		$(MAKE) OBJDIR="$(OBJDIR)$$i/"; \
+		else $(MAKE); fi) || exit; done
 
 array_OBJS = $(OBJDIR)array.o
 array_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
@@ -126,6 +134,10 @@ $(OBJDIR)variable.o: variable.c ../src/variable.c
 	$(CC) $(variable_CFLAGS) -o $(OBJDIR)variable.o -c variable.c
 
 clean:
+	@for i in $(SUBDIRS); do (cd "$$i" && \
+		if [ -n "$(OBJDIR)" ]; then \
+		$(MAKE) OBJDIR="$(OBJDIR)$$i/" clean; \
+		else $(MAKE) clean; fi) || exit; done
 	$(RM) -- $(array_OBJS) $(buffer_OBJS) $(config_OBJS) $(error_OBJS) $(event_OBJS) $(includes_OBJS) $(parser_OBJS) $(string_OBJS) $(variable_OBJS)
 	./clint.sh -c -P "$(PREFIX)" -O CPPFLAGS="-I$(DESTDIR)$(PREFIX)/include -I../include `pkg-config --cflags python-2.7`" -- "$(OBJDIR)clint.log"
 	./coverage.sh -c -P "$(PREFIX)" -- "$(OBJDIR)coverage.log"
@@ -133,11 +145,29 @@ clean:
 	./pylint.sh -c -P "$(PREFIX)" -- "$(OBJDIR)pylint.log"
 	./tests.sh -c -P "$(PREFIX)" -- "$(OBJDIR)tests.log"
 
-distclean: clean
+distclean:
+	@for i in $(SUBDIRS); do (cd "$$i" && \
+		if [ -n "$(OBJDIR)" ]; then \
+		$(MAKE) OBJDIR="$(OBJDIR)$$i/" distclean; \
+		else $(MAKE) distclean; fi) || exit; done
+	$(RM) -- $(array_OBJS) $(buffer_OBJS) $(config_OBJS) $(error_OBJS) $(event_OBJS) $(includes_OBJS) $(parser_OBJS) $(string_OBJS) $(variable_OBJS)
+	./clint.sh -c -P "$(PREFIX)" -O CPPFLAGS="-I$(DESTDIR)$(PREFIX)/include -I../include `pkg-config --cflags python-2.7`" -- "$(OBJDIR)clint.log"
+	./coverage.sh -c -P "$(PREFIX)" -- "$(OBJDIR)coverage.log"
+	./fixme.sh -c -P "$(PREFIX)" -- "$(OBJDIR)fixme.log"
+	./pylint.sh -c -P "$(PREFIX)" -- "$(OBJDIR)pylint.log"
+	./tests.sh -c -P "$(PREFIX)" -- "$(OBJDIR)tests.log"
 	$(RM) -- $(TARGETS)
 
 install: all
+	@for i in $(SUBDIRS); do (cd "$$i" && \
+		if [ -n "$(OBJDIR)" ]; then \
+		$(MAKE) OBJDIR="$(OBJDIR)$$i/" install; \
+		else $(MAKE) install; fi) || exit; done
 
 uninstall:
+	@for i in $(SUBDIRS); do (cd "$$i" && \
+		if [ -n "$(OBJDIR)" ]; then \
+		$(MAKE) OBJDIR="$(OBJDIR)$$i/" uninstall; \
+		else $(MAKE) uninstall; fi) || exit; done
 
-.PHONY: all clean distclean install uninstall
+.PHONY: all subdirs clean distclean install uninstall
