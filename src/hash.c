@@ -100,7 +100,7 @@ Hash * hash_new(HashFunc func, HashCompare compare)
 		error_set_code(1, "%s", "Invalid comparison function");
 		return NULL;
 	}
-	if((hash = object_new(sizeof(*hash))) == NULL)
+	if((hash = (Hash *)object_new(sizeof(*hash))) == NULL)
 		return NULL;
 	if((hash->entries = _hashentryarray_new()) == NULL)
 	{
@@ -125,7 +125,7 @@ void hash_delete(Hash * hash)
 /* hash_func_string */
 unsigned int hash_func_string(void const * key)
 {
-	String const * str = key;
+	String const * str = (String const *)key;
 	size_t i;
 	unsigned int hash = 0;
 
@@ -138,8 +138,8 @@ unsigned int hash_func_string(void const * key)
 /* hash_compare_string */
 int hash_compare_string(void const * value1, void const * value2)
 {
-	String const * str1 = value1;
-	String const * str2 = value2;
+	String const * str1 = (String const *)value1;
+	String const * str2 = (String const *)value2;
 
 	return string_compare(str1, str2);
 }
@@ -149,21 +149,22 @@ int hash_compare_string(void const * value1, void const * value2)
 /* hash_count */
 size_t hash_count(Hash const * hash)
 {
-	return array_count(hash->entries);
+	return array_count((Array const *)hash->entries);
 }
 
 
 /* hash_get */
 void * hash_get(Hash const * hash, void const * key)
 {
+	Array const * entries = (Array const *)hash->entries;
 	unsigned int h;
 	size_t i;
 	HashEntry * he;
 
 	h = (hash->func != NULL) ? hash->func(key) : 0;
-	for(i = array_count(hash->entries); i > 0; i--)
+	for(i = array_count(entries); i > 0; i--)
 	{
-		if((he = array_get(hash->entries, i - 1)) == NULL)
+		if((he = (HashEntry *)array_get(entries, i - 1)) == NULL)
 			return NULL;
 		if(he->hash != h)
 			continue;
@@ -178,14 +179,15 @@ void * hash_get(Hash const * hash, void const * key)
 /* hash_get_key */
 void const * hash_get_key(Hash const * hash, void const * key)
 {
+	Array const * entries = (Array const *)hash->entries;
 	unsigned int h;
 	size_t i;
 	HashEntry const * he;
 
 	h = (hash->func != NULL) ? hash->func(key) : 0;
-	for(i = array_count(hash->entries); i > 0; i--)
+	for(i = array_count(entries); i > 0; i--)
 	{
-		if((he = array_get(hash->entries, i - 1)) == NULL)
+		if((he = (HashEntry const *)array_get(entries, i - 1)) == NULL)
 			return NULL;
 		if(he->hash != h)
 			continue;
@@ -200,6 +202,7 @@ void const * hash_get_key(Hash const * hash, void const * key)
 /* hash_set */
 int hash_set(Hash * hash, void const * key, void * value)
 {
+	Array * entries = (Array *)hash->entries;
 	unsigned int h;
 	size_t i;
 	size_t cnt;
@@ -207,23 +210,22 @@ int hash_set(Hash * hash, void const * key, void * value)
 	HashEntry * p;
 
 	h = (hash->func != NULL) ? hash->func(key) : 0;
-	for(i = 0, cnt = array_count(hash->entries); i < cnt; i++)
+	for(i = 0, cnt = array_count(entries); i < cnt; i++)
 	{
-		if((p = array_get(hash->entries, i)) == NULL)
+		if((p = (HashEntry *)array_get(entries, i)) == NULL)
 			return 1;
 		if(p->hash != h)
 			continue;
 		if(hash->compare(p->key, key) != 0)
 			continue;
 		if(value == NULL)
-			return (array_remove_pos(hash->entries, i) == 0)
-				? 0 : 1;
+			return (array_remove_pos(entries, i) == 0) ? 0 : 1;
 		return _hashentry_set_value(p, value);
 	}
 	if(value == NULL)
 		return 0;
 	_hashentry_init(&he, hash->func, key, value);
-	return (array_append(hash->entries, &he) == 0) ? 0 : 1;
+	return (array_append(entries, &he) == 0) ? 0 : 1;
 }
 
 
@@ -239,17 +241,18 @@ struct funcdata
 
 void hash_foreach(Hash const * hash, HashForeach func, void * data)
 {
+	Array const * entries = (Array const *)hash->entries;
 	struct funcdata fd;
 
 	fd.func = func;
 	fd.data = data;
-	array_foreach(hash->entries, _hash_foreach, &fd);
+	array_foreach(entries, _hash_foreach, &fd);
 }
 
 static void _hash_foreach(void * value, void * data)
 {
-	HashEntry * he = value;
-	struct funcdata * fd = data;
+	HashEntry * he = (HashEntry *)value;
+	struct funcdata * fd = (struct funcdata *)data;
 
 	fd->func(he->key, he->value, fd->data);
 }
@@ -258,8 +261,10 @@ static void _hash_foreach(void * value, void * data)
 /* hash_reset */
 int hash_reset(Hash * hash)
 {
-	while(array_count(hash->entries))
-		if(array_remove_pos(hash->entries, 0) != 0)
+	Array * entries = (Array *)hash->entries;
+
+	while(array_count(entries))
+		if(array_remove_pos(entries, 0) != 0)
 			return 1;
 	return 0;
 }

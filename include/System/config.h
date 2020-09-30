@@ -33,6 +33,10 @@
 
 # include "string.h"
 
+# ifdef __cplusplus
+extern "C" {
+# endif
+
 
 /* Config */
 /* types */
@@ -74,4 +78,7 @@ int config_save(Config const * config, String const * filename);
 int config_save_preferences_user(Config const * config, String const * vendor,
 		String const * package, String const * filename);
 
+# ifdef __cplusplus
+}
+# endif
 #endif /* !LIBSYSTEM_SYSTEM_CONFIG_H */

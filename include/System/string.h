@@ -35,6 +35,10 @@
 # include <stdarg.h>
 # include "array.h"
 
+# ifdef __cplusplus
+extern "C" {
+# endif
+
 
 /* String */
 /* types */
@@ -85,5 +89,9 @@ size_t string_trim(String * string, String const * which);
 
 void string_tolower(String * string);
 void string_toupper(String * string);
+
+# ifdef __cplusplus
+}
+# endif
 
 #endif /* !LIBSYSTEM_SYSTEM_STRING_H */

@@ -34,6 +34,10 @@
 # include "string.h"
 # include "token.h"
 
+# ifdef __cplusplus
+extern "C" {
+# endif
+
 
 /* Parser */
 /* types */
@@ -62,5 +66,9 @@ int parser_remove_filter(Parser * parser, ParserFilter filter);
 
 int parser_scan(Parser * parser);
 int parser_scan_filter(Parser * parser);
+
+# ifdef __cplusplus
+}
+# endif
 
 #endif /* !LIBSYSTEM_SYSTEM_PARSER_H */

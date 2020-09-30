@@ -34,6 +34,10 @@
 # include "license.h"
 # include "string.h"
 
+# ifdef __cplusplus
+extern "C" {
+# endif
+
 
 /* Plugin */
 typedef struct _Plugin Plugin;
@@ -59,5 +63,9 @@ PluginExport plugin_get_export(Plugin * plugin, String const * name);
 
 /* useful */
 PluginExport plugin_lookup(Plugin * plugin, String const * symbol);
+
+# ifdef __cplusplus
+}
+# endif
 
 #endif /* !LIBSYSTEM_SYSTEM_PLUGIN_H */

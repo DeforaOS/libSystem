@@ -33,6 +33,10 @@
 
 # include <stddef.h>
 
+# ifdef __cplusplus
+extern "C" {
+# endif
+
 
 /* Object */
 typedef void Object;
@@ -44,5 +48,9 @@ void object_delete(Object * object);
 
 /* useful */
 int object_resize(Object ** object, size_t size);
+
+# ifdef __cplusplus
+}
+# endif
 
 #endif /* !LIBSYSTEM_SYSTEM_OBJECT_H */

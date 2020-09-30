@@ -55,9 +55,9 @@ Buffer * buffer_new(size_t size, char const * data)
 {
 	Buffer * buffer;
 
-	if((buffer = object_new(sizeof(*buffer))) == NULL)
+	if((buffer = (Buffer *)object_new(sizeof(*buffer))) == NULL)
 		return NULL;
-	if((buffer->data = object_new(size)) == NULL && size != 0)
+	if((buffer->data = (char *)object_new(size)) == NULL && size != 0)
 	{
 		object_delete(buffer);
 		return NULL;
@@ -137,7 +137,7 @@ int buffer_set_size(Buffer * buffer, size_t size)
 
 	if(size == buffer->size)
 		return 0;
-	if((p = realloc(buffer->data, size)) == NULL && size != 0)
+	if((p = (char *)realloc(buffer->data, size)) == NULL && size != 0)
 		return error_set_code(-errno, "%s", strerror(errno));
 	buffer->data = p;
 	if(size > buffer->size)

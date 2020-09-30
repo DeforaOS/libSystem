@@ -64,7 +64,7 @@ File * file_new(String const * filename, FileMode mode)
 	File * file;
 	char const * fmode;
 
-	if((file = object_new(sizeof(*file))) == NULL)
+	if((file = (File *)object_new(sizeof(*file))) == NULL)
 		return NULL;
 	if((file->filename = string_new(filename)) == NULL
 			|| (fmode = _file_get_fmode(file, mode)) == NULL)

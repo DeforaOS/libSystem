@@ -99,7 +99,7 @@ String const * config_get(Config const * config, String const * section,
 
 	if(section == NULL)
 		section = "";
-	if((mutator = mutator_get(config, section)) == NULL)
+	if((mutator = (Mutator *)mutator_get(config, section)) == NULL)
 	{
 		/* the section does not exist */
 		if(section[0] == '\0')
@@ -108,7 +108,7 @@ String const * config_get(Config const * config, String const * section,
 			error_set_code(1, "%s%s", section, ": No such section");
 		return NULL;
 	}
-	if((value = mutator_get(mutator, variable)) == NULL)
+	if((value = (String const *)mutator_get(mutator, variable)) == NULL)
 	{
 		/* the variable is not defined */
 		error_set_code(1, "%s%s%s%s%s", variable, ": Not defined in",
@@ -138,7 +138,7 @@ int config_set(Config * config, String const * section, String const * variable,
 	if(variable == NULL || string_get_length(variable) == 0)
 		return error_set_code(-EINVAL, "variable: %s",
 				strerror(EINVAL));
-	if((mutator = mutator_get(config, section)) == NULL)
+	if((mutator = (Mutator *)mutator_get(config, section)) == NULL)
 	{
 		/* create a new section */
 		if((mutator = mutator_new()) == NULL)
@@ -150,7 +150,8 @@ int config_set(Config * config, String const * section, String const * variable,
 		}
 		p = NULL;
 	}
-	else if((p = mutator_get(mutator, variable)) == NULL && value == NULL)
+	else if((p = (String *)mutator_get(mutator, variable)) == NULL
+			&& value == NULL)
 		/* there is nothing to do */
 		return 0;
 	if(value != NULL && (newvalue = string_new(value)) == NULL)
@@ -182,7 +183,7 @@ void config_foreach(Config const * config, ConfigForeachCallback callback,
 
 static void _foreach_callback(String const * key, void * value, void * data)
 {
-	ConfigForeachData * priv = data;
+	ConfigForeachData * priv = (ConfigForeachData *)data;
 	(void) value;
 
 	priv->callback(key, priv->priv);
@@ -199,7 +200,7 @@ void config_foreach_section(Config const * config, String const * section,
 	Mutator * mutator;
 	ConfigForeachSectionData data;
 
-	if((mutator = mutator_get(config, section)) == NULL)
+	if((mutator = (Mutator *)mutator_get(config, section)) == NULL)
 		return; /* could not find section */
 	data.callback = callback;
 	data.priv = priv;
@@ -209,9 +210,9 @@ void config_foreach_section(Config const * config, String const * section,
 static void _foreach_section_callback(String const * key, void * value,
 		void * data)
 {
-	ConfigForeachSectionData * priv = data;
+	ConfigForeachSectionData * priv = (ConfigForeachSectionData *)data;
 
-	priv->callback(key, value, priv->priv);
+	priv->callback(key, (String const *)value, priv->priv);
 }
 
 
@@ -431,7 +432,7 @@ int config_reset(Config * config)
 
 static void _delete_foreach(String const * key, void * value, void * data)
 {
-	Mutator * mutator = value;
+	Mutator * mutator = (Mutator *)value;
 	(void) key;
 	(void) data;
 
@@ -443,7 +444,7 @@ static void _delete_foreach(String const * key, void * value, void * data)
 static void _delete_foreach_section(String const * key, void * value,
 		void * data)
 {
-	String * v = value;
+	String * v = (String *)value;
 	(void) key;
 	(void) data;
 
@@ -482,8 +483,8 @@ int config_save(Config const * config, String const * filename)
 static void _save_foreach_default(String const * section, void * value,
 		void * data)
 {
-	ConfigSave * save = data;
-	Mutator * mutator = value;
+	ConfigSave * save = (ConfigSave *)data;
+	Mutator * mutator = (Mutator *)value;
 
 	if(save->fp == NULL)
 		return;
@@ -494,8 +495,8 @@ static void _save_foreach_default(String const * section, void * value,
 
 static void _save_foreach(String const * section, void * value, void * data)
 {
-	ConfigSave * save = data;
-	Mutator * mutator = value;
+	ConfigSave * save = (ConfigSave *)data;
+	Mutator * mutator = (Mutator *)value;
 
 	if(save->fp == NULL)
 		return;
@@ -513,8 +514,8 @@ static void _save_foreach(String const * section, void * value, void * data)
 
 static void _save_foreach_section(String const * key, void * value, void * data)
 {
-	ConfigSave * save = data;
-	String const * val = value;
+	ConfigSave * save = (ConfigSave *)data;
+	String const * val = (String const *)value;
 
 	if(save->fp == NULL)
 		return;

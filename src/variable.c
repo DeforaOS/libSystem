@@ -108,7 +108,7 @@ Variable * variable_newv(VariableType type, va_list ap)
 {
 	Variable * variable;
 
-	if((variable = object_new(sizeof(*variable))) == NULL)
+	if((variable = (Variable *)object_new(sizeof(*variable))) == NULL)
 		return NULL;
 	variable->type = VT_NULL;
 	if(variable_set_typev(variable, type, ap) != 0)
@@ -181,7 +181,7 @@ Variable * variable_new_compoundv(String const * name, size_t members,
 		return NULL;
 	for(i = 0; i < members; i++)
 	{
-		type = va_arg(ap, VariableType);
+		type = (VariableType)va_arg(ap, unsigned int);
 		if((v = variable_newv(type, ap)) == NULL
 				|| array_set(variable->u.compound.members, i,
 					v) != 0)
@@ -283,6 +283,7 @@ Variable * variable_new_deserialize(size_t * size, char const * data)
 {
 	Variable * variable;
 	uint8_t u8;
+	VariableType type;
 	size_t s;
 
 	/* check the arguments */
@@ -293,9 +294,10 @@ Variable * variable_new_deserialize(size_t * size, char const * data)
 	}
 	/* obtain the type from the data */
 	u8 = data[0];
+	type = (VariableType)u8;
 	s = *size - sizeof(u8);
 	/* deserialize according to the type */
-	variable = variable_new_deserialize_type(u8, &s, &data[sizeof(u8)]);
+	variable = variable_new_deserialize_type(type, &s, &data[sizeof(u8)]);
 	*size = s + sizeof(u8);
 	return variable;
 }
@@ -453,7 +455,7 @@ void variable_delete(Variable * variable)
 
 
 /* variable_get_as */
-static VariableType _get_as_convert(Variable * variable, VariableType type,
+static VariableError _get_as_convert(Variable * variable, VariableType type,
 		void * result);
 static VariableError _get_as_convert_string(Variable * variable,
 		String ** result);
@@ -491,15 +493,15 @@ VariableError variable_get_as(Variable * variable, VariableType type,
 			memcpy(result, p, size);
 			return 0;
 		case VT_BUFFER:
-			b = result;
+			b = (Buffer **)result;
 			return (*b = buffer_new_copy(variable->u.buffer))
 				!= NULL ? 0 : -1;
 		case VT_STRING:
-			s = result;
+			s = (String **)result;
 			return (*s = string_new(variable->u.string)) != NULL
 				? 0 : -1;
 		case VT_ARRAY:
-			a = result;
+			a = (Array **)result;
 			return (*a = array_new_copy(variable->u.array.array))
 				!= NULL ? 0 : -1;
 	}
@@ -507,7 +509,7 @@ VariableError variable_get_as(Variable * variable, VariableType type,
 	return -1;
 }
 
-static VariableType _get_as_convert(Variable * variable, VariableType type,
+static VariableError _get_as_convert(Variable * variable, VariableType type,
 		void * result)
 {
 	size_t size = 0;
@@ -726,7 +728,7 @@ static VariableType _get_as_convert(Variable * variable, VariableType type,
 			p = &u64;
 			break;
 		case VT_FLOAT:
-			fp = result;
+			fp = (float *)result;
 			if(variable->type == VT_DOUBLE)
 				*fp = variable->u.d;
 			else
@@ -734,7 +736,7 @@ static VariableType _get_as_convert(Variable * variable, VariableType type,
 				break;
 			return 0;
 		case VT_DOUBLE:
-			dp = result;
+			dp = (double *)result;
 			if(variable->type == VT_FLOAT)
 				*dp = variable->u.f;
 			else
@@ -745,7 +747,8 @@ static VariableType _get_as_convert(Variable * variable, VariableType type,
 			/* TODO serialize the variable */
 			break;
 		case VT_STRING:
-			return _get_as_convert_string(variable, result);
+			return _get_as_convert_string(variable,
+					(String **)result);
 	}
 	if(size != 0 && p != NULL)
 	{
@@ -1129,14 +1132,15 @@ static VariableError _copy_compound(Variable * variable, Variable const * from)
 	}
 	count = array_count(from->u.compound.members);
 	for(i = 0; i < count; i++)
-		if((v = array_get(from->u.compound.members, i)) == NULL
+		if((v = (Variable *)array_get(from->u.compound.members, i))
+				== NULL
 				|| (v = variable_new_copy(v)) == NULL
 				|| array_set(members, i, v) != 0)
 			break;
 	if(i != count)
 	{
 		for(count = i, i = 0; i < count; i++)
-			if((v = array_get(members, i)) != NULL)
+			if((v = (Variable *)array_get(members, i)) != NULL)
 				variable_delete(v);
 		array_delete(members);
 		string_delete(s);
@@ -1244,25 +1248,26 @@ VariableError variable_serialize(Variable * variable, Buffer * buffer,
 	{
 		/* prefix with the type */
 		u8 = variable->type;
-		if(buffer_set(buffer, sizeof(u8), (char *)&u8) != 0)
+		if(buffer_set(buffer, sizeof(u8), (char const *)&u8) != 0)
 			return -1;
 		offset = sizeof(u8);
 		if(variable->type == VT_BUFFER)
 		{
-			if(buffer_set_data(buffer, offset, (char *)&u32,
+			if(buffer_set_data(buffer, offset, (char const *)&u32,
 						sizeof(u32)) != 0)
 				return -1;
 			offset += sizeof(u32);
 		}
-		return buffer_set_data(buffer, offset, p, size);
+		return buffer_set_data(buffer, offset, (char const *)p, size);
 	}
 	if(variable->type == VT_BUFFER)
 	{
-		if(buffer_set(buffer, sizeof(u32), (char *)&u32) != 0)
+		if(buffer_set(buffer, sizeof(u32), (char const *)&u32) != 0)
 			return -1;
-		return buffer_set_data(buffer, sizeof(u32), p, size);
+		return buffer_set_data(buffer, sizeof(u32), (char const *)p,
+				size);
 	}
-	return buffer_set(buffer, size, p);
+	return buffer_set(buffer, size, (char const *)p);
 }
 
 
@@ -1339,7 +1344,7 @@ static void _destroy_compound(Variable * variable)
 	count = array_count(variable->u.compound.members);
 	for(i = 0; i < count; i++)
 	{
-		v = array_get(variable->u.compound.members, i);
+		v = (Variable *)array_get(variable->u.compound.members, i);
 		variable_delete(v);
 	}
 	array_delete(variable->u.compound.members);

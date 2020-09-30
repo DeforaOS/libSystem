@@ -61,7 +61,7 @@ Array * array_new(size_t size)
 		error_set_code(-ERANGE, "%s", strerror(ERANGE));
 		return NULL;
 	}
-	if((array = object_new(sizeof(*array))) == NULL)
+	if((array = (Array *)object_new(sizeof(*array))) == NULL)
 		return NULL;
 	array->count = 0;
 	array->size = size;
@@ -193,7 +193,7 @@ ArrayError array_set(Array * array, size_t pos, ArrayData * value)
 			return error_set_code(-ERANGE, "%s", strerror(ERANGE));
 		if((q = realloc(array->value, offset + array->size)) == NULL)
 			return error_set_code(-errno, "%s", strerror(errno));
-		array->value = q;
+		array->value = (char *)q;
 		curpos = array->count * array->size;
 		memset(&array->value[curpos], 0, offset - curpos);
 		array->count = pos + 1;
@@ -215,7 +215,7 @@ ArrayError array_append(Array * array, ArrayData * value)
 	if(UINT64_MAX - offset < array->size
 			|| offset + array->size > SIZE_MAX)
 		return error_set_code(-ERANGE, "%s", strerror(ERANGE));
-	if((p = realloc(array->value, offset + array->size)) == NULL)
+	if((p = (char *)realloc(array->value, offset + array->size)) == NULL)
 		return error_set_code(-errno, "%s", strerror(errno));
 	array->value = p;
 	memcpy(&p[offset], value, array->size);
@@ -243,7 +243,7 @@ ArrayError array_prepend(Array * array, ArrayData * value)
 /* array_remove_pos */
 ArrayError array_remove_pos(Array * array, size_t pos)
 {
-	char * p;
+	void * p;
 
 	if(pos >= array->count)
 		return error_set_code(-ERANGE, "%s", strerror(ERANGE));
@@ -255,7 +255,7 @@ ArrayError array_remove_pos(Array * array, size_t pos)
 			&& array->count != 0)
 		/* XXX ignore the error */
 		return 0;
-	array->value = p;
+	array->value = (char *)p;
 	return 0;
 }
 

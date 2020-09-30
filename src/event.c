@@ -96,7 +96,7 @@ Event * event_new(void)
 {
 	Event * event;
 
-	if((event = object_new(sizeof(*event))) == NULL)
+	if((event = (Event *)object_new(sizeof(*event))) == NULL)
 		return NULL;
 	event->timeouts = eventtimeoutarray_new();
 	event->loop = 0;
@@ -301,7 +301,7 @@ int event_register_io_read(Event * event, int fd, EventIOFunc func,
 	EventIO * eventio;
 
 	assert(fd >= 0);
-	if((eventio = object_new(sizeof(*eventio))) == NULL)
+	if((eventio = (EventIO *)object_new(sizeof(*eventio))) == NULL)
 		return 1;
 	eventio->fd = fd;
 	eventio->func = func;
@@ -324,7 +324,7 @@ int event_register_io_write(Event * event, int fd, EventIOFunc func,
 	EventIO * eventio;
 
 	assert(fd >= 0);
-	if((eventio = object_new(sizeof(*eventio))) == NULL)
+	if((eventio = (EventIO *)object_new(sizeof(*eventio))) == NULL)
 		return 1;
 	eventio->fd = fd;
 	eventio->func = func;
@@ -349,7 +349,8 @@ int event_register_timeout(Event * event, struct timeval * timeout,
 
 	if(gettimeofday(&now, NULL) != 0)
 		return error_set_code(-errno, "%s", strerror(errno));
-	if((eventtimeout = object_new(sizeof(*eventtimeout))) == NULL)
+	if((eventtimeout = (EventTimeout *)object_new(sizeof(*eventtimeout)))
+			== NULL)
 		return -1;
 	eventtimeout->initial.tv_sec = timeout->tv_sec;
 	eventtimeout->initial.tv_usec = timeout->tv_usec;

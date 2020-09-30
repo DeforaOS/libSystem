@@ -33,6 +33,10 @@
 
 # include <stddef.h>
 
+# ifdef __cplusplus
+extern "C" {
+# endif
+
 
 /* Buffer */
 /* types */
@@ -52,5 +56,9 @@ int buffer_set_data(Buffer * buffer, size_t offset, char const * data,
 
 size_t buffer_get_size(Buffer const * buffer);
 int buffer_set_size(Buffer * buffer, size_t size);
+
+# ifdef __cplusplus
+}
+# endif
 
 #endif /* !LIBSYSTEM_SYSTEM_BUFFER_H */

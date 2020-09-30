@@ -126,7 +126,7 @@ int parser_scan_filter(Parser * parser)
 /* parser_scanner_file */
 static int _parser_scanner_file(int * c, void * data)
 {
-	Parser * parser = data;
+	Parser * parser = (Parser *)data;
 
 #ifdef DEBUG
 	fprintf(stderr, "DEBUG: %s()\n", __func__);
@@ -149,7 +149,7 @@ static int _parser_scanner_file(int * c, void * data)
 /* parser_scanner_string */
 static int _parser_scanner_string(int * c, void * data)
 {
-	Parser * parser = data;
+	Parser * parser = (Parser *)data;
 
 #ifdef DEBUG
 	fprintf(stderr, "DEBUG: %s()\n", __func__);
@@ -201,7 +201,7 @@ static Parser * _new_do(ParserFilter scanner)
 {
 	Parser * parser;
 
-	if((parser = object_new(sizeof(*parser))) == NULL)
+	if((parser = (Parser *)object_new(sizeof(*parser))) == NULL)
 		return NULL;
 	parser->filename = NULL;
 	parser->fp = NULL;
@@ -232,7 +232,7 @@ Parser * parser_new_string(String const * string, size_t length)
 #endif
 	if((parser = _new_do(_parser_scanner_string)) == NULL)
 		return NULL;
-	parser->string = malloc(length);
+	parser->string = (String *)malloc(length);
 	parser->string_cnt = length;
 	if(parser->string == NULL && length != 0)
 	{
@@ -317,7 +317,8 @@ int parser_add_callback(Parser * parser, ParserCallback callback, void * data)
 {
 	ParserCallbackData * p;
 
-	if((p = realloc(parser->callbacks, sizeof(*p) * (parser->callbacks_cnt
+	if((p = (ParserCallbackData *)realloc(parser->callbacks,
+					sizeof(*p) * (parser->callbacks_cnt
 						+ 1))) == NULL)
 		return 1;
 	parser->callbacks = p;
@@ -337,7 +338,8 @@ int parser_add_filter(Parser * parser, ParserFilter filter, void * data)
 	fprintf(stderr, "DEBUG: %s(%p, %p, %p)\n", __func__, (void *)parser,
 			(void *)filter, (void *)data);
 #endif
-	if((p = realloc(p, sizeof(*p) * (parser->filters_cnt + 1))) == NULL)
+	if((p = (ParserFilterData *)realloc(p, sizeof(*p) * (parser->filters_cnt
+						+ 1))) == NULL)
 		return 1;
 	parser->filters = p;
 	p = &parser->filters[parser->filters_cnt++];

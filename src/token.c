@@ -65,7 +65,7 @@ Token * token_new(String const * filename, unsigned int line, unsigned int col)
 #ifdef DEBUG
 	fprintf(stderr, "DEBUG: %s(%u, %u)\n", __func__, line, col);
 #endif
-	if((token = object_new(sizeof(*token))) == NULL)
+	if((token = (Token *)object_new(sizeof(*token))) == NULL)
 		return NULL;
 	token->code = 0;
 	token->string = NULL;

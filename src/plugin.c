@@ -64,7 +64,7 @@ static Plugin * _plugin_open(String const * filename)
 #else
 	Plugin * plugin;
 
-	if((plugin = dlopen(filename, RTLD_LAZY)) == NULL)
+	if((plugin = (Plugin *)dlopen(filename, RTLD_LAZY)) == NULL)
 		error_set_code(1, "%s", dlerror());
 	return plugin;
 #endif

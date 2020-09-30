@@ -33,6 +33,10 @@
 
 # include "string.h"
 
+# ifdef __cplusplus
+extern "C" {
+# endif
+
 
 /* Token */
 /* types */
@@ -68,5 +72,9 @@ void token_set_data(Token * token, void * data);
 
 /* useful */
 int token_in_set(Token * token, TokenSet set);
+
+# ifdef __cplusplus
+}
+# endif
 
 #endif /* !LIBSYSTEM_SYSTEM_TOKEN_H */

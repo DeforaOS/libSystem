@@ -35,6 +35,10 @@
 # include "buffer.h"
 # include "string.h"
 
+# ifdef __cplusplus
+extern "C" {
+# endif
+
 
 /* types */
 typedef struct _File File;
@@ -77,5 +81,9 @@ FileError file_write_buffer(File * file, Buffer const * buffer);
 FileError file_seek(File * file, FileSeekMode mode, FileOffset offset);
 
 FileError file_unlink(File * file);
+
+# ifdef __cplusplus
+}
+# endif
 
 #endif /* !LIBSYSTEM_SYSTEM_FILE_H */

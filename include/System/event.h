@@ -34,6 +34,10 @@
 # include <sys/time.h>
 # include <time.h>
 
+# ifdef __cplusplus
+extern "C" {
+# endif
+
 
 /* Event */
 /* types */
@@ -60,5 +64,9 @@ int event_register_timeout(Event * event, struct timeval * timeout,
 int event_unregister_io_read(Event * event, int fd);
 int event_unregister_io_write(Event * event, int fd);
 int event_unregister_timeout(Event * event, EventTimeoutFunc func);
+
+# ifdef __cplusplus
+}
+# endif
 
 #endif /* !LIBSYSTEM_SYSTEM_EVENT_H */

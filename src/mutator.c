@@ -80,7 +80,7 @@ int mutator_set(Mutator * mutator, String const * key, void * value)
 	String * oldk;
 
 	/* look for the former key */
-	if((oldk = hash_get_key(mutator, key)) == NULL)
+	if((oldk = (String *)hash_get_key(mutator, key)) == NULL)
 	{
 		if(value == NULL)
 			/* there is nothing to do */

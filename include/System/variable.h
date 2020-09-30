@@ -37,6 +37,10 @@
 # include "buffer.h"
 # include "string.h"
 
+# ifdef __cplusplus
+extern "C" {
+# endif
+
 
 /* Variable */
 /* types */
@@ -113,5 +117,9 @@ VariableError variable_set_typev(Variable * variable, VariableType type,
 VariableError variable_copy(Variable * variable, Variable const * from);
 VariableError variable_serialize(Variable * variable, Buffer * buffer,
 		bool prefix);
+
+# ifdef __cplusplus
+}
+# endif
 
 #endif /* !LIBSYSTEM_SYSTEM_VARIABLE_H */

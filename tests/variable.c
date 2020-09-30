@@ -44,7 +44,7 @@ static int _variable(char const * progname)
 	int32_t j;
 	int8_t i8;
 	size_t s;
-	void * p;
+	char * p;
 	double d;
 
 	/* variable_new */
@@ -54,7 +54,7 @@ static int _variable(char const * progname)
 				progname, samples[i]);
 		i8 = samples[i];
 		s = sizeof(i8);
-		p = &i8;
+		p = (char *)&i8;
 		if((variable = variable_new_deserialize_type(VT_INT8, &s, p))
 				== NULL)
 		{
@@ -62,8 +62,8 @@ static int _variable(char const * progname)
 			ret += 1;
 			continue;
 		}
-		p = &j;
-		if(variable_get_as(variable, VT_INT32, p) != 0
+		p = (char *)&j;
+		if(variable_get_as(variable, VT_INT32, (void *)p) != 0
 				|| j != samples[i])
 		{
 			error_print(progname);

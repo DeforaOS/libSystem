@@ -126,7 +126,7 @@ String * string_new_formatv(String const * format, va_list ap)
 		return NULL;
 	}
 	s = (size_t)len + 1;
-	if((ret = object_new(s)) == NULL)
+	if((ret = (String *)object_new(s)) == NULL)
 		return NULL;
 	if(vsnprintf(ret, s, format, ap) != len)
 	{
@@ -151,7 +151,7 @@ String * string_new_length(String const * string, size_t length)
 		error_set_code(-ERANGE, "%s", strerror(ERANGE));
 		return NULL;
 	}
-	if((ret = object_new(length + 1)) == NULL)
+	if((ret = (String *)object_new(length + 1)) == NULL)
 		return NULL;
 	snprintf(ret, length + 1, "%s", (string != NULL) ? string : "");
 	return ret;

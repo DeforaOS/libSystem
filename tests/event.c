@@ -52,7 +52,7 @@ static int _event(char const * progname)
 
 static int _event_on_idle(void * data)
 {
-	Event * event = data;
+	Event * event = (Event *)data;
 
 	event_loop_quit(event);
 	return 0;

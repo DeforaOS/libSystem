@@ -33,6 +33,10 @@
 
 # include "string.h"
 
+# ifdef __cplusplus
+extern "C" {
+# endif
+
 
 /* types */
 typedef int ErrorCode;
@@ -54,5 +58,9 @@ ErrorCode error_set_printv(String const * program, ErrorCode code,
 
 /* useful */
 ErrorCode error_print(String const * program);
+
+# ifdef __cplusplus
+}
+# endif
 
 #endif /* !LIBSYSTEM_SYSTEM_ERROR_H */

@@ -75,7 +75,7 @@ static int _test(intArray * array)
 			return 8;
 	if(array_count(array) != 1024)
 		return 9;
-	if((p = array_get(array, 512)) == NULL || *p != 512)
+	if((p = (int *)array_get(array, 512)) == NULL || *p != 512)
 		return 10;
 	j = 0;
 	array_foreach(array, _test_foreach, &j);
@@ -87,7 +87,7 @@ static int _test(intArray * array)
 		return 12;
 	if(array_remove_pos(array, 512) != 0)
 		return 13;
-	if((p = array_get(array, 512)) == NULL || *p != 513)
+	if((p = (int *)array_get(array, 512)) == NULL || *p != 513)
 		return 14;
 	if((a = array_new_filter(array, _test_filter, NULL)) == NULL)
 		return 15;
@@ -105,7 +105,7 @@ static int _test(intArray * array)
 
 static bool _test_filter(void * value, void * data)
 {
-	int * i = value;
+	int * i = (int *)value;
 	(void) data;
 
 	return (*i != 0) ? true : false;
@@ -113,7 +113,7 @@ static bool _test_filter(void * value, void * data)
 
 static bool _test_filter_swap(void * data, void * value)
 {
-	int * i = value;
+	int * i = (int *)value;
 	(void) data;
 
 	return (*i != 0) ? false : true;
@@ -121,8 +121,8 @@ static bool _test_filter_swap(void * data, void * value)
 
 static void _test_foreach(void * value, void * data)
 {
-	int * i = value;
-	int * j = data;
+	int * i = (int *)value;
+	int * j = (int *)data;
 
 	*j += *i;
 }

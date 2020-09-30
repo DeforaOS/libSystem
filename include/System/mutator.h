@@ -33,6 +33,10 @@
 
 # include "string.h"
 
+# ifdef __cplusplus
+extern "C" {
+# endif
+
 
 /* Mutator */
 /* types */
@@ -53,5 +57,9 @@ size_t mutator_count(Mutator const * mutator);
 /* useful */
 void mutator_foreach(Mutator const * mutator, MutatorForeach func, void * data);
 int mutator_reset(Mutator * mutator);
+
+# ifdef __cplusplus
+}
+# endif
 
 #endif /* !LIBSYSTEM_SYSTEM_MUTATOR_H */

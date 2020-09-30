@@ -35,6 +35,10 @@
 # include <stdbool.h>
 # include "userdata.h"
 
+# ifdef __cplusplus
+extern "C" {
+# endif
+
 
 /* Array */
 /* macros */
@@ -95,5 +99,9 @@ void array_filter_swap(Array * array, ArrayFilter func, UserData * data);
 void array_foreach(Array const * array, ArrayForeachSwap func, UserData * data);
 void array_foreach_swap(Array const * array, ArrayForeachSwap func,
 		UserData * data);
+
+# ifdef __cplusplus
+}
+# endif
 
 #endif /* !LIBSYSTEM_SYSTEM_ARRAY_H */

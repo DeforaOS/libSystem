@@ -33,6 +33,10 @@
 
 # include <stddef.h>
 
+# ifdef __cplusplus
+extern "C" {
+# endif
+
 
 /* Hash */
 /* types */
@@ -60,5 +64,9 @@ size_t hash_count(Hash const * hash);
 /* useful */
 void hash_foreach(Hash const * hash, HashForeach func, void * data);
 int hash_reset(Hash * hash);
+
+# ifdef __cplusplus
+}
+# endif
 
 #endif /* !LIBSYSTEM_SYSTEM_HASH_H */
