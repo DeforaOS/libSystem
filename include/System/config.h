@@ -49,6 +49,7 @@ typedef void (*ConfigForeachSectionCallback)(String const * variable,
 
 /* functions */
 Config * config_new(void);
+Config * config_new_load(String const * filename);
 void config_delete(Config * config);
 
 /* accessors */

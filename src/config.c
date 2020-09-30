@@ -81,6 +81,24 @@ Config * config_new(void)
 }
 
 
+/* config_new_load */
+Config * config_new_load(String const * filename)
+{
+	Config * config;
+
+	if(filename == NULL)
+		return config_new();
+	if((config = config_new()) == NULL)
+		return NULL;
+	if(config_load(config, filename) != 0)
+	{
+		config_delete(config);
+		return NULL;
+	}
+	return config;
+}
+
+
 /* config_delete */
 void config_delete(Config * config)
 {
