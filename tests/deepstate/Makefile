@@ -1,49 +1,67 @@
-PREFIX	= /home/khorben/pkg
+TARGETS	= $(OBJDIR)config-deepstate$(EXEEXT) test
+OBJDIR	=
+PREFIX	= /usr/local
+DESTDIR	=
 BINDIR	= $(PREFIX)/bin
-INCLUDEDIR=$(PREFIX)/include
-LIBDIR	= $(PREFIX)/lib
-CPPFLAGS=-isystem $(INCLUDEDIR) -I../../include
-LDFLAGS=-L$(LIBDIR) -ldeepstate
-CXX=	$(BINDIR)/clang++
-DEEPSTATE=$(BINDIR)/deepstate
-RM=	rm -f
-OBJS=	array.o config.o config-deepstate.o error.o hash.o mutator.o object.o string.o
+SBINDIR	= $(PREFIX)/sbin
+CC	= $(PREFIX)/bin/clang++
+CPPFLAGSF=
+CPPFLAGS= -isystem $(PREFIX)/include -I../../include
+CFLAGSF	=
+CFLAGS	=
+CXX	= $(CC)
+LDFLAGS	= -L$(PREFIX)/lib -ldeepstate
+EXEEXT	=
+RM	= rm -f
+LN	= ln -f
+MKDIR	= mkdir -m 0755 -p
+INSTALL	= install
 
-all: config-deepstate
 
-config-deepstate: $(OBJS)
-	$(CXX) $(LDFLAGS) -o config-deepstate $(OBJS)
+all: $(OBJDIR)config-deepstate$(EXEEXT)
 
-array.o: array.cpp
-	$(CXX) $(CPPFLAGS) -c array.cpp
+config-deepstate_OBJS = $(OBJDIR)array.o $(OBJDIR)config-deepstate.o $(OBJDIR)config.o $(OBJDIR)error.o $(OBJDIR)hash.o $(OBJDIR)mutator.o $(OBJDIR)object.o $(OBJDIR)string.o
+config-deepstate_CXXFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CXXFLAGSF) $(CXXFLAGS)
+config-deepstate_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 
-config.o: config.cpp
-	$(CXX) $(CPPFLAGS) -c config.cpp
+$(OBJDIR)config-deepstate$(EXEEXT): $(config-deepstate_OBJS)
+	$(CC) -o $(OBJDIR)config-deepstate$(EXEEXT) $(config-deepstate_OBJS) $(config-deepstate_LDFLAGS)
 
-config-deepstate.o: config-deepstate.cpp
-	$(CXX) $(CPPFLAGS) -c config-deepstate.cpp
+test: $(OBJDIR)config-deepstate
+	$(PREFIX)/bin/deepstate $(OBJDIR)config-deepstate
 
-error.o: error.cpp
-	$(CXX) $(CPPFLAGS) -c error.cpp
+$(OBJDIR)array.o: array.cpp
+	$(CXX) $(config-deepstate_CXXFLAGS) -o $(OBJDIR)array.o -c array.cpp
 
-hash.o: hash.cpp
-	$(CXX) $(CPPFLAGS) -c hash.cpp
+$(OBJDIR)config-deepstate.o: config-deepstate.cpp
+	$(CXX) $(config-deepstate_CXXFLAGS) -o $(OBJDIR)config-deepstate.o -c config-deepstate.cpp
 
-mutator.o: mutator.cpp
-	$(CXX) $(CPPFLAGS) -c mutator.cpp
+$(OBJDIR)config.o: config.cpp
+	$(CXX) $(config-deepstate_CXXFLAGS) -o $(OBJDIR)config.o -c config.cpp
 
-object.o: object.cpp
-	$(CXX) $(CPPFLAGS) -c object.cpp
+$(OBJDIR)error.o: error.cpp
+	$(CXX) $(config-deepstate_CXXFLAGS) -o $(OBJDIR)error.o -c error.cpp
 
-string.o: string.cpp
-	$(CXX) $(CPPFLAGS) -c string.cpp
+$(OBJDIR)hash.o: hash.cpp
+	$(CXX) $(config-deepstate_CXXFLAGS) -o $(OBJDIR)hash.o -c hash.cpp
+
+$(OBJDIR)mutator.o: mutator.cpp
+	$(CXX) $(config-deepstate_CXXFLAGS) -o $(OBJDIR)mutator.o -c mutator.cpp
+
+$(OBJDIR)object.o: object.cpp
+	$(CXX) $(config-deepstate_CXXFLAGS) -o $(OBJDIR)object.o -c object.cpp
+
+$(OBJDIR)string.o: string.cpp
+	$(CXX) $(config-deepstate_CXXFLAGS) -o $(OBJDIR)string.o -c string.cpp
 
 clean:
-	$(RM) -- $(OBJS)
+	$(RM) -- $(config-deepstate_OBJS)
 
 distclean: clean
+	$(RM) -- $(OBJDIR)config-deepstate
 
-test: config-deepstate
-	$(DEEPSTATE) ./config-deepstate
+install: all
 
-.PHONY: clean distclean test
+uninstall:
+
+.PHONY: all clean distclean install uninstall test
