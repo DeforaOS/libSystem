@@ -124,6 +124,15 @@ dist:
 		$(PACKAGE)-$(VERSION)/tests/python.sh \
 		$(PACKAGE)-$(VERSION)/tests/tests.sh \
 		$(PACKAGE)-$(VERSION)/tests/project.conf \
+		$(PACKAGE)-$(VERSION)/tests/deepstate/array.cpp \
+		$(PACKAGE)-$(VERSION)/tests/deepstate/config-deepstate.cpp \
+		$(PACKAGE)-$(VERSION)/tests/deepstate/config.cpp \
+		$(PACKAGE)-$(VERSION)/tests/deepstate/error.cpp \
+		$(PACKAGE)-$(VERSION)/tests/deepstate/hash.cpp \
+		$(PACKAGE)-$(VERSION)/tests/deepstate/mutator.cpp \
+		$(PACKAGE)-$(VERSION)/tests/deepstate/object.cpp \
+		$(PACKAGE)-$(VERSION)/tests/deepstate/string.cpp \
+		$(PACKAGE)-$(VERSION)/tests/deepstate/project.conf \
 		$(PACKAGE)-$(VERSION)/tools/configctl.c \
 		$(PACKAGE)-$(VERSION)/tools/Makefile \
 		$(PACKAGE)-$(VERSION)/tools/platform.sh \
