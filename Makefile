@@ -128,6 +128,10 @@ dist:
 		$(PACKAGE)-$(VERSION)/tests/afl/Makefile \
 		$(PACKAGE)-$(VERSION)/tests/afl/config-input/config.conf \
 		$(PACKAGE)-$(VERSION)/tests/afl/project.conf \
+		$(PACKAGE)-$(VERSION)/tests/honggfuzz/config.c \
+		$(PACKAGE)-$(VERSION)/tests/honggfuzz/Makefile \
+		$(PACKAGE)-$(VERSION)/tests/honggfuzz/config-input/config.conf \
+		$(PACKAGE)-$(VERSION)/tests/honggfuzz/project.conf \
 		$(PACKAGE)-$(VERSION)/tools/configctl.c \
 		$(PACKAGE)-$(VERSION)/tools/Makefile \
 		$(PACKAGE)-$(VERSION)/tools/platform.sh \
