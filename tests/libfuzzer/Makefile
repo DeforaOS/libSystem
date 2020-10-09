@@ -9,7 +9,7 @@ CPPFLAGSF= -I ../../include
 CPPFLAGS=
 CFLAGSF	=
 CFLAGS	=
-LDFLAGSF= -static -fsanitize=fuzzer
+LDFLAGSF= -fsanitize=fuzzer,undefined
 EXEEXT	=
 RM	= rm -f
 LN	= ln -f
