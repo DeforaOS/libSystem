@@ -7,8 +7,8 @@ SBINDIR	= $(PREFIX)/sbin
 CC	= clang
 CPPFLAGSF= -I ../../include
 CPPFLAGS=
-CFLAGSF	=
-CFLAGS	=
+CFLAGSF	= -fPIE -fsanitize=fuzzer,undefined
+CFLAGS	= -W -Wall -g -O2
 LDFLAGSF= -fsanitize=fuzzer,undefined
 EXEEXT	=
 RM	= rm -f
