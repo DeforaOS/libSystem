@@ -1,4 +1,4 @@
-TARGETS	= $(OBJDIR)config$(EXEEXT) $(OBJDIR)variable$(EXEEXT) test
+TARGETS	= $(OBJDIR)config$(EXEEXT) $(OBJDIR)variable$(EXEEXT) test-config test-variable
 OBJDIR	=
 PREFIX	= /usr/local
 DESTDIR	=
@@ -33,8 +33,11 @@ variable_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 $(OBJDIR)variable$(EXEEXT): $(variable_OBJS)
 	$(CC) -o $(OBJDIR)variable$(EXEEXT) $(variable_OBJS) $(variable_LDFLAGS)
 
-test: $(OBJDIR)config config-input/config.conf
+test-config: $(OBJDIR)config config-input/config.conf
 	afl-fuzz -i config-input -o config-output -- $(OBJDIR)config @@
+
+test-variable: $(OBJDIR)variable
+	afl-fuzz -i ../variable-samples -o variable-output -- $(OBJDIR)variable
 
 $(OBJDIR)config.o: config.c ../../src/array.c ../../src/config.c ../../src/error.c ../../src/hash.c ../../src/mutator.c ../../src/object.c ../../src/string.c
 	$(CC) $(config_CFLAGS) -o $(OBJDIR)config.o -c config.c
@@ -52,4 +55,4 @@ install: all
 
 uninstall:
 
-.PHONY: all clean distclean install uninstall test
+.PHONY: all clean distclean install uninstall test-config test-variable
