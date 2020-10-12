@@ -125,6 +125,7 @@ dist:
 		$(PACKAGE)-$(VERSION)/tests/tests.sh \
 		$(PACKAGE)-$(VERSION)/tests/project.conf \
 		$(PACKAGE)-$(VERSION)/tests/afl/config.c \
+		$(PACKAGE)-$(VERSION)/tests/afl/variable.c \
 		$(PACKAGE)-$(VERSION)/tests/afl/Makefile \
 		$(PACKAGE)-$(VERSION)/tests/afl/config-input/config.conf \
 		$(PACKAGE)-$(VERSION)/tests/afl/project.conf \
