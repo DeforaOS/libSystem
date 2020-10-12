@@ -10,7 +10,7 @@ CPPFLAGSF= -I ../include
 CPPFLAGS=
 CFLAGSF	=
 CFLAGS	= -W -Wall -g -O2 -fPIE -D_FORTIFY_SOURCE=2 -fstack-protector
-LDFLAGSF= -L$(OBJDIR)../src -Wl,-rpath,$(OBJDIR)../src -lSystem `../tools/platform.sh -O DESTDIR="$(DESTDIR)" -l dl` `../tools/platform.sh -O DESTDIR="$(DESTDIR)" -l m`
+LDFLAGSF= $(OBJDIR)../src/libSystem.a `../tools/platform.sh -O DESTDIR="$(DESTDIR)" -l dl` `../tools/platform.sh -O DESTDIR="$(DESTDIR)" -l m`
 LDFLAGS	= -pie -Wl,-z,relro -Wl,-z,now
 EXEEXT	=
 RM	= rm -f
