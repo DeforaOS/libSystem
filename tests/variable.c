@@ -28,13 +28,100 @@
 
 
 
+#include <fcntl.h>
+#include <unistd.h>
 #include <stdio.h>
+#include <string.h>
+#include <errno.h>
 #include "System/error.h"
 #include "System/variable.h"
 
 
 /* variable */
-static int _variable(char const * progname)
+/* private */
+/* prototypes */
+static int _variable_deserialize(char const * progname);
+static int _variable_deserialize_type(char const * progname);
+
+static int _variable_perror(int ret, char const * progname,
+		char const * message);
+static int _variable_serror(int ret, char const * progname,
+		char const * message);
+
+
+/* functions */
+/* variable_deserialize */
+static int _variable_deserialize(char const * progname)
+{
+	int ret = 0;
+	struct
+	{
+		char const * filename;
+		VariableType type;
+	} files[] = {
+		{ "afl/variable-input/null.var",	VT_NULL		},
+		{ "afl/variable-input/bool-false.var",	VT_BOOL		},
+		{ "afl/variable-input/bool-true.var",	VT_BOOL		},
+		{ "afl/variable-input/int8_t-min.var",	VT_INT8		},
+		{ "afl/variable-input/uint8_t-max.var",	VT_UINT8	},
+		{ "afl/variable-input/int16_t-min.var",	VT_INT16	},
+		{ "afl/variable-input/uint16_t-max.var",VT_UINT16	},
+		{ "afl/variable-input/int32_t-min.var",	VT_INT32	},
+		{ "afl/variable-input/uint32_t-max.var",VT_UINT32	},
+		{ "afl/variable-input/int64_t-min.var",	VT_INT64	},
+		{ "afl/variable-input/uint64_t-max.var",VT_UINT64	},
+		{ "afl/variable-input/float-zero.var",	VT_FLOAT	},
+		{ "afl/variable-input/double-zero.var",	VT_DOUBLE	},
+		{ "afl/variable-input/buffer-empty.var",VT_BUFFER	},
+		{ "afl/variable-input/string-empty.var",VT_STRING	}
+	};
+	size_t i;
+	int fd;
+	char buf[BUFSIZ];
+	ssize_t ssize;
+	size_t size;
+	Variable * variable;
+
+	for(i = 0; i < sizeof(files) / sizeof(*files); i++)
+	{
+		printf("%s: Testing variable_new_deserialize(): \"%s\"\n",
+				progname, files[i].filename);
+		if((fd = open(files[i].filename, O_RDONLY)) < 0)
+		{
+			ret |= _variable_perror(2, progname, files[i].filename);
+			continue;
+		}
+		if((ssize = read(fd, buf, sizeof(buf))) < 0)
+		{
+			ret |= _variable_perror(4, progname, files[i].filename);
+			close(fd);
+			continue;
+		}
+		if(close(fd) != 0)
+		{
+			ret |= _variable_perror(8, progname, files[i].filename);
+			continue;
+		}
+		size = ssize;
+		if((variable = variable_new_deserialize(&size, buf)) == NULL)
+		{
+			ret |= _variable_serror(16, progname, files[i].filename);
+			continue;
+		}
+		if(variable_get_type(variable) != files[i].type)
+		{
+			fprintf(stderr, "%s: Wrong type for \"%s\"\n", progname,
+					files[i].filename);
+			ret |= 32;
+		}
+		variable_delete(variable);
+	}
+	return ret;
+}
+
+
+/* variable_deserialize_type */
+static int _variable_deserialize_type(char const * progname)
 {
 	int ret = 0;
 	Variable * variable;
@@ -92,10 +179,37 @@ static int _variable(char const * progname)
 }
 
 
+/* variable_perror */
+static int _variable_perror(int ret, char const * progname,
+		char const * message)
+{
+	fprintf(stderr, "%s: %s%s%s\n", progname,
+			(message != NULL) ? message : "",
+			(message != NULL) ? ": " : "",
+			strerror(errno));
+	return ret;
+}
+
+
+/* variable_serror */
+static int _variable_serror(int ret, char const * progname,
+		char const * message)
+{
+	fprintf(stderr, "%s: %s%s%s\n", progname,
+			(message != NULL) ? message : "",
+			(message != NULL) ? ": " : "",
+			error_get(NULL));
+	return ret;
+}
+
+
 /* main */
 int main(int argc, char * argv[])
 {
+	int ret;
 	(void) argc;
 
-	return (_variable(argv[0]) == 0) ? 0 : 2;
+	ret = _variable_deserialize(argv[0]);
+	ret |= _variable_deserialize_type(argv[0]);
+	return ret;
 }
