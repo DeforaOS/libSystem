@@ -128,6 +128,21 @@ dist:
 		$(PACKAGE)-$(VERSION)/tests/afl/variable.c \
 		$(PACKAGE)-$(VERSION)/tests/afl/Makefile \
 		$(PACKAGE)-$(VERSION)/tests/afl/config-input/config.conf \
+		$(PACKAGE)-$(VERSION)/tests/afl/variable-input/bool-false.var \
+		$(PACKAGE)-$(VERSION)/tests/afl/variable-input/bool-true.var \
+		$(PACKAGE)-$(VERSION)/tests/afl/variable-input/buffer-empty.var \
+		$(PACKAGE)-$(VERSION)/tests/afl/variable-input/double-zero.var \
+		$(PACKAGE)-$(VERSION)/tests/afl/variable-input/float-zero.var \
+		$(PACKAGE)-$(VERSION)/tests/afl/variable-input/int16_t-min.var \
+		$(PACKAGE)-$(VERSION)/tests/afl/variable-input/int32_t-min.var \
+		$(PACKAGE)-$(VERSION)/tests/afl/variable-input/int64_t-min.var \
+		$(PACKAGE)-$(VERSION)/tests/afl/variable-input/int8_t-min.var \
+		$(PACKAGE)-$(VERSION)/tests/afl/variable-input/null.var \
+		$(PACKAGE)-$(VERSION)/tests/afl/variable-input/string-empty.var \
+		$(PACKAGE)-$(VERSION)/tests/afl/variable-input/uint16_t-max.var \
+		$(PACKAGE)-$(VERSION)/tests/afl/variable-input/uint32_t-max.var \
+		$(PACKAGE)-$(VERSION)/tests/afl/variable-input/uint64_t-max.var \
+		$(PACKAGE)-$(VERSION)/tests/afl/variable-input/uint8_t-max.var \
 		$(PACKAGE)-$(VERSION)/tests/afl/project.conf \
 		$(PACKAGE)-$(VERSION)/tests/honggfuzz/config.c \
 		$(PACKAGE)-$(VERSION)/tests/honggfuzz/Makefile \
