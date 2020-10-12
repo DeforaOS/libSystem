@@ -59,21 +59,21 @@ static int _variable_deserialize(char const * progname)
 		char const * filename;
 		VariableType type;
 	} files[] = {
-		{ "afl/variable-input/null.var",	VT_NULL		},
-		{ "afl/variable-input/bool-false.var",	VT_BOOL		},
-		{ "afl/variable-input/bool-true.var",	VT_BOOL		},
-		{ "afl/variable-input/int8_t-min.var",	VT_INT8		},
-		{ "afl/variable-input/uint8_t-max.var",	VT_UINT8	},
-		{ "afl/variable-input/int16_t-min.var",	VT_INT16	},
-		{ "afl/variable-input/uint16_t-max.var",VT_UINT16	},
-		{ "afl/variable-input/int32_t-min.var",	VT_INT32	},
-		{ "afl/variable-input/uint32_t-max.var",VT_UINT32	},
-		{ "afl/variable-input/int64_t-min.var",	VT_INT64	},
-		{ "afl/variable-input/uint64_t-max.var",VT_UINT64	},
-		{ "afl/variable-input/float-zero.var",	VT_FLOAT	},
-		{ "afl/variable-input/double-zero.var",	VT_DOUBLE	},
-		{ "afl/variable-input/buffer-empty.var",VT_BUFFER	},
-		{ "afl/variable-input/string-empty.var",VT_STRING	}
+		{ "variable-samples/null.var",		VT_NULL		},
+		{ "variable-samples/bool-false.var",	VT_BOOL		},
+		{ "variable-samples/bool-true.var",	VT_BOOL		},
+		{ "variable-samples/int8_t-min.var",	VT_INT8		},
+		{ "variable-samples/uint8_t-max.var",	VT_UINT8	},
+		{ "variable-samples/int16_t-min.var",	VT_INT16	},
+		{ "variable-samples/uint16_t-max.var",	VT_UINT16	},
+		{ "variable-samples/int32_t-min.var",	VT_INT32	},
+		{ "variable-samples/uint32_t-max.var",	VT_UINT32	},
+		{ "variable-samples/int64_t-min.var",	VT_INT64	},
+		{ "variable-samples/uint64_t-max.var",	VT_UINT64	},
+		{ "variable-samples/float-zero.var",	VT_FLOAT	},
+		{ "variable-samples/double-zero.var",	VT_DOUBLE	},
+		{ "variable-samples/buffer-empty.var",	VT_BUFFER	},
+		{ "variable-samples/string-empty.var",	VT_STRING	}
 	};
 	size_t i;
 	int fd;
