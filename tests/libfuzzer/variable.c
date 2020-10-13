@@ -37,11 +37,18 @@
 
 
 /* main */
+# ifdef __cplusplus
+extern "C" {
+# endif
 int LLVMFuzzerTestOneInput(const uint8_t * data, size_t size)
 {
 	Variable * variable;
 
-	if((variable = variable_new_deserialize(&size, (char const *)data)) != NULL)
+	if((variable = variable_new_deserialize(&size, (char const *)data))
+			!= NULL)
 		variable_delete(variable);
 	return 0;
 }
+# ifdef __cplusplus
+}
+# endif
