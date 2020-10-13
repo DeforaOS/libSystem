@@ -150,8 +150,8 @@ FileError file_read_buffer(File * file, Buffer * buffer)
 	size_t s;
 
 	s = buffer_get_size(buffer);
-	if((ret = file_read(file, buffer_get_data(buffer), sizeof(char),
-					&s)) != 0)
+	if((ret = file_read(file, (void *)buffer_get_data(buffer),
+					sizeof(BufferData), &s)) != 0)
 		buffer_set_size(buffer, s);
 	return ret;
 }

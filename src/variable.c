@@ -1225,7 +1225,7 @@ VariableError variable_serialize(Variable * variable, Buffer * buffer,
 			size = buffer_get_size(variable->u.buffer);
 			u32 = buffer_get_size(variable->u.buffer);
 			u32 = _bswap32(u32);
-			p = buffer_get_data(variable->u.buffer);
+			p = (void *)buffer_get_data(variable->u.buffer);
 			break;
 		case VT_STRING:
 			size = string_get_length(variable->u.string) + 1;
