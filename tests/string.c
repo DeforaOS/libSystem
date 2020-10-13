@@ -39,9 +39,9 @@
 
 /* prototypes */
 static int _test(String * s);
-static int _test2(String const * string, String * rtrim, int rcount);
-static int _test3(String const * string, String * ltrim, int lcount);
-static int _test4(String const * string, String * trim, int count);
+static int _test2(String const * string, String const * rtrim, int rcount);
+static int _test3(String const * string, String const * ltrim, int lcount);
+static int _test4(String const * string, String const * trim, int count);
 static int _test5(String const * string, String const * key, ssize_t expected);
 static int _test6(String const * string, String const * key, ssize_t expected);
 static int _test7(String const * string, size_t length,
@@ -71,7 +71,7 @@ static int _test(String * s)
 
 
 /* test2 */
-static int _test2(String const * string, String * rtrim, int rcount)
+static int _test2(String const * string, String const * rtrim, int rcount)
 {
 	int ret = 0;
 	String * s;
@@ -93,7 +93,7 @@ static int _test2(String const * string, String * rtrim, int rcount)
 
 
 /* test3 */
-static int _test3(String const * string, String * ltrim, int lcount)
+static int _test3(String const * string, String const * ltrim, int lcount)
 {
 	int ret = 0;
 	String * s;
@@ -115,7 +115,7 @@ static int _test3(String const * string, String * ltrim, int lcount)
 
 
 /* test4 */
-static int _test4(String const * string, String * trim, int count)
+static int _test4(String const * string, String const * trim, int count)
 {
 	int ret = 0;
 	String * s;
