@@ -44,20 +44,20 @@
 struct _Buffer
 {
 	size_t size;
-	char * data;
+	BufferData * data;
 };
 
 
 /* public */
 /* functions */
 /* buffer_new */
-Buffer * buffer_new(size_t size, char const * data)
+Buffer * buffer_new(size_t size, BufferData const * data)
 {
 	Buffer * buffer;
 
 	if((buffer = (Buffer *)object_new(sizeof(*buffer))) == NULL)
 		return NULL;
-	if((buffer->data = (char *)object_new(size)) == NULL && size != 0)
+	if((buffer->data = (BufferData *)object_new(size)) == NULL && size != 0)
 	{
 		object_delete(buffer);
 		return NULL;
@@ -88,7 +88,7 @@ void buffer_delete(Buffer * buffer)
 
 /* accessors */
 /* buffer_get_data */
-char * buffer_get_data(Buffer const * buffer)
+BufferData const * buffer_get_data(Buffer const * buffer)
 {
 	return buffer->data;
 }
@@ -102,7 +102,7 @@ size_t buffer_get_size(Buffer const * buffer)
 
 
 /* buffer_set */
-int buffer_set(Buffer * buffer, size_t size, char const * data)
+int buffer_set(Buffer * buffer, size_t size, BufferData const * data)
 {
 	if(buffer_set_size(buffer, size) != 0)
 		return -1;
@@ -115,7 +115,7 @@ int buffer_set(Buffer * buffer, size_t size, char const * data)
 
 
 /* buffer_set_data */
-int buffer_set_data(Buffer * buffer, size_t offset, char const * data,
+int buffer_set_data(Buffer * buffer, size_t offset, BufferData const * data,
 		size_t size)
 {
 	size_t s = offset + size;
@@ -133,11 +133,11 @@ int buffer_set_data(Buffer * buffer, size_t offset, char const * data,
 /* buffer_set_size */
 int buffer_set_size(Buffer * buffer, size_t size)
 {
-	char * p;
+	BufferData * p;
 
 	if(size == buffer->size)
 		return 0;
-	if((p = (char *)realloc(buffer->data, size)) == NULL && size != 0)
+	if((p = (BufferData *)realloc(buffer->data, size)) == NULL && size != 0)
 		return error_set_code(-errno, "%s", strerror(errno));
 	buffer->data = p;
 	if(size > buffer->size)

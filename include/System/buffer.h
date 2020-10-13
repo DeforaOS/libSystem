@@ -42,16 +42,18 @@ extern "C" {
 /* types */
 typedef struct _Buffer Buffer;
 
+typedef char BufferData;
+
 
 /* functions */
-Buffer * buffer_new(size_t size, char const * data);
+Buffer * buffer_new(size_t size, BufferData const * data);
 Buffer * buffer_new_copy(Buffer const * buffer);
 void buffer_delete(Buffer * buffer);
 
 /* accessors */
-char * buffer_get_data(Buffer const * buffer);
-int buffer_set(Buffer * buffer, size_t size, char const * data);
-int buffer_set_data(Buffer * buffer, size_t offset, char const * data,
+BufferData const * buffer_get_data(Buffer const * buffer);
+int buffer_set(Buffer * buffer, size_t size, BufferData const * data);
+int buffer_set_data(Buffer * buffer, size_t offset, BufferData const * data,
 		size_t size);
 
 size_t buffer_get_size(Buffer const * buffer);

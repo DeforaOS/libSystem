@@ -306,7 +306,7 @@ Variable * variable_new_deserialize(size_t * size, char const * data)
 /* variable_new_deserialize_buffer */
 Variable * variable_new_deserialize_buffer(size_t * size, Buffer const * buffer)
 {
-	char const * data;
+	BufferData const * data;
 
 	data = buffer_get_data(buffer);
 	return variable_new_deserialize(size, data);
