@@ -35,6 +35,6 @@
 /* Token */
 /* functions */
 /* protected */
-Token * token_new(char const * filename, unsigned int line, unsigned int col);
+Token * token_new(String const * filename, unsigned int line, unsigned int col);
 
 #endif /* !_LIBSYSTEM_TOKEN_H */
