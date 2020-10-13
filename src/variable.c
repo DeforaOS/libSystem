@@ -359,7 +359,9 @@ Variable * variable_new_deserialize_type(VariableType type, size_t * size,
 		case VT_DOUBLE:
 		case VT_STRING:
 			for(s = 0; s < *size && data[s] != '\0'; s++);
-			break;
+			if(s < *size)
+				break;
+			/* fallthrough */
 		default:
 			error_set_code(1, "Unable to deserialize type %u",
 					type);
