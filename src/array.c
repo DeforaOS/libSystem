@@ -73,8 +73,17 @@ Array * array_new(size_t size)
 /* array_new_copy */
 Array * array_new_copy(Array const * from)
 {
-	/* FIXME implement */
-	return NULL;
+	Array * array;
+
+	if((array = (Array *)object_new(sizeof(*array))) == NULL)
+		return NULL;
+	array->value = NULL;
+	if(array_copy(array, from) != 0)
+	{
+		array_delete(array);
+		return NULL;
+	}
+	return array;
 }
 
 
@@ -227,8 +236,16 @@ ArrayError array_append(Array * array, ArrayData * value)
 /* array_copy */
 ArrayError array_copy(Array * array, Array const * from)
 {
-	/* FIXME implement */
-	return -1;
+	char * p;
+
+	if((p = (char *)realloc(array->value, from->count * from->size)) == NULL
+			&& from->count != 0 && from->size != 0)
+		return error_set_code(-errno, "%s", strerror(errno));
+	array->count = from->count;
+	array->size = from->size;
+	array->value = p;
+	memcpy(array->value, from->value, array->count * array->size);
+	return 0;
 }
 
 
