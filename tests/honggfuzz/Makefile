@@ -9,7 +9,6 @@ CPPFLAGSF= -I ../../include
 CPPFLAGS=
 CFLAGSF	=
 CFLAGS	=
-LDFLAGSF= -static
 EXEEXT	=
 RM	= rm -f
 LN	= ln -f
