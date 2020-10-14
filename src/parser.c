@@ -36,6 +36,7 @@
 #include <ctype.h>
 #include <errno.h>
 #include "System/error.h"
+#include "System/file.h"
 #include "System/object.h"
 #include "System/parser.h"
 #include "token.h"
@@ -51,7 +52,7 @@ struct _Parser
 {
 	/* parsing sources */
 	String * filename;
-	FILE * fp;
+	File * fp;
 	String * string;
 	size_t string_cnt;
 	size_t string_pos;
@@ -127,6 +128,7 @@ int parser_scan_filter(Parser * parser)
 static int _parser_scanner_file(int * c, void * data)
 {
 	Parser * parser = (Parser *)data;
+	size_t count = 1;
 
 #ifdef DEBUG
 	fprintf(stderr, "DEBUG: %s()\n", __func__);
@@ -138,8 +140,9 @@ static int _parser_scanner_file(int * c, void * data)
 	}
 	else if(parser->last != EOF)
 		parser->col++;
-	if((*c = fgetc(parser->fp)) == EOF
-			&& !feof(parser->fp))
+	/* XXX only one byte of c is written */
+	if(file_read(parser->fp, c, sizeof(char), &count) == EOF
+			&& !file_is_end(parser->fp))
 		return -1;
 	parser->last = *c;
 	return 0;
@@ -187,7 +190,7 @@ Parser * parser_new(String const * pathname)
 		return NULL;
 	if((parser->filename = string_new(pathname)) == NULL)
 		error_set_code(-errno, "%s", strerror(errno));
-	if((parser->fp = fopen(pathname, "r")) == NULL)
+	if((parser->fp = file_new(pathname, FILE_MODE_READ)) == NULL)
 		error_set_code(-errno, "%s: %s", pathname, strerror(errno));
 	if(parser->filename == NULL || parser->fp == NULL)
 	{
@@ -255,9 +258,8 @@ int parser_delete(Parser * parser)
 			parser->filename);
 #endif
 	if(parser->fp != NULL
-			&& fclose(parser->fp) != 0)
-		ret = error_set_code(-errno, "%s: %s", parser->filename,
-				strerror(errno));
+			&& file_delete(parser->fp) != 0)
+		ret = error_get_code();
 	string_delete(parser->filename);
 	free(parser->string);
 	free(parser->filters);

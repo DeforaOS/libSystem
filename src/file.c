@@ -112,6 +112,13 @@ FileMode file_get_mode(File * file)
 }
 
 
+/* file_is_end */
+bool file_is_end(File * file)
+{
+	return feof(file->fp);
+}
+
+
 #if 0
 /* file_set_mode */
 int file_set_mode(File * file, FileMode mode)

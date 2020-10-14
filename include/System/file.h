@@ -32,6 +32,7 @@
 # define LIBSYSTEM_SYSTEM_FILE_H
 
 # include <sys/types.h>
+# include <stdbool.h>
 # include "buffer.h"
 # include "string.h"
 
@@ -70,6 +71,8 @@ FileError file_delete(File * file);
 /* accessors */
 String const * file_get_filename(File * file);
 FileMode file_get_mode(File * file);
+
+bool file_is_end(File * file);
 
 /* useful */
 FileError file_read(File * file, void * buf, size_t size, size_t * count);
