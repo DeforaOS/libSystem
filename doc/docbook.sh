@@ -1,6 +1,6 @@
 #!/bin/sh
 #$Id$
-#Copyright (c) 2012-2015 Pierre Pronchery <khorben@defora.org>
+#Copyright (c) 2012-2017 Pierre Pronchery <khorben@defora.org>
 #
 #Redistribution and use in source and binary forms, with or without
 #modification, are permitted provided that the following conditions are met:
@@ -114,7 +114,7 @@ _usage()
 clean=0
 install=0
 uninstall=0
-while getopts "ciuP:" name; do
+while getopts "ciO:uP:" name; do
 	case "$name" in
 		c)
 			clean=1
@@ -122,6 +122,9 @@ while getopts "ciuP:" name; do
 		i)
 			uninstall=0
 			install=1
+			;;
+		O)
+			export "${OPTARG%%=*}"="${OPTARG#*=}"
 			;;
 		u)
 			install=0
@@ -137,7 +140,7 @@ while getopts "ciuP:" name; do
 	esac
 done
 shift $((OPTIND - 1))
-if [ $# -eq 0 ]; then
+if [ $# -lt 1 ]; then
 	_usage
 	exit $?
 fi
@@ -167,7 +170,7 @@ while [ $# -gt 0 ]; do
 			xpath="string(/refentry/refmeta/manvolnum)"
 			section=$($XMLLINT --xpath "$xpath" "$source")
 			if [ $? -eq 0 -a -n "$section" ]; then
-				instdir="$DATADIR/man/html$section"
+				instdir="$MANDIR/html$section"
 			fi
 			;;
 		pdf)

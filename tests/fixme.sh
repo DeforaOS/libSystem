@@ -1,6 +1,6 @@
 #!/bin/sh
 #$Id$
-#Copyright (c) 2017 Pierre Pronchery <khorben@defora.org>
+#Copyright (c) 2017-2020 Pierre Pronchery <khorben@defora.org>
 #
 #Redistribution and use in source and binary forms, with or without
 #modification, are permitted provided that the following conditions are met:
@@ -32,6 +32,7 @@ DATE="date"
 DEBUG="_debug"
 FIND="find"
 GREP="grep"
+MKDIR="mkdir -p"
 SORT="sort -n"
 TR="tr"
 
@@ -40,7 +41,8 @@ TR="tr"
 #fixme
 _fixme()
 {
-	ret=0
+	res=0
+	subdirs=
 
 	$DATE
 	echo
@@ -55,44 +57,69 @@ _fixme()
 				;;
 		esac
 	done < "$PROJECTCONF"
+	if [ ! -n "$subdirs" ]; then
+		_error "Could not locate directories to analyze"
+		return $?
+	fi
 	for subdir in $subdirs; do
 		[ -d "../$subdir" ] || continue
 		for filename in $($FIND "../$subdir" -type f | $SORT); do
 			callback=
-			case "$filename" in
-				*.c|*.h|*.js)
+			ext=${filename##*/}
+			ext=${ext%.in}
+			ext=${ext##*.}
+			case "$ext" in
+				asm|S)
+					callback="_fixme_asm"
+					;;
+				c|cc|cpp|cxx|h|js)
 					callback="_fixme_c"
 					;;
-				*.conf|*.sh)
+				conf|sh)
 					callback="_fixme_sh"
+					;;
+				htm|html|xml)
+					callback="_fixme_xml"
 					;;
 			esac
 			[ -n "$callback" ] || continue
-			$callback "$filename" 2>&1
+			($callback "$filename") 2>&1
 			if [ $? -ne 0 ]; then
 				echo "$PROGNAME: $filename: FAIL" 1>&2
-				ret=2
+				res=2
 			fi
 		done
 	done
-	return $ret
+	return $res
+}
+
+_fixme_asm()
+{
+	res=0
+	filename="$1"
+
+	#warnings
+	$GREP -nH '/\*.*\(TODO\|XXX\)' "$filename"
+	#failures
+	$GREP -nH '/\*.*FIXME' "$filename" && res=2
+	return $res
 }
 
 _fixme_c()
 {
-	retc=0
+	res=0
 	filename="$1"
 
 	#warnings
 	$GREP -nH '/\(/\|\*\).*\(TODO\|XXX\)' "$filename"
 	#failures
-	$GREP -nH '/\(/\|\*\).*FIXME' "$filename" && retc=2
-	return $retc
+	$GREP -nH '/\(/\|\*\).*FIXME' "$filename" && res=2
+	return $res
 }
 
 _fixme_sh()
 {
-	retsh=0
+	res=0
 	filename="$1"
 	#XXX avoid matching the regexp
 	comment="#"
@@ -100,8 +127,21 @@ _fixme_sh()
 	#warnings
 	$GREP -nH "$comment.*\\(TODO\\|XXX\\)" "$filename"
 	#failures
-	$GREP -nH "$comment.*FIXME" "$filename" && retsh=2
-	return $retsh
+	$GREP -nH "$comment.*FIXME" "$filename" && res=2
+	return $res
+}
+
+_fixme_xml()
+{
+	res=0
+	filename="$1"
+
+	#XXX limited to a single line
+	#warnings
+	$GREP -nH '<!--.*\(TODO\|XXX\)' "$filename"
+	#failures
+	$GREP -nH '<!--.*FIXME' "$filename" && res=2
+	return $res
 }
 
 
@@ -114,6 +154,14 @@ _debug()
 	#ignore errors when the command is not available
 	[ $res -eq 127 ]					&& return 0
 	return $res
+}
+
+
+#error
+_error()
+{
+	echo "$PROGNAME: $@" 1>&2
+	return 2
 }
 
 
@@ -154,9 +202,15 @@ fi
 [ $clean -ne 0 ] && exit 0
 
 exec 3>&1
+ret=0
 while [ $# -gt 0 ]; do
 	target="$1"
+	dirname="${target%/*}"
 	shift
 
-	_fixme > "$target"					|| exit 2
+	if [ -n "$dirname" -a "$dirname" != "$target" ]; then
+		$MKDIR -- "$dirname"				|| ret=$?
+	fi
+	_fixme > "$target"					|| ret=$?
 done
+exit $ret

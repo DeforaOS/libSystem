@@ -125,8 +125,8 @@ _subst()
 			-e "s;@LIBDIR@;$LIBDIR;g" \
 			-e "s;@LIBEXECDIR@;$LIBEXECDIR;g" \
 			-e "s;@MANDIR@;$MANDIR;g" \
-			-e "s;@SYSCONFDIR@;$SYSCONFDIR;g" \
 			-e "s;@PWD@;$PWD;g" \
+			-e "s;@SYSCONFDIR@;$SYSCONFDIR;g" \
 			-- "$source" > "$target"
 		if [ $? -ne 0 ]; then
 			$RM -- "$target" 2> "$DEVNULL"
