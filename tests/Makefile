@@ -18,7 +18,7 @@ MKDIR	= mkdir -m 0755 -p
 INSTALL	= install
 
 
-all: $(OBJDIR)array$(EXEEXT) $(OBJDIR)buffer$(EXEEXT) $(OBJDIR)config$(EXEEXT) $(OBJDIR)error$(EXEEXT) $(OBJDIR)event$(EXEEXT) $(OBJDIR)includes$(EXEEXT) $(OBJDIR)parser$(EXEEXT) $(OBJDIR)pylint.log $(OBJDIR)string$(EXEEXT) $(OBJDIR)variable$(EXEEXT)
+all: $(OBJDIR)array$(EXEEXT) $(OBJDIR)buffer$(EXEEXT) $(OBJDIR)config$(EXEEXT) $(OBJDIR)error$(EXEEXT) $(OBJDIR)event$(EXEEXT) $(OBJDIR)includes$(EXEEXT) $(OBJDIR)parser$(EXEEXT) $(OBJDIR)string$(EXEEXT) $(OBJDIR)variable$(EXEEXT)
 
 array_OBJS = $(OBJDIR)array.o
 array_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
