@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # $Id$
-#Copyright (c) 2013-2018 Pierre Pronchery <khorben@defora.org>
+# Copyright (c) 2013-2020 Pierre Pronchery <khorben@defora.org>
 # This file is part of DeforaOS System libSystem
 # All rights reserved.
 #
