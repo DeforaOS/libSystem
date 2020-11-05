@@ -395,14 +395,15 @@ Variable * variable_new_deserialize_type(VariableType type, size_t * size,
 			break;
 		case VT_INT16:
 		case VT_UINT16:
-			v = variable_new(type, udata[1] << 8 | udata[0]);
+			v = variable_new(type, (uint32_t)udata[0] << 8
+					| udata[1]);
 			break;
 		case VT_INT32:
 		case VT_UINT32:
-			v = variable_new(type, (uint32_t)udata[3] << 24
-					| (uint32_t)udata[2] << 16
-					| (uint32_t)udata[1] << 8
-					| (uint32_t)udata[0]);
+			v = variable_new(type, (uint32_t)udata[0] << 24
+					| (uint32_t)udata[1] << 16
+					| (uint32_t)udata[2] << 8
+					| (uint32_t)udata[3]);
 			break;
 		case VT_FLOAT:
 			res = sscanf(data, "%e", &f);
@@ -427,14 +428,14 @@ Variable * variable_new_deserialize_type(VariableType type, size_t * size,
 			break;
 		case VT_INT64:
 		case VT_UINT64:
-			u64 = (uint64_t)udata[7] << 56
-				| (uint64_t)udata[6] << 48
-				| (uint64_t)udata[5] << 40
-				| (uint64_t)udata[4] << 32
-				| (uint64_t)udata[3] << 24
-				| (uint64_t)udata[2] << 16
-				| (uint64_t)udata[1] << 8
-				| (uint64_t)udata[0];
+			u64 = (uint64_t)udata[0] << 56
+				| (uint64_t)udata[1] << 48
+				| (uint64_t)udata[2] << 40
+				| (uint64_t)udata[3] << 32
+				| (uint64_t)udata[4] << 24
+				| (uint64_t)udata[5] << 16
+				| (uint64_t)udata[6] << 8
+				| (uint64_t)udata[7];
 			v = variable_new(type, u64);
 			break;
 		case VT_BUFFER:
