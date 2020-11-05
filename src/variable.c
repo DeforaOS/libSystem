@@ -1036,7 +1036,9 @@ VariableError variable_set_typev(Variable * variable, VariableType type,
 #ifdef DEBUG
 			fprintf(stderr, "DEBUG: %s(%p)\n", __func__, (void *)b);
 #endif
-			if((b = buffer_new_copy(b)) == NULL)
+			b = (b != NULL)
+				? buffer_new_copy(b) : buffer_new(0, NULL);
+			if(b  == NULL)
 				return -1;
 			_variable_destroy(variable);
 			variable->u.buffer = b;
