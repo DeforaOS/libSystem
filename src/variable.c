@@ -358,7 +358,7 @@ Variable * variable_new_deserialize_type(VariableType type, size_t * size,
 		case VT_FLOAT:
 		case VT_DOUBLE:
 		case VT_STRING:
-			for(s = 0; s < *size && data[s] != '\0'; s++);
+			for(s = 1; s <= *size && data[s - 1] != '\0'; s++);
 			if(s < *size)
 				break;
 			/* fallthrough */
