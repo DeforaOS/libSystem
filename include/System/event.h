@@ -54,6 +54,7 @@ void event_delete(Event * event);
 /* useful */
 int event_loop(Event * event);
 void event_loop_quit(Event * event);
+int event_loop_while(Event * event, const int * flag);
 int event_register_idle(Event * event, EventTimeoutFunc func, void * userdata);
 int event_register_io_read(Event * event, int fd, EventIOFunc func,
 		void * userdata);

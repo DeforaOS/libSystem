@@ -89,6 +89,10 @@ struct _Event
 };
 
 
+/* prototypes */
+static int _event_loop_once(Event * event);
+
+
 /* public */
 /* functions */
 /* event_new */
@@ -148,130 +152,13 @@ void event_delete(Event * event)
 
 /* useful */
 /* event_loop */
-static int _loop_timeout(Event * event);
-static void _loop_io(Event * event, eventioArray * eios, fd_set * fds);
-
 int event_loop(Event * event)
 {
-	struct timeval tv = event->timeout;
-	struct timeval * timeout = (tv.tv_sec == (time_t)LONG_MAX
-			&& tv.tv_usec == (suseconds_t)LONG_MAX) ? NULL : &tv;
-	fd_set rfds = event->rfds;
-	fd_set wfds = event->wfds;
+	int ret;
 
 	event->loop++;
-	while(event->loop && (timeout != NULL || event->fdmax != -1))
-	{
-		if(select(event->fdmax + 1, &rfds, &wfds, NULL, timeout) < 0)
-			return error_set_code(-errno, "%s", strerror(errno));
-		if(_loop_timeout(event) != 0)
-			return -1;
-		_loop_io(event, event->reads, &rfds);
-		_loop_io(event, event->writes, &wfds);
-		if(event->timeout.tv_sec == (time_t)LONG_MAX
-				&& event->timeout.tv_usec
-				== (suseconds_t)LONG_MAX)
-			timeout = NULL;
-		else
-			timeout = &event->timeout;
-		rfds = event->rfds;
-		wfds = event->wfds;
-	}
-	return 0;
-}
-
-static int _loop_timeout(Event * event)
-{
-	struct timeval now;
-	unsigned int i = 0;
-	EventTimeout * et;
-
-	if(gettimeofday(&now, NULL) != 0)
-		return error_set_code(-errno, "%s", strerror(errno));
-	event->timeout.tv_sec = (time_t)LONG_MAX;
-	event->timeout.tv_usec = (suseconds_t)LONG_MAX;
-	while(i < array_count(event->timeouts))
-	{
-		array_get_copy(event->timeouts, i, &et);
-		if(now.tv_sec > et->timeout.tv_sec
-				|| (now.tv_sec == et->timeout.tv_sec
-					&& now.tv_usec >= et->timeout.tv_usec))
-		{
-			if(et->func(et->data) != 0)
-			{
-				array_remove_pos(event->timeouts, i);
-				object_delete(et);
-				continue;
-			}
-			et->timeout.tv_sec = et->initial.tv_sec + now.tv_sec;
-			et->timeout.tv_usec = et->initial.tv_usec + now.tv_usec;
-			if(et->initial.tv_sec < event->timeout.tv_sec
-					|| (et->initial.tv_sec
-						== event->timeout.tv_sec
-						&& et->initial.tv_usec
-						< event->timeout.tv_usec))
-			{
-				event->timeout.tv_sec = et->initial.tv_sec;
-				event->timeout.tv_usec = et->initial.tv_usec;
-			}
-		}
-		else
-		{
-			if(et->timeout.tv_sec - now.tv_sec < event->timeout.tv_sec
-					|| (et->timeout.tv_sec - now.tv_sec == event->timeout.tv_sec
-						&& et->timeout.tv_usec - now.tv_usec < event->timeout.tv_usec))
-			{
-				event->timeout.tv_sec = et->timeout.tv_sec
-					- now.tv_sec;
-				/* XXX may be needed elsewhere too */
-				if(et->timeout.tv_usec >= now.tv_usec)
-					event->timeout.tv_usec
-						= et->timeout.tv_usec
-						- now.tv_usec;
-				else
-				{
-					event->timeout.tv_sec--;
-					event->timeout.tv_usec
-						= now.tv_usec
-						- et->timeout.tv_usec;
-				}
-			}
-		}
-		i++;
-	}
-#ifdef DEBUG
-	fprintf(stderr, "DEBUG: %s() %s%lld%s%ld => 0\n", __func__, "tv_sec=",
-			(long long)event->timeout.tv_sec, ", tv_usec=",
-			(long)event->timeout.tv_usec);
-#endif
-	return 0;
-}
-
-static void _loop_io(Event * event, eventioArray * eios, fd_set * fds)
-{
-	unsigned int i = 0;
-	EventIO * eio;
-	int fd;
-
-	while(i < array_count(eios))
-	{
-		array_get_copy(eios, i, &eio);
-		if((fd = eio->fd) <= event->fdmax && FD_ISSET(fd, fds)
-				&& eio->func(fd, eio->data) != 0)
-		{
-			if(eios == event->reads)
-				event_unregister_io_read(event, fd);
-			else if(eios == event->writes)
-				event_unregister_io_write(event, fd);
-#ifdef DEBUG
-			else
-				fprintf(stderr, "DEBUG: %s%s", __func__,
-						"(): should not happen\n");
-#endif
-		}
-		else
-			i++;
-	}
+	while(event->loop && (ret = _event_loop_once(event)) == 0);
+	return ret;
 }
 
 
@@ -280,6 +167,19 @@ void event_loop_quit(Event * event)
 {
 	if(event->loop > 0)
 		event->loop--;
+}
+
+
+/* event_loop_while */
+int event_loop_while(Event * event, const int * flag)
+{
+	int ret;
+
+	if(flag == NULL)
+		return event_loop(event);
+	event->loop++;
+	while(event->loop && *flag && (ret = _event_loop_once(event)) == 0);
+	return ret;
 }
 
 
@@ -470,4 +370,131 @@ int event_unregister_timeout(Event * event, EventTimeoutFunc func)
 		}
 	}
 	return 0;
+}
+
+
+/* private */
+/* functions */
+/* event_loop_once */
+static int _loop_timeout(Event * event);
+static void _loop_io(Event * event, eventioArray * eios, fd_set * fds);
+
+static int _event_loop_once(Event * event)
+{
+	struct timeval tv = event->timeout;
+	struct timeval * timeout = (tv.tv_sec == (time_t)LONG_MAX
+			&& tv.tv_usec == (suseconds_t)LONG_MAX) ? NULL : &tv;
+	fd_set rfds = event->rfds;
+	fd_set wfds = event->wfds;
+
+	if(timeout != NULL || event->fdmax != -1)
+	{
+		if(select(event->fdmax + 1, &rfds, &wfds, NULL, timeout) < 0)
+			return error_set_code(-errno, "%s", strerror(errno));
+		if(_loop_timeout(event) != 0)
+			return -1;
+		_loop_io(event, event->reads, &rfds);
+		_loop_io(event, event->writes, &wfds);
+		if(event->timeout.tv_sec == (time_t)LONG_MAX
+				&& event->timeout.tv_usec
+				== (suseconds_t)LONG_MAX)
+			timeout = NULL;
+		else
+			timeout = &event->timeout;
+	}
+	return 0;
+}
+
+static int _loop_timeout(Event * event)
+{
+	struct timeval now;
+	unsigned int i = 0;
+	EventTimeout * et;
+
+	if(gettimeofday(&now, NULL) != 0)
+		return error_set_code(-errno, "%s", strerror(errno));
+	event->timeout.tv_sec = (time_t)LONG_MAX;
+	event->timeout.tv_usec = (suseconds_t)LONG_MAX;
+	while(i < array_count(event->timeouts))
+	{
+		array_get_copy(event->timeouts, i, &et);
+		if(now.tv_sec > et->timeout.tv_sec
+				|| (now.tv_sec == et->timeout.tv_sec
+					&& now.tv_usec >= et->timeout.tv_usec))
+		{
+			if(et->func(et->data) != 0)
+			{
+				array_remove_pos(event->timeouts, i);
+				object_delete(et);
+				continue;
+			}
+			et->timeout.tv_sec = et->initial.tv_sec + now.tv_sec;
+			et->timeout.tv_usec = et->initial.tv_usec + now.tv_usec;
+			if(et->initial.tv_sec < event->timeout.tv_sec
+					|| (et->initial.tv_sec
+						== event->timeout.tv_sec
+						&& et->initial.tv_usec
+						< event->timeout.tv_usec))
+			{
+				event->timeout.tv_sec = et->initial.tv_sec;
+				event->timeout.tv_usec = et->initial.tv_usec;
+			}
+		}
+		else
+		{
+			if(et->timeout.tv_sec - now.tv_sec < event->timeout.tv_sec
+					|| (et->timeout.tv_sec - now.tv_sec == event->timeout.tv_sec
+						&& et->timeout.tv_usec - now.tv_usec < event->timeout.tv_usec))
+			{
+				event->timeout.tv_sec = et->timeout.tv_sec
+					- now.tv_sec;
+				/* XXX may be needed elsewhere too */
+				if(et->timeout.tv_usec >= now.tv_usec)
+					event->timeout.tv_usec
+						= et->timeout.tv_usec
+						- now.tv_usec;
+				else
+				{
+					event->timeout.tv_sec--;
+					event->timeout.tv_usec
+						= now.tv_usec
+						- et->timeout.tv_usec;
+				}
+			}
+		}
+		i++;
+	}
+#ifdef DEBUG
+	fprintf(stderr, "DEBUG: %s() %s%lld%s%ld => 0\n", __func__, "tv_sec=",
+			(long long)event->timeout.tv_sec, ", tv_usec=",
+			(long)event->timeout.tv_usec);
+#endif
+	return 0;
+}
+
+static void _loop_io(Event * event, eventioArray * eios, fd_set * fds)
+{
+	unsigned int i = 0;
+	EventIO * eio;
+	int fd;
+
+	while(i < array_count(eios))
+	{
+		array_get_copy(eios, i, &eio);
+		if((fd = eio->fd) <= event->fdmax && FD_ISSET(fd, fds)
+				&& eio->func(fd, eio->data) != 0)
+		{
+			if(eios == event->reads)
+				event_unregister_io_read(event, fd);
+			else if(eios == event->writes)
+				event_unregister_io_write(event, fd);
+#ifdef DEBUG
+			else
+				fprintf(stderr, "DEBUG: %s%s", __func__,
+						"(): should not happen\n");
+#endif
+		}
+		else
+			i++;
+	}
 }
