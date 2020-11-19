@@ -1,6 +1,6 @@
 #!/bin/sh
 #$Id$
-#Copyright (c) 2012-2017 Pierre Pronchery <khorben@defora.org>
+#Copyright (c) 2012-2020 Pierre Pronchery <khorben@defora.org>
 #
 #Redistribution and use in source and binary forms, with or without
 #modification, are permitted provided that the following conditions are met:
@@ -25,8 +25,8 @@
 
 
 #variables
+CONFIGSH="${0%/docbook.sh}/../config.sh"
 PREFIX="/usr/local"
-[ -f "../config.sh" ] && . "../config.sh"
 PROGNAME="docbook.sh"
 #executables
 DEBUG="_debug"
@@ -36,6 +36,8 @@ MKDIR="mkdir -m 0755 -p"
 RM="rm -f"
 XMLLINT="xmllint"
 XSLTPROC="xsltproc --nonet --xinclude"
+
+[ -f "$CONFIGSH" ] && . "$CONFIGSH"
 
 
 #functions

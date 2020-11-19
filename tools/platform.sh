@@ -33,6 +33,7 @@ PROGNAME="platform.sh"
 SOEXT=
 #executables
 UNAME="uname"
+
 [ -f "$CONFIGSH" ] && . "$CONFIGSH"
 
 

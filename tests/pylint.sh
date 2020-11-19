@@ -25,6 +25,7 @@
 
 
 #variables
+CONFIGSH="${0%/pylint.sh}/../config.sh"
 PROGNAME="pylint.sh"
 PROJECTCONF="../project.conf"
 #executables
@@ -35,6 +36,8 @@ MKDIR="mkdir -p"
 PYLINT="pep8"
 SORT="sort -n"
 TR="tr"
+
+[ -f "$CONFIGSH" ] && . "$CONFIGSH"
 
 
 #functions
