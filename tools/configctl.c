@@ -117,9 +117,10 @@ static int _configctl_do(Config * config, int verbose, char const * section,
 
 
 /* configctl_list */
-static void _list_foreach(String const * section, void * data);
-static void _list_foreach_section(String const * variable, String const * value,
+static void _list_foreach(Config const * config, String const * section,
 		void * data);
+static void _list_foreach_section(Config const * config, String const * section,
+		String const * variable, String const * value, void * data);
 
 static int _configctl_list(char const * filename)
 {
@@ -132,23 +133,24 @@ static int _configctl_list(char const * filename)
 		config_delete(config);
 		return -_configctl_error(PROGNAME, 1);
 	}
-	config_foreach(config, _list_foreach, config);
+	config_foreach(config, _list_foreach, NULL);
 	config_delete(config);
 	return 0;
 }
 
-static void _list_foreach(String const * section, void * data)
-{
-	Config * config = data;
-
-	config_foreach_section(config, section, _list_foreach_section,
-			(void *)section);
-}
-
-static void _list_foreach_section(String const * variable, String const * value,
+static void _list_foreach(Config const * config, String const * section,
 		void * data)
 {
-	String const * section = data;
+	(void) data;
+
+	config_foreach_section(config, section, _list_foreach_section, NULL);
+}
+
+static void _list_foreach_section(Config const * config, String const * section,
+		String const * variable, String const * value, void * data)
+{
+	(void) config;
+	(void) data;
 
 	_configctl_print(1, section, variable, value);
 }

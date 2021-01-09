@@ -62,6 +62,7 @@ typedef struct _ConfigForeachData
 typedef struct _ConfigForeachSectionData
 {
 	ConfigForeachSectionCallback callback;
+	String const * section;
 	void * priv;
 } ConfigForeachSectionData;
 
@@ -78,6 +79,56 @@ typedef struct _ConfigSave
 Config * config_new(void)
 {
 	return mutator_new();
+}
+
+
+/* config_new_copy */
+typedef struct _ConfigError
+{
+	Config * config;
+	ErrorCode code;
+} ConfigError;
+static void _new_copy_foreach(Config const * from, String const * section,
+		void * priv);
+static void _new_copy_foreach_section(Config const * from,
+		String const * section, String const * variable,
+		String const * value, void * priv);
+
+Config * config_new_copy(Config const * from)
+{
+	ConfigError ce;
+
+	if((ce.config = mutator_new_copy(from)) == NULL)
+		return NULL;
+	ce.code = 0;
+	config_foreach(from, _new_copy_foreach, &ce);
+	if(ce.code != 0)
+	{
+		config_delete(ce.config);
+		return NULL;
+	}
+	return ce.config;
+}
+
+static void _new_copy_foreach(Config const * from, String const * section,
+		void * priv)
+{
+	ConfigError * ce = (ConfigError *)priv;
+
+	if(ce->code == 0)
+		config_foreach_section(from, section, _new_copy_foreach_section,
+				ce);
+}
+
+static void _new_copy_foreach_section(Config const * from,
+		String const * section, String const * variable,
+		String const * value, void * priv)
+{
+	ConfigError * ce = (ConfigError *)priv;
+	(void) from;
+
+	if(config_set(ce->config, section, variable, value) != 0)
+		ce->code = error_get_code();
 }
 
 
@@ -187,7 +238,8 @@ int config_set(Config * config, String const * section, String const * variable,
 
 /* useful */
 /* config_foreach */
-static void _foreach_callback(String const * key, void * value, void * data);
+static void _foreach_callback(Config const * config, String const * key,
+		void * value, void * data);
 
 void config_foreach(Config const * config, ConfigForeachCallback callback,
 		void * priv)
@@ -199,18 +251,19 @@ void config_foreach(Config const * config, ConfigForeachCallback callback,
 	mutator_foreach(config, _foreach_callback, &data);
 }
 
-static void _foreach_callback(String const * key, void * value, void * data)
+static void _foreach_callback(Config const * config, String const * key,
+		void * value, void * data)
 {
 	ConfigForeachData * priv = (ConfigForeachData *)data;
 	(void) value;
 
-	priv->callback(key, priv->priv);
+	priv->callback(config, key, priv->priv);
 }
 
 
 /* config_foreach_section */
-static void _foreach_section_callback(String const * key, void * value,
-		void * data);
+static void _foreach_section_callback(Mutator const * mutator,
+		String const * key, void * value, void * data);
 
 void config_foreach_section(Config const * config, String const * section,
 		ConfigForeachSectionCallback callback, void * priv)
@@ -221,16 +274,18 @@ void config_foreach_section(Config const * config, String const * section,
 	if((mutator = (Mutator *)mutator_get(config, section)) == NULL)
 		return; /* could not find section */
 	data.callback = callback;
+	data.section = section;
 	data.priv = priv;
 	mutator_foreach(mutator, _foreach_section_callback, &data);
 }
 
-static void _foreach_section_callback(String const * key, void * value,
-		void * data)
+static void _foreach_section_callback(Mutator const * mutator,
+		String const * key, void * value, void * data)
 {
 	ConfigForeachSectionData * priv = (ConfigForeachSectionData *)data;
 
-	priv->callback(key, (String const *)value, priv->priv);
+	priv->callback(mutator, priv->section, key, (String const *)value,
+			priv->priv);
 }
 
 
@@ -438,9 +493,10 @@ int config_load_preferences_user(Config * config, String const * vendor,
 
 
 /* config_reset */
-static void _delete_foreach(String const * key, void * value, void * data);
-static void _delete_foreach_section(String const * key, void * value,
-		void * data);
+static void _delete_foreach(Mutator const * mutator, String const * key,
+		void * value, void * data);
+static void _delete_foreach_section(Mutator const * mutator, String const * key,
+		void * value, void * data);
 
 int config_reset(Config * config)
 {
@@ -448,21 +504,24 @@ int config_reset(Config * config)
 	return mutator_reset(config);
 }
 
-static void _delete_foreach(String const * key, void * value, void * data)
+static void _delete_foreach(Mutator const * mutator, String const * key,
+		void * value, void * data)
 {
-	Mutator * mutator = (Mutator *)value;
+	Mutator * m = (Mutator *)value;
+	(void) mutator;
 	(void) key;
 	(void) data;
 
 	/* free the values */
-	mutator_foreach(mutator, _delete_foreach_section, NULL);
-	mutator_delete(mutator);
+	mutator_foreach(m, _delete_foreach_section, NULL);
+	mutator_delete(m);
 }
 
-static void _delete_foreach_section(String const * key, void * value,
-		void * data)
+static void _delete_foreach_section(Mutator const * mutator, String const * key,
+		void * value, void * data)
 {
 	String * v = (String *)value;
+	(void) mutator;
 	(void) key;
 	(void) data;
 
@@ -471,10 +530,12 @@ static void _delete_foreach_section(String const * key, void * value,
 
 
 /* config_save */
-static void _save_foreach_default(String const * section, void * value,
-		void * data);
-static void _save_foreach(String const * section, void * value, void * data);
-static void _save_foreach_section(String const * key, void * value, void * data);
+static void _save_foreach_default(Mutator const * mutator,
+		String const * section, void * value, void * data);
+static void _save_foreach(Mutator const * mutator, String const * section,
+		void * value, void * data);
+static void _save_foreach_section(Mutator const * mutator, String const * key,
+		void * value, void * data);
 
 int config_save(Config const * config, String const * filename)
 {
@@ -498,23 +559,26 @@ int config_save(Config const * config, String const * filename)
 	return 0;
 }
 
-static void _save_foreach_default(String const * section, void * value,
-		void * data)
+static void _save_foreach_default(Mutator const * mutator,
+		String const * section, void * value, void * data)
 {
 	ConfigSave * save = (ConfigSave *)data;
-	Mutator * mutator = (Mutator *)value;
+	Mutator * m = (Mutator *)value;
+	(void) mutator;
 
 	if(save->fp == NULL)
 		return;
 	if(section[0] != '\0')
 		return;
-	mutator_foreach(mutator, _save_foreach_section, save);
+	mutator_foreach(m, _save_foreach_section, save);
 }
 
-static void _save_foreach(String const * section, void * value, void * data)
+static void _save_foreach(Mutator const * mutator, String const * section,
+		void * value, void * data)
 {
 	ConfigSave * save = (ConfigSave *)data;
-	Mutator * mutator = (Mutator *)value;
+	Mutator * m = (Mutator *)value;
+	(void) mutator;
 
 	if(save->fp == NULL)
 		return;
@@ -527,13 +591,15 @@ static void _save_foreach(String const * section, void * value, void * data)
 		return;
 	}
 	save->sep = "\n";
-	mutator_foreach(mutator, _save_foreach_section, save);
+	mutator_foreach(m, _save_foreach_section, save);
 }
 
-static void _save_foreach_section(String const * key, void * value, void * data)
+static void _save_foreach_section(Mutator const * mutator, String const * key,
+		void * value, void * data)
 {
 	ConfigSave * save = (ConfigSave *)data;
 	String const * val = (String const *)value;
+	(void) mutator;
 
 	if(save->fp == NULL)
 		return;

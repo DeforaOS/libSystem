@@ -44,7 +44,8 @@ typedef struct _Hash Hash;
 
 typedef unsigned int (*HashFunc)(void const * value);
 typedef int (*HashCompare)(void const * value1, void const * value2);
-typedef void (*HashForeach)(void const * key, void * value, void * data);
+typedef void (*HashForeach)(Hash const * hash, void const * key, void * value,
+		void * data);
 
 
 /* functions */

@@ -42,7 +42,8 @@ extern "C" {
 /* types */
 typedef struct _Hash Mutator;
 
-typedef void (*MutatorForeach)(String const * key, void * value, void * data);
+typedef void (*MutatorForeach)(Mutator const * mutator,
+		String const * key, void * value, void * data);
 
 
 /* functions */

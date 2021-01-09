@@ -42,8 +42,10 @@ extern "C" {
 /* types */
 typedef struct _Hash Config;
 
-typedef void (*ConfigForeachCallback)(String const * section, void * priv);
-typedef void (*ConfigForeachSectionCallback)(String const * variable,
+typedef void (*ConfigForeachCallback)(Config const * config,
+		String const * section, void * priv);
+typedef void (*ConfigForeachSectionCallback)(Config const * config,
+		String const * section, String const * variable,
 		String const * value, void * priv);
 
 

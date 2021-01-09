@@ -253,6 +253,7 @@ static void _hash_foreach(void * value, void * data);
 
 struct funcdata
 {
+	Hash const * hash;
 	HashForeach func;
 	void * data;
 };
@@ -262,6 +263,7 @@ void hash_foreach(Hash const * hash, HashForeach func, void * data)
 	Array const * entries = (Array const *)hash->entries;
 	struct funcdata fd;
 
+	fd.hash = hash;
 	fd.func = func;
 	fd.data = data;
 	array_foreach(entries, _hash_foreach, &fd);
@@ -272,7 +274,7 @@ static void _hash_foreach(void * value, void * data)
 	HashEntry * he = (HashEntry *)value;
 	struct funcdata * fd = (struct funcdata *)data;
 
-	fd->func(he->key, he->value, fd->data);
+	fd->func(fd->hash, he->key, he->value, fd->data);
 }
 
 

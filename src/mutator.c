@@ -123,7 +123,8 @@ void mutator_foreach(Mutator const * mutator, MutatorForeach func, void * data)
 
 
 /* mutator_reset */
-static void _reset_foreach(String const * key, void * value, void * data);
+static void _reset_foreach(Mutator const * mutator, String const * key,
+		void * value, void * data);
 
 int mutator_reset(Mutator * mutator)
 {
@@ -132,9 +133,11 @@ int mutator_reset(Mutator * mutator)
 	return hash_reset(mutator);
 }
 
-static void _reset_foreach(String const * key, void * value, void * data)
+static void _reset_foreach(Mutator const * mutator, String const * key,
+		void * value, void * data)
 {
 	String * k = (String *)key;
+	(void) mutator;
 	(void) value;
 	(void) data;
 
