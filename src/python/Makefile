@@ -1,13 +1,13 @@
+OBJDIR	=
+PREFIX	= /usr/local
+DESTDIR	=
 MKDIR	= mkdir -m 0755 -p
 INSTALL	= install
 RM	= rm -f
 TARGETS	= $(OBJDIR)_libSystem$(SOEXT)
-OBJDIR	=
-PREFIX	= /usr/local
-DESTDIR	=
 LIBDIR	= $(PREFIX)/lib
 CC	= cc
-CPPFLAGSF= -I ../../include
+CPPFLAGSF= -I../../include
 CPPFLAGS=
 CFLAGSF	= -fPIC `pkg-config --cflags python-2.7`
 CFLAGS	= -W -Wall -g -O2 -D_FORTIFY_SOURCE=2 -fstack-protector

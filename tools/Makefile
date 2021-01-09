@@ -5,7 +5,7 @@ DESTDIR	=
 BINDIR	= $(PREFIX)/bin
 SBINDIR	= $(PREFIX)/sbin
 CC	= cc
-CPPFLAGSF= -I ../include
+CPPFLAGSF= -I../include
 CPPFLAGS=
 CFLAGSF	=
 CFLAGS	= -W -Wall -g -O2 -fPIE -D_FORTIFY_SOURCE=2 -fstack-protector
