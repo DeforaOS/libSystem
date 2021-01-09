@@ -1,4 +1,4 @@
-TARGETS	= $(OBJDIR)libSystem.a $(OBJDIR)libSystem$(SOEXT).0.0 $(OBJDIR)libSystem$(SOEXT).0 $(OBJDIR)libSystem$(SOEXT)
+TARGETS	= $(OBJDIR)libSystem.a $(OBJDIR)libSystem.so.1.0 $(OBJDIR)libSystem.so.1 $(OBJDIR)libSystem$(SOEXT)
 OBJDIR	=
 PREFIX	= /usr/local
 DESTDIR	=
@@ -31,14 +31,14 @@ $(OBJDIR)libSystem.a: $(libSystem_OBJS)
 	$(AR) $(ARFLAGS) $(OBJDIR)libSystem.a $(libSystem_OBJS)
 	$(RANLIB) $(OBJDIR)libSystem.a
 
-$(OBJDIR)libSystem$(SOEXT).0.0: $(libSystem_OBJS)
-	$(CCSHARED) -o $(OBJDIR)libSystem$(SOEXT).0.0 -Wl,-soname,libSystem$(SOEXT).0 $(libSystem_OBJS) $(libSystem_LDFLAGS)
+$(OBJDIR)libSystem.so.1.0: $(libSystem_OBJS)
+	$(CCSHARED) -o $(OBJDIR)libSystem.so.1.0 -Wl,-soname,libSystem.so.1 $(libSystem_OBJS) $(libSystem_LDFLAGS)
 
-$(OBJDIR)libSystem$(SOEXT).0: $(OBJDIR)libSystem$(SOEXT).0.0
-	$(LN) -s -- libSystem$(SOEXT).0.0 $(OBJDIR)libSystem$(SOEXT).0
+$(OBJDIR)libSystem.so.1: $(OBJDIR)libSystem.so.1.0
+	$(LN) -s -- libSystem.so.1.0 $(OBJDIR)libSystem.so.1
 
-$(OBJDIR)libSystem$(SOEXT): $(OBJDIR)libSystem$(SOEXT).0.0
-	$(LN) -s -- libSystem$(SOEXT).0.0 $(OBJDIR)libSystem$(SOEXT)
+$(OBJDIR)libSystem$(SOEXT): $(OBJDIR)libSystem.so.1.0
+	$(LN) -s -- libSystem.so.1.0 $(OBJDIR)libSystem$(SOEXT)
 
 $(OBJDIR)array.o: array.c
 	$(CC) $(libSystem_CFLAGS) -o $(OBJDIR)array.o -c array.c
@@ -91,14 +91,14 @@ distclean: clean
 install: all
 	$(MKDIR) $(DESTDIR)$(LIBDIR)
 	$(INSTALL) -m 0644 $(OBJDIR)libSystem.a $(DESTDIR)$(LIBDIR)/libSystem.a
-	$(INSTALL) -m 0755 $(OBJDIR)libSystem$(SOEXT).0.0 $(DESTDIR)$(LIBDIR)/libSystem$(SOEXT).0.0
-	$(LN) -s -- libSystem$(SOEXT).0.0 $(DESTDIR)$(LIBDIR)/libSystem$(SOEXT).0
-	$(LN) -s -- libSystem$(SOEXT).0.0 $(DESTDIR)$(LIBDIR)/libSystem$(SOEXT)
+	$(INSTALL) -m 0755 $(OBJDIR)libSystem.so.1.0 $(DESTDIR)$(LIBDIR)/libSystem.so.1.0
+	$(LN) -s -- libSystem.so.1.0 $(DESTDIR)$(LIBDIR)/libSystem.so.1
+	$(LN) -s -- libSystem.so.1.0 $(DESTDIR)$(LIBDIR)/libSystem$(SOEXT)
 
 uninstall:
 	$(RM) -- $(DESTDIR)$(LIBDIR)/libSystem.a
-	$(RM) -- $(DESTDIR)$(LIBDIR)/libSystem$(SOEXT).0.0
-	$(RM) -- $(DESTDIR)$(LIBDIR)/libSystem$(SOEXT).0
+	$(RM) -- $(DESTDIR)$(LIBDIR)/libSystem.so.1.0
+	$(RM) -- $(DESTDIR)$(LIBDIR)/libSystem.so.1
 	$(RM) -- $(DESTDIR)$(LIBDIR)/libSystem$(SOEXT)
 
 .PHONY: all clean distclean install uninstall
