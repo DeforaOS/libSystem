@@ -49,6 +49,7 @@ typedef void (*HashForeach)(void const * key, void * value, void * data);
 
 /* functions */
 Hash * hash_new(HashFunc func, HashCompare compare);
+Hash * hash_new_copy(Hash const * from);
 void hash_delete(Hash * h);
 
 /* helpers */

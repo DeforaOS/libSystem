@@ -47,6 +47,7 @@ typedef void (*MutatorForeach)(String const * key, void * value, void * data);
 
 /* functions */
 Mutator * mutator_new(void);
+Mutator * mutator_new_copy(Mutator const * from);
 void mutator_delete(Mutator * mutator);
 
 /* accessors */

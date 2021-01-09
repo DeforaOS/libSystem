@@ -113,6 +113,24 @@ Hash * hash_new(HashFunc func, HashCompare compare)
 }
 
 
+/* hash_new_copy */
+Hash * hash_new_copy(Hash const * from)
+{
+	Hash * hash;
+
+	if((hash = (Hash *)object_new(sizeof(*from))) == NULL)
+		return NULL;
+	if((hash->entries = array_new_copy(from->entries)) == NULL)
+	{
+		object_delete(hash);
+		return NULL;
+	}
+	hash->func = from->func;
+	hash->compare = from->compare;
+	return hash;
+}
+
+
 /* hash_delete */
 void hash_delete(Hash * hash)
 {

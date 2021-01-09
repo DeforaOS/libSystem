@@ -45,6 +45,13 @@ Mutator * mutator_new(void)
 }
 
 
+/* mutator_new_copy */
+Mutator * mutator_new_copy(Mutator const * from)
+{
+	return hash_new_copy(from);
+}
+
+
 /* mutator_delete */
 void mutator_delete(Mutator * mutator)
 {
