@@ -51,6 +51,7 @@ typedef void (*ConfigForeachSectionCallback)(Config const * config,
 
 /* functions */
 Config * config_new(void);
+Config * config_new_copy(Config const * from);
 Config * config_new_load(String const * filename);
 void config_delete(Config * config);
 
