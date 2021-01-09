@@ -294,6 +294,8 @@ int string_compare_length(String const * string, String const * string2,
 
 
 /* string_explode */
+static void _explose_foreach_delete(ArrayData * value, void * data);
+
 StringArray * string_explode(String const * string, String const * separator)
 {
 	StringArray * ret;
@@ -348,9 +350,17 @@ StringArray * string_explode(String const * string, String const * separator)
 #endif
 	}
 	/* free everything */
-	array_foreach(ret, (ArrayForeach)string_delete, NULL);
+	array_foreach(ret, _explose_foreach_delete, NULL);
 	array_delete(ret);
 	return NULL;
+}
+
+static void _explose_foreach_delete(ArrayData * value, void * data)
+{
+	String * s = (String *)value;
+	(void) data;
+
+	string_delete(s);
 }
 
 
