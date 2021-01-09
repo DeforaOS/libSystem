@@ -98,7 +98,7 @@ Config * config_new_copy(Config const * from)
 {
 	ConfigError ce;
 
-	if((ce.config = mutator_new(from)) == NULL)
+	if((ce.config = mutator_new()) == NULL)
 		return NULL;
 	ce.code = 0;
 	config_foreach(from, _new_copy_foreach, &ce);
