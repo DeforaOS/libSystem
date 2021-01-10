@@ -239,6 +239,47 @@ int string_append(String ** string, String const * append)
 }
 
 
+/* string_append_format */
+int string_append_format(String ** string, String const * format, ...)
+{
+	int ret;
+	va_list ap;
+
+	va_start(ap, format);
+	ret = string_append_formatv(string, format, ap);
+	va_end(ap);
+	return ret;
+}
+
+
+/* string_append_formatv */
+int string_append_formatv(String ** string, String const * format, va_list ap)
+{
+	va_list v;
+	int alen;
+	size_t len;
+	size_t s;
+
+	if(format == NULL)
+		return error_set_code(-EINVAL, "%s", strerror(EINVAL));
+	va_copy(v, ap);
+	alen = vsnprintf(NULL, 0, format, v);
+	va_end(v);
+	if(alen < 0)
+		return error_set_code(-errno, "%s", strerror(errno));
+	len = string_get_length(*string);
+	s = (size_t)alen + 1;
+	if(object_resize((Object **)string, len + s) != 0)
+		return -1;
+	if(vsnprintf(&(*string)[len], s, format, ap) != alen)
+	{
+		error_set_code(-errno, "%s", strerror(errno));
+		return -1;
+	}
+	return 0;
+}
+
+
 /* string_clear */
 void string_clear(String * string)
 {

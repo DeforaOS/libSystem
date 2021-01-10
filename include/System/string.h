@@ -68,6 +68,9 @@ int string_set(String ** string, String const * string2);
 
 /* useful */
 int string_append(String ** string, String const * append);
+int string_append_format(String ** string, String const * format, ...);
+int string_append_formatv(String ** string, String const * format, va_list ap);
+
 void string_clear(String * string);
 void string_cut(String * string, size_t length);
 
