@@ -1194,6 +1194,8 @@ VariableError variable_serialize(Variable * variable, Buffer * buffer,
 	uint32_t u32;
 	uint64_t u64;
 	char buf[16];
+	Array const * array;
+	size_t i;
 
 #ifdef DEBUG
 	fprintf(stderr, "DEBUG: %s(%u)\n", __func__, variable->type);
@@ -1257,6 +1259,13 @@ VariableError variable_serialize(Variable * variable, Buffer * buffer,
 			size = string_get_length(variable->u.string) + 1;
 			p = variable->u.string;
 			break;
+		case VT_ARRAY:
+			array = variable->u.array.array;
+			size = sizeof(u32);
+			u32 = array_count(array);
+			u32 = _bswap32(u32);
+			p = &u32;
+			break;
 		case VT_POINTER:
 			size = sizeof(u64);
 			u64 = (uint64_t)variable->u.pointer;
@@ -1270,6 +1279,7 @@ VariableError variable_serialize(Variable * variable, Buffer * buffer,
 	if(size == 0 && variable->type != VT_NULL)
 		return -error_set_code(1, "Unable to serialize type %u",
 				variable->type);
+	offset = 0;
 	if(prefix)
 	{
 		/* prefix with the type */
@@ -1284,7 +1294,9 @@ VariableError variable_serialize(Variable * variable, Buffer * buffer,
 				return -1;
 			offset += sizeof(u32);
 		}
-		return buffer_set_data(buffer, offset, (char const *)p, size);
+		else if(variable->type != VT_ARRAY)
+			return buffer_set_data(buffer, offset, (char const *)p,
+					size);
 	}
 	if(variable->type == VT_BUFFER)
 	{
@@ -1292,6 +1304,26 @@ VariableError variable_serialize(Variable * variable, Buffer * buffer,
 			return -1;
 		return buffer_set_data(buffer, sizeof(u32), (char const *)p,
 				size);
+	}
+	else if(variable->type == VT_ARRAY)
+	{
+		array = variable->u.array.array;
+		u8 = variable->u.array.type;
+		if(buffer_set_data(buffer, offset, (char const *)&u8,
+					sizeof(u8)) != 0)
+			return -1;
+		offset += sizeof(u8);
+		if(buffer_set_data(buffer, offset, p, size) != 0)
+			return -1;
+		offset += sizeof(u32);
+		size = array_get_size(array);
+		for(i = 0; i < array_count(array); i++)
+			if(buffer_set_data(buffer, offset, array_get(array, i),
+						size) != 0)
+				return -1;
+			else
+				offset += size;
+		return 0;
 	}
 	return buffer_set(buffer, size, (char const *)p);
 }
