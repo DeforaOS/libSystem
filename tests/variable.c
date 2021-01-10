@@ -46,6 +46,8 @@ static int _variable(char const * progname)
 	size_t s;
 	char * p;
 	double d;
+	Buffer * buf;
+	String * str;
 
 	/* variable_new */
 	for(i = 0; i < sizeof(samples) / sizeof(*samples); i++)
@@ -88,6 +90,25 @@ static int _variable(char const * progname)
 		}
 		variable_delete(variable);
 	}
+	printf("%s: Testing variable_get_as(%u)\n", progname, VT_STRING);
+	if((buf = buffer_new(4, "ABC")) == NULL)
+		ret += 1;
+	if((variable = variable_new(VT_BUFFER, buf)) == NULL)
+	{
+		error_print(progname);
+		ret += 1;
+	}
+	else if(variable_get_as(variable, VT_STRING, &str) != 0)
+	{
+		error_print(progname);
+		ret += 1;
+	}
+	else if(string_compare(str, "\\x41\\x42\\x43\\x00") != 0)
+	{
+		error_print(progname);
+		ret += 1;
+	}
+	buffer_delete(buf);
 	return ret;
 }
 
