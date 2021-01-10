@@ -79,11 +79,10 @@ Variable * variable_new(VariableType type, ...);
 Variable * variable_newv(VariableType type, va_list ap);
 Variable * variable_new_array(VariableType type, size_t size, ...);
 Variable * variable_new_arrayv(VariableType type, size_t size, va_list ap);
-Variable * variable_new_compound(String const * name, size_t members, ...);
-Variable * variable_new_compoundv(String const * name, size_t members,
-		va_list ap);
+Variable * variable_new_compound(String const * name, ...);
+Variable * variable_new_compoundv(String const * name, va_list ap);
 Variable * variable_new_compound_variables(String const * name, size_t members,
-		Variable ** variables);
+		String const ** names, Variable const ** variables);
 Variable * variable_new_copy(Variable const * from);
 Variable * variable_new_deserialize(size_t * size, char const * data);
 Variable * variable_new_deserialize_buffer(size_t * size,

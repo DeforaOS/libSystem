@@ -88,6 +88,8 @@ static uint32_t _bswap32(uint32_t u);
 static uint64_t _bswap64(uint64_t u);
 
 static void _variable_destroy(Variable * variable);
+static void _variable_destroy_compound(Variable * variable);
+static void _variable_destroy_compound_members(Mutator * members);
 
 
 /* public */
@@ -188,11 +190,14 @@ Variable * variable_new_compoundv(String const * name, va_list ap)
 		name = va_arg(ap, String const *);
 		if(name == NULL)
 			break;
-		if((v = mutator_get(m, name)) != NULL)
+		if((v = (Variable *)mutator_get(m, name)) != NULL)
 			variable_delete(v);
 		if((v = variable_newv(type, ap)) == NULL
 				|| mutator_set(m, name, v) != 0)
+		{
+			variable_delete(v);
 			break;
+		}
 	}
 	variable_delete(variable);
 	return NULL;
@@ -218,8 +223,11 @@ Variable * variable_new_compound_variables(String const * name, size_t members,
 			error_set_code(-EINVAL, "%s", strerror(EINVAL));
 			break;
 		}
-		if((v = mutator_get(m, names[i])) != NULL)
+		if((v = (Variable *)mutator_get(m, names[i])) != NULL)
+		{
+			mutator_set(m, names[i], NULL);
 			variable_delete(v);
+		}
 		if((v = variable_new_copy(variables[i])) == NULL
 				|| mutator_set(m, names[i], v) != 0)
 			break;
@@ -235,6 +243,9 @@ Variable * variable_new_compound_variables(String const * name, size_t members,
 
 /* variable_new_copy */
 static Variable * _new_copy_array(Variable const * from);
+static Variable * _new_copy_compound(Variable const * from);
+static void _new_copy_compound_foreach(Mutator const * mutator,
+		String const * key, void * value, void * data);
 
 Variable * variable_new_copy(Variable const * from)
 {
@@ -270,6 +281,8 @@ Variable * variable_new_copy(Variable const * from)
 			return variable_new(from->type, from->u.buffer);
 		case VT_ARRAY:
 			return _new_copy_array(from);
+		case VT_COMPOUND:
+			return _new_copy_compound(from);
 		case VT_POINTER:
 			return variable_new(from->type, from->u.pointer);
 	}
@@ -278,20 +291,62 @@ Variable * variable_new_copy(Variable const * from)
 	return NULL;
 }
 
-static Variable * _new_copy_array(Variable const * variable)
+static Variable * _new_copy_array(Variable const * from)
 {
-	Variable * ret;
+	Variable * variable;
 	size_t size;
 
-	size = array_get_size(variable->u.array.array);
-	if((ret = variable_new_array(variable->u.array.type, size)) == NULL)
+	size = array_get_size(from->u.array.array);
+	if((variable = variable_new_array(from->u.array.type, size)) == NULL)
 		return NULL;
-	if(array_copy(ret->u.array.array, variable->u.array.array) != 0)
+	if(array_copy(variable->u.array.array, from->u.array.array) != 0)
 	{
-		variable_delete(ret);
+		variable_delete(variable);
 		return NULL;
 	}
-	return ret;
+	return variable;
+}
+
+static Variable * _new_copy_compound(Variable const * from)
+{
+	Variable * variable;
+	Mutator * m;
+
+	if((variable = variable_new_compound(from->u.compound.name, VT_NULL))
+			== NULL)
+		return NULL;
+	m = variable->u.compound.members;
+	mutator_foreach(from->u.compound.members, _new_copy_compound_foreach,
+			&m);
+	if(m == NULL)
+	{
+		variable_delete(variable);
+		return NULL;
+	}
+	return variable;
+}
+
+static void _new_copy_compound_foreach(Mutator const * mutator,
+		String const * key, void * value, void * data)
+{
+	Mutator ** m = (Mutator **)data;
+	Variable const * from = (Variable const *)value;
+	Variable * v;
+	(void) mutator;
+
+	if(*m == NULL)
+		return;
+	if((v = (Variable *)mutator_get(*m, key)) != NULL)
+	{
+		mutator_set(*m, key, NULL);
+		variable_delete(v);
+	}
+	if((v = variable_new_copy(from)) == NULL
+			|| mutator_set(*m, key, v) != 0)
+	{
+		variable_delete(v);
+		*m = NULL;
+	}
 }
 
 
@@ -475,6 +530,8 @@ Variable * variable_new_deserialize_type(VariableType type, size_t * size,
 /* variable_delete */
 void variable_delete(Variable * variable)
 {
+	if(variable == NULL)
+		return;
 	_variable_destroy(variable);
 	object_delete(variable);
 }
@@ -1175,18 +1232,25 @@ static VariableError _copy_compound(Variable * variable, Variable const * from)
 {
 	String * s;
 	Mutator * m;
+	Mutator * n;
 
 	if(from->u.compound.name == NULL)
 		s = NULL;
 	else if((s = string_new(from->u.compound.name)) == NULL)
 		return -1;
-	if((m = mutator_new()) == NULL)
+	if((n = m = mutator_new()) == NULL)
 	{
 		string_delete(s);
 		return -1;
 	}
-	mutator_foreach(from->u.compound.members, _copy_compound_foreach, m);
-	/* FIXME abort upon errors */
+	mutator_foreach(from->u.compound.members, _copy_compound_foreach, &n);
+	if(n == NULL)
+	{
+		_variable_destroy_compound_members(m);
+		string_delete(s);
+		return -1;
+	}
+	_variable_destroy(variable);
 	variable->u.compound.name = s;
 	variable->u.compound.members = m;
 	return 0;
@@ -1195,18 +1259,20 @@ static VariableError _copy_compound(Variable * variable, Variable const * from)
 static void _copy_compound_foreach(Mutator const * mutator, String const * key,
 		void * value, void * data)
 {
-	Mutator * m = (Mutator *)data;
+	Mutator ** m = (Mutator **)data;
 	Variable * v = (Variable *)value;
 	(void) mutator;
 
+	if(*m == NULL)
+		return;
 	if(v == NULL)
 		return;
-	if((v = variable_new_copy(v)) == NULL)
-		/* FIXME abort the operation */
-		return;
-	if(mutator_set(m, key, v) != 0)
-		/* FIXME abort the operation */
-		return;
+	if((v = variable_new_copy(v)) == NULL
+			|| mutator_set(*m, key, v) != 0)
+	{
+		variable_delete(v);
+		*m = NULL;
+	}
 }
 
 
@@ -1388,10 +1454,6 @@ static uint64_t _bswap64(uint64_t u)
 
 
 /* variable_destroy */
-static void _destroy_compound(Variable * variable);
-static void _destroy_compound_foreach(Mutator const * mutator,
-		String const * key, void * value, void * data);
-
 static void _variable_destroy(Variable * variable)
 {
 	switch(variable->type)
@@ -1420,20 +1482,31 @@ static void _variable_destroy(Variable * variable)
 			array_delete(variable->u.array.array);
 			break;
 		case VT_COMPOUND:
-			_destroy_compound(variable);
+			_variable_destroy_compound(variable);
 			break;
 	}
 }
 
-static void _destroy_compound(Variable * variable)
+
+/* variable_destroy_compound */
+static void _variable_destroy_compound(Variable * variable)
 {
 	string_delete(variable->u.compound.name);
-	mutator_foreach(variable->u.compound.members, _destroy_compound_foreach,
-			NULL);
-	mutator_delete(variable->u.compound.members);
+	_variable_destroy_compound_members(variable->u.compound.members);
 }
 
-static void _destroy_compound_foreach(Mutator const * mutator,
+
+/* variable_destroy_compound_members */
+static void _destroy_compound_members_foreach(Mutator const * mutator,
+		String const * key, void * value, void * data);
+
+static void _variable_destroy_compound_members(Mutator * members)
+{
+	mutator_foreach(members, _destroy_compound_members_foreach, NULL);
+	mutator_delete(members);
+}
+
+static void _destroy_compound_members_foreach(Mutator const * mutator,
 		String const * key, void * value, void * data)
 {
 	Variable * v = (Variable *)value;
