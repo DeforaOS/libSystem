@@ -772,6 +772,9 @@ static VariableError _get_as_convert_string(Variable * variable,
 		String ** result)
 {
 	Variable * v = variable;
+	BufferData const * bufdata;
+	size_t cnt;
+	size_t i;
 
 	switch(v->type)
 	{
@@ -825,9 +828,21 @@ static VariableError _get_as_convert_string(Variable * variable,
 		case VT_COMPOUND:
 			/* no possible conversion */
 			break;
+		case VT_BUFFER:
+			if((*result = string_new("")) == NULL)
+				return -1;
+			bufdata = buffer_get_data(v->u.buffer);
+			cnt = buffer_get_size(v->u.buffer);
+			for(i = 0; i < cnt; i++)
+				if(string_append_format(result, "\\x%02hhx",
+							bufdata[i]) != 0)
+				{
+					string_delete(*result);
+					return -1;
+				}
+			return 0;
 #if 0
 		case VT_ARRAY:
-		case VT_BUFFER:
 			/* FIXME implement */
 			break;
 #endif
