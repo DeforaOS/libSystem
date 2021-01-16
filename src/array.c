@@ -249,11 +249,35 @@ ArrayError array_copy(Array * array, Array const * from)
 }
 
 
+/* array_insert */
+ArrayError array_insert(Array * array, size_t pos, ArrayData * value)
+{
+	char * p;
+	uint64_t offset = array->size * pos;
+	uint64_t size = array->size * (array->count + 1);
+
+	/* check for errors */
+	if(pos > array->count)
+		return error_set_code(-ERANGE, "%s", strerror(ERANGE));
+	/* check for overflows */
+	if(UINT64_MAX - offset < array->size
+			|| offset + array->size > SIZE_MAX)
+		return error_set_code(-ERANGE, "%s", strerror(ERANGE));
+	if((p = (char *)realloc(array->value, size)) == NULL)
+		return error_set_code(-errno, "%s", strerror(errno));
+	array->value = p;
+	memmove(&p[offset + array->size], &p[offset], array->size
+			* (array->count - pos));
+	memcpy(&p[offset], value, array->size);
+	array->count++;
+	return 0;
+}
+
+
 /* array_prepend */
 ArrayError array_prepend(Array * array, ArrayData * value)
 {
-	/* FIXME implement */
-	return -1;
+	return array_insert(array, 0, value);
 }
 
 

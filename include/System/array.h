@@ -91,6 +91,7 @@ ArrayError array_set(Array * array, size_t pos, ArrayData * value);
 /* useful */
 ArrayError array_append(Array * array, ArrayData * value);
 ArrayError array_copy(Array * array, Array const * from);
+ArrayError array_insert(Array * array, size_t pos, ArrayData * value);
 ArrayError array_prepend(Array * array, ArrayData * value);
 ArrayError array_remove_pos(Array * array, size_t pos);
 
