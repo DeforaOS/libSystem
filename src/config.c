@@ -616,7 +616,7 @@ static void _save_foreach_section(Mutator const * mutator, String const * key,
 
 
 /* config_save_preferences_user */
-static int _save_preferences_user_append(String ** f, String const * dir);
+static int _save_preferences_user_mkdir(String * dir);
 
 int config_save_preferences_user(Config const * config, String const * vendor,
 		String const * package, String const * filename)
@@ -627,37 +627,54 @@ int config_save_preferences_user(Config const * config, String const * vendor,
 
 	if(filename == NULL)
 		return error_set_code(-EINVAL, "%s", strerror(EINVAL));
-	if(vendor != NULL && string_find(vendor, "/") != NULL)
-		return error_set_code(-EPERM, "%s", strerror(EPERM));
-	if(package != NULL && string_find(package, "/") != NULL)
-		return error_set_code(-EPERM, "%s", strerror(EPERM));
-	if(string_find(filename, "/") != NULL)
-		return error_set_code(-EPERM, "%s", strerror(EPERM));
 	if((homedir = getenv("HOME")) == NULL)
 		return error_set_code(-errno, "%s", strerror(errno));
-	if((f = string_new_append(homedir, "/.config", NULL)) == NULL)
+	if((f = string_new_append(homedir, "/.config/",
+					(vendor != NULL) ? vendor : "",
+					(vendor != NULL) ? "/" : "",
+					(package != NULL) ? package : "",
+					(package != NULL) ? "/" : "",
+					filename, NULL)) == NULL)
 		return error_get_code();
-	if(vendor != NULL && (ret = _save_preferences_user_append(&f,
-					vendor)) != 0)
-		return ret;
-	if(package != NULL && (ret = _save_preferences_user_append(&f,
-					package)) != 0)
-		return ret;
-	if(string_append(&f, "/") != 0 || string_append(&f, filename) != 0)
-		return error_get_code();
-	ret = config_save(config, f);
+	if((ret = _save_preferences_user_mkdir(f)) == 0)
+		ret = config_save(config, f);
 	string_delete(f);
 	return ret;
 }
 
-static int _save_preferences_user_append(String ** f, String const * dir)
+static int _save_preferences_user_mkdir(String * dir)
 {
-	if(string_append(f, "/") != 0)
-		return error_get_code();
-	if(string_append(f, dir) != 0)
-		return error_get_code();
-	if(mkdir(*f, 0755) != 0
-			&& errno != EEXIST)
-		return error_set_code(-errno, "%s: %s", *f, strerror(errno));
+	int ret = 0;
+	size_t i;
+	size_t j;
+	size_t len;
+
+#ifdef DEBUG
+	fprintf(stderr, "DEBUG: %s(\"%s\")\n", __func__, dir);
+#endif
+	len = string_get_length(dir);
+	for(i = 0, j = 0; j < len; j++)
+	{
+		if(dir[j] != '/')
+			continue;
+		if(i == j)
+		{
+			i++;
+			continue;
+		}
+		dir[j] = '\0';
+#ifdef DEBUG
+		fprintf(stderr, "DEBUG: %s() \"%s\"\n", __func__, dir);
+#endif
+		if(dir[i] == '.')
+			ret = error_set_code(-EPERM, "%s: %s", dir,
+					strerror(EPERM));
+		else if(mkdir(dir, 0777) != 0 && errno != EEXIST)
+			ret = error_set_code(-errno, "%s: %s", dir,
+					strerror(errno));
+		dir[j] = '/';
+		if(ret != 0)
+			return ret;
+	}
 	return 0;
 }
