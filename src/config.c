@@ -631,7 +631,7 @@ int config_save_preferences_user(Config const * config, String const * vendor,
 		return error_set_code(-EPERM, "%s", strerror(EPERM));
 	if(package != NULL && string_find(package, "/") != NULL)
 		return error_set_code(-EPERM, "%s", strerror(EPERM));
-	if(filename != NULL && string_find(filename, "/") != NULL)
+	if(string_find(filename, "/") != NULL)
 		return error_set_code(-EPERM, "%s", strerror(EPERM));
 	if((homedir = getenv("HOME")) == NULL)
 		return error_set_code(-errno, "%s", strerror(errno));
