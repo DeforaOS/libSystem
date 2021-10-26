@@ -429,7 +429,7 @@ int config_load_preferences(Config * config, String const * vendor,
 
 	if((ret = config_load_preferences_system(config, vendor, package,
 					filename)) != 0
-			&& ret != -ENOENT)
+			&& ret != -ENOENT && ret != -EPERM)
 		return ret;
 	if((ret = config_load_preferences_user(config, vendor, package,
 					filename)) != 0
@@ -448,9 +448,11 @@ int config_load_preferences_system(Config * config, String const * vendor,
 
 	if(filename == NULL)
 		return error_set_code(-EINVAL, "%s", strerror(EINVAL));
-	if(vendor != NULL && string_find(vendor, "/") != NULL)
+	if(vendor != NULL && (string_compare_length(vendor, "../", 3) == 0
+				|| string_find(vendor, "/..") != NULL))
 		return error_set_code(-EPERM, "%s", strerror(EPERM));
-	if(package != NULL && string_find(package, "/") != NULL)
+	if(package != NULL && (string_compare_length(package, "../", 3) == 0
+				|| string_find(package, "/..") != NULL))
 		return error_set_code(-EPERM, "%s", strerror(EPERM));
 	if((f = string_new_append(SYSCONFDIR, "/",
 					(vendor != NULL) ? vendor : "", "/",
@@ -473,9 +475,11 @@ int config_load_preferences_user(Config * config, String const * vendor,
 
 	if(filename == NULL)
 		return error_set_code(-EINVAL, "%s", strerror(EINVAL));
-	if(vendor != NULL && string_find(vendor, "/") != NULL)
+	if(vendor != NULL && (string_compare_length(vendor, "../", 3) == 0
+				|| string_find(vendor, "/..") != NULL))
 		return error_set_code(-EPERM, "%s", strerror(EPERM));
-	if(package != NULL && string_find(package, "/") != NULL)
+	if(package != NULL && (string_compare_length(package, "../", 3) == 0
+				|| string_find(package, "/..") != NULL))
 		return error_set_code(-EPERM, "%s", strerror(EPERM));
 	if(filename != NULL && string_find(filename, "/") != NULL)
 		return error_set_code(-EPERM, "%s", strerror(EPERM));
