@@ -538,15 +538,15 @@ void variable_delete(Variable * variable)
 
 
 /* variable_get_as */
-static VariableError _get_as_convert(Variable * variable, VariableType type,
-		void * result);
-static VariableError _get_as_convert_string(Variable * variable,
+static VariableError _get_as_convert(Variable const * variable,
+		VariableType type, void * result);
+static VariableError _get_as_convert_string(Variable const * variable,
 		String ** result);
 
-VariableError variable_get_as(Variable * variable, VariableType type,
+VariableError variable_get_as(Variable const * variable, VariableType type,
 		void * result)
 {
-	void * p;
+	void const * p;
 	size_t size;
 	Buffer ** b;
 	String ** s;
@@ -592,11 +592,11 @@ VariableError variable_get_as(Variable * variable, VariableType type,
 	return -1;
 }
 
-static VariableError _get_as_convert(Variable * variable, VariableType type,
-		void * result)
+static VariableError _get_as_convert(Variable const * variable,
+		VariableType type, void * result)
 {
 	size_t size = 0;
-	void * p = NULL;
+	void const * p = NULL;
 	int8_t i8;
 	uint8_t u8;
 	int16_t i16;
@@ -842,10 +842,10 @@ static VariableError _get_as_convert(Variable * variable, VariableType type,
 			variable->type, type);
 }
 
-static VariableError _get_as_convert_string(Variable * variable,
+static VariableError _get_as_convert_string(Variable const * variable,
 		String ** result)
 {
-	Variable * v = variable;
+	Variable const * v = variable;
 	BufferData const * bufdata;
 	size_t cnt;
 	size_t i;
@@ -931,7 +931,7 @@ static VariableError _get_as_convert_string(Variable * variable,
 
 
 /* variable_get_pointer */
-void * variable_get_pointer(Variable * variable)
+void const * variable_get_pointer(Variable const * variable)
 {
 	switch(variable->type)
 	{
@@ -976,7 +976,7 @@ void * variable_get_pointer(Variable * variable)
 
 
 /* variable_get_type */
-VariableType variable_get_type(Variable * variable)
+VariableType variable_get_type(Variable const * variable)
 {
 	return variable->type;
 }

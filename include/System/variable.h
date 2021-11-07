@@ -93,18 +93,18 @@ void variable_delete(Variable * variable);
 
 
 /* accessors */
-VariableError variable_get_as(Variable * variable, VariableType type,
+VariableError variable_get_as(Variable const * variable, VariableType type,
 		void * result);
-VariableClass variable_get_class(Variable * variable);
-void * variable_get_pointer(Variable * variable);
-VariableType variable_get_type(Variable * variable);
+VariableClass variable_get_class(Variable const * variable);
+void const * variable_get_pointer(Variable const * variable);
+VariableType variable_get_type(Variable const * variable);
 
-bool variable_is_array(Variable * variable);
-bool variable_is_class(Variable * variable, VariableClass _class);
-bool variable_is_compound(Variable * variable);
-bool variable_is_instance(Variable * variable, String const * name);
-bool variable_is_scalar(Variable * variable);
-bool variable_is_type(Variable * variable, VariableType type);
+bool variable_is_array(Variable const * variable);
+bool variable_is_class(Variable const * variable, VariableClass _class);
+bool variable_is_compound(Variable const * variable);
+bool variable_is_instance(Variable const * variable, String const * name);
+bool variable_is_scalar(Variable const * variable);
+bool variable_is_type(Variable const * variable, VariableType type);
 
 VariableError variable_set(Variable * variable, ...);
 VariableError variable_setv(Variable * variable, va_list ap);
