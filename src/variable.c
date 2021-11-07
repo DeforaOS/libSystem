@@ -73,6 +73,13 @@ struct _Variable
 	} u;
 };
 
+typedef struct _VariableCompoundCallbackData
+{
+	char * result;
+	size_t pos;
+	int ret;
+} VariableCompoundCallbackData;
+
 
 /* constants */
 static const size_t _variable_sizes[VT_COUNT] = { 0, 1,
@@ -538,6 +545,9 @@ void variable_delete(Variable * variable)
 
 
 /* variable_get_as */
+static VariableError _get_as_compound(Variable const * variable, void * result);
+static void _get_as_compound_callback(Mutator const * mutator,
+		String const * key, void * value, void * data);
 static VariableError _get_as_convert(Variable const * variable,
 		VariableType type, void * result);
 static VariableError _get_as_convert_string(Variable const * variable,
@@ -587,9 +597,44 @@ VariableError variable_get_as(Variable const * variable, VariableType type,
 			a = (Array **)result;
 			return (*a = array_new_copy(variable->u.array.array))
 				!= NULL ? 0 : -1;
+		case VT_COMPOUND:
+			return _get_as_compound(variable, result);
 	}
-	/* FIXME implement the rest */
-	return -1;
+	return error_set_code(-ENOSYS, "%s", strerror(ENOSYS));
+}
+
+static VariableError _get_as_compound(Variable const * variable, void * result)
+{
+	VariableCompoundCallbackData data;
+
+	data.pos = 0;
+	data.result = result;
+	data.ret = 0;
+	/* XXX there is no warranty on the right order */
+	mutator_foreach(variable->u.compound.members,
+			_get_as_compound_callback, &data);
+	return data.ret;
+}
+
+static void _get_as_compound_callback(Mutator const * mutator,
+		String const * key, void * value, void * data)
+{
+	VariableCompoundCallbackData * vccd = data;
+	Variable const * from = value;
+	VariableType type;
+	size_t size;
+	(void) mutator;
+	(void) key;
+
+	if(vccd->ret != 0)
+		return;
+	type = variable_get_type(from);
+	/* XXX assumes alignment on byte boundary */
+	size = (type < sizeof(_variable_sizes) / sizeof(*_variable_sizes))
+		? _variable_sizes[type] : 0;
+	if((vccd->ret = variable_get_as(from, type, &vccd->result[vccd->pos]))
+			== 0)
+		vccd->pos += size;
 }
 
 static VariableError _get_as_convert(Variable const * variable,
