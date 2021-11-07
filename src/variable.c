@@ -66,6 +66,7 @@ struct _Variable
 			Array * array;
 		} array;
 		struct {
+			VariableClass _class;
 			String * name;
 			Mutator * members;
 		} compound;
@@ -1024,6 +1025,64 @@ void const * variable_get_pointer(Variable const * variable)
 VariableType variable_get_type(Variable const * variable)
 {
 	return variable->type;
+}
+
+
+/* variable_is_array */
+bool variable_is_array(Variable const * variable)
+{
+	return variable_is_type(variable, VT_ARRAY);
+}
+
+
+/* variable_is_class */
+bool variable_is_class(Variable const * variable, VariableClass _class)
+{
+	if(!variable_is_type(variable, VT_COMPOUND)
+			|| variable->u.compound.name == NULL)
+		return false;
+	return (variable->u.compound._class == _class) ? true : false;
+}
+
+
+/* variable_is_compound */
+bool variable_is_compound(Variable const * variable)
+{
+	return (variable_is_type(variable, VT_COMPOUND)
+			&& variable->u.compound.name == NULL)
+		? true : false;
+}
+
+
+/* variable_is_instance */
+bool variable_is_instance(Variable const * variable, String const * name)
+{
+	if(!variable_is_type(variable, VT_COMPOUND)
+			|| variable->u.compound.name == NULL)
+		return false;
+	return (string_compare(variable->u.compound.name, name) == 0)
+		? true : false;
+}
+
+
+/* variable_is_scalar */
+bool variable_is_scalar(Variable const * variable)
+{
+	VariableType type;
+
+	type = variable_get_type(variable);
+	if(type >= VT_BOOL && type <= VT_DOUBLE)
+		return true;
+	if(type == VT_STRING || type == VT_POINTER)
+		return true;
+	return false;
+}
+
+
+/* variable_is_type */
+bool variable_is_type(Variable const * variable, VariableType type)
+{
+	return (variable_get_type(variable) == type) ? true : false;
 }
 
 
