@@ -41,10 +41,10 @@ static int _variable(char const * progname)
 	const int samples[] = { 0, -1, 1, -127, -128, 126, 127 };
 	const float fsamples[] = { 0.0, -1.0, 1.0 };
 	size_t i;
+	size_t size;
 	int32_t j;
 	int8_t i8;
 	size_t s;
-	char * p;
 	double d;
 	Buffer * buf;
 	String * str;
@@ -56,16 +56,15 @@ static int _variable(char const * progname)
 				progname, samples[i]);
 		i8 = samples[i];
 		s = sizeof(i8);
-		p = (char *)&i8;
-		if((variable = variable_new_deserialize_type(VT_INT8, &s, p))
-				== NULL)
+		if((variable = variable_new_deserialize_type(VT_INT8, &s,
+						(void *)&i8)) == NULL)
 		{
 			error_print(progname);
 			ret += 1;
 			continue;
 		}
-		p = (char *)&j;
-		if(variable_get_as(variable, VT_INT32, (void *)p) != 0
+		size = sizeof(j);
+		if(variable_get_as(variable, VT_INT32, (void *)&j, &size) != 0
 				|| j != samples[i])
 		{
 			error_print(progname);
@@ -82,7 +81,8 @@ static int _variable(char const * progname)
 			continue;
 		}
 		d = 0.0 / 0.0;
-		if(variable_get_as(variable, VT_DOUBLE, &d) != 0
+		size = sizeof(d);
+		if(variable_get_as(variable, VT_DOUBLE, &d, &size) != 0
 				|| d != fsamples[i])
 		{
 			error_print(progname);
@@ -93,12 +93,13 @@ static int _variable(char const * progname)
 	printf("%s: Testing variable_get_as(%u)\n", progname, VT_STRING);
 	if((buf = buffer_new(4, "ABC")) == NULL)
 		ret += 1;
+	size = sizeof(buf);
 	if((variable = variable_new(VT_BUFFER, buf)) == NULL)
 	{
 		error_print(progname);
 		ret += 1;
 	}
-	else if(variable_get_as(variable, VT_STRING, &str) != 0)
+	else if(variable_get_as(variable, VT_STRING, &str, &size) != 0)
 	{
 		error_print(progname);
 		ret += 1;

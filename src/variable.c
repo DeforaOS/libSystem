@@ -76,6 +76,7 @@ struct _Variable
 
 typedef struct _VariableCompoundCallbackData
 {
+	size_t * size;
 	char * result;
 	size_t pos;
 	int ret;
@@ -546,7 +547,8 @@ void variable_delete(Variable * variable)
 
 
 /* variable_get_as */
-static VariableError _get_as_compound(Variable const * variable, void * result);
+static VariableError _get_as_compound(Variable const * variable, void * result,
+		size_t * size);
 static void _get_as_compound_callback(Mutator const * mutator,
 		String const * key, void * value, void * data);
 static VariableError _get_as_convert(Variable const * variable,
@@ -555,18 +557,20 @@ static VariableError _get_as_convert_string(Variable const * variable,
 		String ** result);
 
 VariableError variable_get_as(Variable const * variable, VariableType type,
-		void * result)
+		void * result, size_t * size)
 {
 	void const * p;
-	size_t size;
+	size_t sz;
 	Buffer ** b;
 	String ** s;
 	Array ** a;
 
+	if(size == NULL)
+		return error_set_code(-EINVAL, "%s", strerror(EINVAL));
 	if(variable->type != type)
 		return _get_as_convert(variable, type, result);
 	p = variable_get_pointer(variable);
-	size = (type < sizeof(_variable_sizes) / sizeof(*_variable_sizes))
+	sz = (type < sizeof(_variable_sizes) / sizeof(*_variable_sizes))
 		? _variable_sizes[type] : 0;
 	switch(type)
 	{
@@ -584,30 +588,51 @@ VariableError variable_get_as(Variable const * variable, VariableType type,
 		case VT_FLOAT:
 		case VT_DOUBLE:
 		case VT_POINTER:
-			memcpy(result, p, size);
+			if(sz > *size)
+				return error_set_code(-ENOSPC, "%s",
+						strerror(ENOSPC));
+			memcpy(result, p, sz);
+			*size = sz;
 			return 0;
 		case VT_BUFFER:
+			sz = _variable_sizes[VT_POINTER];
+			if(sz > *size)
+				return error_set_code(-ENOSPC, "%s",
+						strerror(ENOSPC));
+			*size = sz;
 			b = (Buffer **)result;
 			return (*b = buffer_new_copy(variable->u.buffer))
 				!= NULL ? 0 : -1;
 		case VT_STRING:
+			sz = _variable_sizes[VT_POINTER];
+			if(sz > *size)
+				return error_set_code(-ENOSPC, "%s",
+						strerror(ENOSPC));
+			*size = sz;
 			s = (String **)result;
 			return (*s = string_new(variable->u.string)) != NULL
 				? 0 : -1;
 		case VT_ARRAY:
+			sz = _variable_sizes[VT_POINTER];
+			if(sz > *size)
+				return error_set_code(-ENOSPC, "%s",
+						strerror(ENOSPC));
+			*size = sz;
 			a = (Array **)result;
 			return (*a = array_new_copy(variable->u.array.array))
 				!= NULL ? 0 : -1;
 		case VT_COMPOUND:
-			return _get_as_compound(variable, result);
+			return _get_as_compound(variable, result, size);
 	}
 	return error_set_code(-ENOSYS, "%s", strerror(ENOSYS));
 }
 
-static VariableError _get_as_compound(Variable const * variable, void * result)
+static VariableError _get_as_compound(Variable const * variable, void * result,
+		size_t * size)
 {
 	VariableCompoundCallbackData data;
 
+	data.size = size;
 	data.pos = 0;
 	data.result = result;
 	data.ret = 0;
@@ -624,18 +649,18 @@ static void _get_as_compound_callback(Mutator const * mutator,
 	Variable const * from = value;
 	VariableType type;
 	size_t size;
+	int res;
 	(void) mutator;
 	(void) key;
 
-	if(vccd->ret != 0)
-		return;
-	type = variable_get_type(from);
 	/* XXX assumes alignment on byte boundary */
-	size = (type < sizeof(_variable_sizes) / sizeof(*_variable_sizes))
-		? _variable_sizes[type] : 0;
-	if((vccd->ret = variable_get_as(from, type, &vccd->result[vccd->pos]))
-			== 0)
-		vccd->pos += size;
+	type = variable_get_type(from);
+	size = *(vccd->size);
+	size = (size >= vccd->pos) ? size - vccd->pos : 0;
+	if((res = variable_get_as(from, type, &vccd->result[vccd->pos], &size))
+			!= 0)
+		vccd->ret = res;
+	vccd->pos += size;
 }
 
 static VariableError _get_as_convert(Variable const * variable,

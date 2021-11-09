@@ -94,7 +94,7 @@ void variable_delete(Variable * variable);
 
 /* accessors */
 VariableError variable_get_as(Variable const * variable, VariableType type,
-		void * result);
+		void * result, size_t * size);
 VariableClass variable_get_class(Variable const * variable);
 void const * variable_get_pointer(Variable const * variable);
 VariableType variable_get_type(Variable const * variable);
