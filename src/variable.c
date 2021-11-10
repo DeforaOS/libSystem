@@ -555,23 +555,20 @@ static VariableError _get_as_convert(Variable const * variable,
 		VariableType type, void * result);
 static VariableError _get_as_convert_string(Variable const * variable,
 		String ** result);
+static int _get_as_pointer(size_t * size);
 
 VariableError variable_get_as(Variable const * variable, VariableType type,
 		void * result, size_t * size)
 {
+	int ret;
 	void const * p;
 	size_t sz;
 	Buffer ** b;
 	String ** s;
 	Array ** a;
 
-	if(size == NULL)
-		return error_set_code(-EINVAL, "%s", strerror(EINVAL));
 	if(variable->type != type)
 		return _get_as_convert(variable, type, result);
-	p = variable_get_pointer(variable);
-	sz = (type < sizeof(_variable_sizes) / sizeof(*_variable_sizes))
-		? _variable_sizes[type] : 0;
 	switch(type)
 	{
 		case VT_NULL:
@@ -588,43 +585,41 @@ VariableError variable_get_as(Variable const * variable, VariableType type,
 		case VT_FLOAT:
 		case VT_DOUBLE:
 		case VT_POINTER:
-			if(sz > *size)
-				return error_set_code(-ENOSPC, "%s",
-						strerror(ENOSPC));
+			sz = (type < sizeof(_variable_sizes)
+					/ sizeof(*_variable_sizes))
+				? _variable_sizes[type] : 0;
+			if(size != NULL)
+			{
+				if(sz > *size)
+					return error_set_code(-ENOSPC, "%s",
+							strerror(ENOSPC));
+				*size = sz;
+			}
+			p = variable_get_pointer(variable);
 			memcpy(result, p, sz);
-			*size = sz;
 			return 0;
 		case VT_BUFFER:
-			sz = _variable_sizes[VT_POINTER];
-			if(sz > *size)
-				return error_set_code(-ENOSPC, "%s",
-						strerror(ENOSPC));
-			*size = sz;
+			if((ret = _get_as_pointer(size)) != 0)
+				return ret;
 			b = (Buffer **)result;
 			return (*b = buffer_new_copy(variable->u.buffer))
 				!= NULL ? 0 : -1;
 		case VT_STRING:
-			sz = _variable_sizes[VT_POINTER];
-			if(sz > *size)
-				return error_set_code(-ENOSPC, "%s",
-						strerror(ENOSPC));
-			*size = sz;
+			if((ret = _get_as_pointer(size)) != 0)
+				return ret;
 			s = (String **)result;
 			return (*s = string_new(variable->u.string)) != NULL
 				? 0 : -1;
 		case VT_ARRAY:
-			sz = _variable_sizes[VT_POINTER];
-			if(sz > *size)
-				return error_set_code(-ENOSPC, "%s",
-						strerror(ENOSPC));
-			*size = sz;
+			if((ret = _get_as_pointer(size)) != 0)
+				return ret;
 			a = (Array **)result;
 			return (*a = array_new_copy(variable->u.array.array))
 				!= NULL ? 0 : -1;
 		case VT_COMPOUND:
 			return _get_as_compound(variable, result, size);
 	}
-	return error_set_code(-ENOSYS, "%s", strerror(ENOSYS));
+	return error_set_code(-ENOTSUP, "%s", strerror(ENOTSUP));
 }
 
 static VariableError _get_as_compound(Variable const * variable, void * result,
@@ -632,6 +627,8 @@ static VariableError _get_as_compound(Variable const * variable, void * result,
 {
 	VariableCompoundCallbackData data;
 
+	if(size == NULL)
+		return error_set_code(-EINVAL, "%s", strerror(EINVAL));
 	data.size = size;
 	data.pos = 0;
 	data.result = result;
@@ -998,6 +995,20 @@ static VariableError _get_as_convert_string(Variable const * variable,
 	}
 	return -error_set_code(1, "Unable to convert from type %u to %u",
 			variable->type, VT_STRING);
+}
+
+static int _get_as_pointer(size_t * size)
+{
+	size_t sz;
+
+	sz = _variable_sizes[VT_POINTER];
+	if(size != NULL)
+	{
+		if(sz > *size)
+			return error_set_code(-ENOSPC, "%s", strerror(ENOSPC));
+		*size = sz;
+	}
+	return 0;
 }
 
 
