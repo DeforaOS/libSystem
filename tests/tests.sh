@@ -30,7 +30,10 @@
 PROGNAME="tests.sh"
 #executables
 DATE="date"
+ECHO="echo"
 PKGCONFIG="pkg-config"
+UNAME="uname"
+[ $($UNAME -s) != "Darwin" ] || ECHO="/bin/echo"
 
 
 #functions
@@ -60,7 +63,7 @@ _run()
 	[ $# -eq 1 ] || sep=" "
 
 	shift
-	echo -n "$test:" 1>&2
+	$ECHO -n "$test:" 1>&2
 	(echo
 	echo "Testing: $test" "$@"
 	testexe="./$test"
