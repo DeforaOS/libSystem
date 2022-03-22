@@ -9,6 +9,7 @@ CPPFLAGS=
 CFLAGSF	= -fPIC
 CFLAGS	= -W -Wall -g -O2 -D_FORTIFY_SOURCE=2 -fstack-protector
 LDFLAGSF= 
+LDFLAGS	= -Wl,-z,relro -Wl,-z,now
 EXEEXT	=
 AR	= ar
 ARFLAGS	= -rc
