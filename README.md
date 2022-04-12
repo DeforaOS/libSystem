@@ -60,3 +60,30 @@ Likewise, an alternate installation directory may be specified:
 Makefiles can be re-generated for the bindings as well:
 
     $ configure src/python
+
+
+Caveats
+-------
+
+### Building on macOS
+
+libSystem may fail to build on macOS, with the following error:
+
+    ld: unknown option: -soname
+
+To work around this issue, it is possible to:
+
+1. Build the static library, `libSystem.a`:
+
+    $ (cd src && make libSystem.a)
+
+2. Build DeforaOS configure with this library
+3. Re-generate the Makefiles and build as follows:
+
+    $ configure
+    $ make LDFLAGS=-lm
+
+### Python bindings
+
+The Python bindings are outdated and still assume Python 2.7.
+
