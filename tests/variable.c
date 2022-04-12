@@ -29,6 +29,7 @@
 
 
 #include <stdio.h>
+#include <math.h>
 #include "System/error.h"
 #include "System/variable.h"
 
@@ -80,7 +81,7 @@ static int _variable(char const * progname)
 			ret += 1;
 			continue;
 		}
-		d = 0.0 / 0.0;
+		d = INFINITY;
 		size = sizeof(d);
 		if(variable_get_as(variable, VT_DOUBLE, &d, &size) != 0
 				|| d != fsamples[i])
