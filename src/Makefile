@@ -27,10 +27,10 @@ all: $(TARGETS)
 
 libSystem_OBJS = $(OBJDIR)array.lo $(OBJDIR)buffer.lo $(OBJDIR)config.lo $(OBJDIR)error.lo $(OBJDIR)event.lo $(OBJDIR)file.lo $(OBJDIR)hash.lo $(OBJDIR)mutator.lo $(OBJDIR)object.lo $(OBJDIR)parser.lo $(OBJDIR)plugin.lo $(OBJDIR)string.lo $(OBJDIR)token.lo $(OBJDIR)variable.lo
 libSystem_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
-libSystem_LDFLAGS = $(LDFLAGSF) $(LDFLAGS) `../tools/platform.sh -O DESTDIR="$(DESTDIR)" -l dl` `../tools/platform.sh -O DESTDIR="$(DESTDIR)" -l m`
+libSystem_LDFLAGS = $(LDFLAGSF) $(LDFLAGS) `../tools/platform.sh -O DESTDIR="$(DESTDIR)" -l dl` `../tools/platform.sh -O DESTDIR="$(DESTDIR)" -l m` -version-info 1
 
 $(OBJDIR)libSystem.la: $(libSystem_OBJS)
-	$(LIBTOOL) --mode=link --tag=CC $(CC) -o $(OBJDIR)libSystem.la $(libSystem_OBJS) `../tools/platform.sh -O DESTDIR="$(DESTDIR)" -l dl` `../tools/platform.sh -O DESTDIR="$(DESTDIR)" -l m` -rpath $(LIBDIR) $(libSystem_LDFLAGS)
+	$(LIBTOOL) --mode=link --tag=CC $(CC) -o $(OBJDIR)libSystem.la $(libSystem_OBJS) `../tools/platform.sh -O DESTDIR="$(DESTDIR)" -l dl` `../tools/platform.sh -O DESTDIR="$(DESTDIR)" -l m` -version-info 1 -rpath $(LIBDIR) $(libSystem_LDFLAGS)
 
 $(OBJDIR)array.o $(OBJDIR)array.lo: array.c
 	$(LIBTOOL) --mode=compile --tag=CC $(CC) $(libSystem_CFLAGS) -o $(OBJDIR)array.o -c array.c
