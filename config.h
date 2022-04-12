@@ -1,5 +1,5 @@
 #define PACKAGE "libSystem"
-#define VERSION "0.4.2"
+#define VERSION "0.4.3"
 #define VENDOR "DeforaOS"
 
 #ifndef PREFIX

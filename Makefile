@@ -1,5 +1,5 @@
 PACKAGE	= libSystem
-VERSION	= 0.4.2
+VERSION	= 0.4.3
 VENDOR	= DeforaOS
 SUBDIRS	= data doc include src tests tools
 OBJDIR	=
