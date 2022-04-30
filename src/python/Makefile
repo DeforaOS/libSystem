@@ -11,7 +11,7 @@ CPPFLAGSF= -I../../include
 CPPFLAGS=
 CFLAGSF	= -fPIC `pkg-config --cflags python-2.7`
 CFLAGS	= -W -Wall -g -O2 -D_FORTIFY_SOURCE=2 -fstack-protector
-LDFLAGSF= `pkg-config --libs python-2.7` -L$(OBJDIR).. -lSystem
+LDFLAGSF= `pkg-config --libs python-2.7` -L$(OBJDIR).. -L$(OBJDIR)../.libs -lSystem
 LDFLAGS	= -Wl,-rpath,$(LIBDIR) -Wl,-z,relro -Wl,-z,now
 EXEEXT	=
 AR	= ar
