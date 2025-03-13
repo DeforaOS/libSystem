@@ -90,6 +90,13 @@ Plugin * plugin_new(String const * libdir, String const * package,
 }
 
 
+/* plugin_new_path */
+Plugin * plugin_new_path(String const * path)
+{
+	return _plugin_open(path);
+}
+
+
 /* plugin_new_self */
 Plugin * plugin_new_self(void)
 {

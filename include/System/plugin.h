@@ -55,6 +55,7 @@ typedef struct _PluginHeader
 /* functions */
 Plugin * plugin_new(String const * libdir, String const * package,
 		String const * type, String const * name);
+Plugin * plugin_new_path(String const * path);
 Plugin * plugin_new_self(void);
 void plugin_delete(Plugin * plugin);
 
