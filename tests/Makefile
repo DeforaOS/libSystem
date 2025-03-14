@@ -1,4 +1,4 @@
-TARGETS	= $(OBJDIR)array$(EXEEXT) $(OBJDIR)buffer$(EXEEXT) $(OBJDIR)clint.log $(OBJDIR)config$(EXEEXT) $(OBJDIR)coverage.log $(OBJDIR)error$(EXEEXT) $(OBJDIR)event$(EXEEXT) $(OBJDIR)fixme.log $(OBJDIR)includes$(EXEEXT) $(OBJDIR)parser$(EXEEXT) $(OBJDIR)pylint.log $(OBJDIR)string$(EXEEXT) $(OBJDIR)variable$(EXEEXT) $(OBJDIR)tests.log
+TARGETS	= $(OBJDIR)array$(EXEEXT) $(OBJDIR)buffer$(EXEEXT) $(OBJDIR)clint.log $(OBJDIR)config$(EXEEXT) $(OBJDIR)coverage.log $(OBJDIR)error$(EXEEXT) $(OBJDIR)event$(EXEEXT) $(OBJDIR)fixme.log $(OBJDIR)includes$(EXEEXT) $(OBJDIR)parser$(EXEEXT) $(OBJDIR)pkgconfig.log $(OBJDIR)pylint.log $(OBJDIR)string$(EXEEXT) $(OBJDIR)variable$(EXEEXT) $(OBJDIR)tests.log
 OBJDIR	=
 PREFIX	= /usr/local
 DESTDIR	=
@@ -78,6 +78,9 @@ parser_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 $(OBJDIR)parser$(EXEEXT): $(parser_OBJS)
 	$(CC) -o $(OBJDIR)parser$(EXEEXT) $(parser_OBJS) $(parser_LDFLAGS)
 
+$(OBJDIR)pkgconfig.log: $(OBJDIR)../data/libSystem.pc pkgconfig.sh
+	./pkgconfig.sh -P "$(PREFIX)" -- "$(OBJDIR)pkgconfig.log"
+
 $(OBJDIR)pylint.log: ../src/python/libSystem.py pylint.sh
 	./pylint.sh -P "$(PREFIX)" -- "$(OBJDIR)pylint.log"
 
@@ -95,7 +98,7 @@ variable_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 $(OBJDIR)variable$(EXEEXT): $(variable_OBJS)
 	$(CC) -o $(OBJDIR)variable$(EXEEXT) $(variable_OBJS) $(variable_LDFLAGS)
 
-$(OBJDIR)tests.log: $(OBJDIR)array$(EXEEXT) $(OBJDIR)buffer$(EXEEXT) $(OBJDIR)config$(EXEEXT) config.conf config-noeol.conf $(OBJDIR)error$(EXEEXT) $(OBJDIR)event$(EXEEXT) $(OBJDIR)includes$(EXEEXT) $(OBJDIR)parser$(EXEEXT) pkgconfig.sh python.sh $(OBJDIR)string$(EXEEXT) tests.sh $(OBJDIR)variable$(EXEEXT) $(OBJDIR)../src/libSystem.a ../src/python/libSystem.c
+$(OBJDIR)tests.log: $(OBJDIR)array$(EXEEXT) $(OBJDIR)buffer$(EXEEXT) $(OBJDIR)config$(EXEEXT) config.conf config-noeol.conf $(OBJDIR)error$(EXEEXT) $(OBJDIR)event$(EXEEXT) $(OBJDIR)includes$(EXEEXT) $(OBJDIR)parser$(EXEEXT) python.sh $(OBJDIR)string$(EXEEXT) tests.sh $(OBJDIR)variable$(EXEEXT) $(OBJDIR)../src/libSystem.a ../src/python/libSystem.c
 	./tests.sh -P "$(PREFIX)" -- "$(OBJDIR)tests.log"
 
 $(OBJDIR)array.o: array.c ../src/array.c
@@ -130,6 +133,7 @@ clean:
 	./clint.sh -c -P "$(PREFIX)" -O CPPFLAGS="-I$(DESTDIR)$(PREFIX)/include -I../include `pkg-config --cflags python-2.7`" -- "$(OBJDIR)clint.log"
 	./coverage.sh -c -P "$(PREFIX)" -- "$(OBJDIR)coverage.log"
 	./fixme.sh -c -P "$(PREFIX)" -- "$(OBJDIR)fixme.log"
+	./pkgconfig.sh -c -P "$(PREFIX)" -- "$(OBJDIR)pkgconfig.log"
 	./pylint.sh -c -P "$(PREFIX)" -- "$(OBJDIR)pylint.log"
 	./tests.sh -c -P "$(PREFIX)" -- "$(OBJDIR)tests.log"
 

@@ -27,7 +27,7 @@ subdirs:
 		else $(MAKE); fi) || exit; done
 
 tests: all
-	cd tests && (if [ -n "$(OBJDIR)" ]; then $(MAKE) OBJDIR="$(OBJDIR)tests/" "$(OBJDIR)tests/clint.log" "$(OBJDIR)tests/fixme.log" "$(OBJDIR)tests/pylint.log" "$(OBJDIR)tests/tests.log"; else $(MAKE) clint.log fixme.log pylint.log tests.log; fi)
+	cd tests && (if [ -n "$(OBJDIR)" ]; then $(MAKE) OBJDIR="$(OBJDIR)tests/" "$(OBJDIR)tests/clint.log" "$(OBJDIR)tests/fixme.log" "$(OBJDIR)tests/pkgconfig.log" "$(OBJDIR)tests/pylint.log" "$(OBJDIR)tests/tests.log"; else $(MAKE) clint.log fixme.log pkgconfig.log pylint.log tests.log; fi)
 
 clean:
 	@for i in $(SUBDIRS); do (cd "$$i" && \
