@@ -1,6 +1,6 @@
 #!/bin/sh
 #$Id$
-#Copyright (c) 2011-2022 Pierre Pronchery <khorben@defora.org>
+#Copyright (c) 2011-2025 Pierre Pronchery <khorben@defora.org>
 #This file is part of DeforaOS System libSystem
 #
 #Redistribution and use in source and binary forms, with or without
