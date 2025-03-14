@@ -125,12 +125,12 @@ failures=
 $PKGCONFIG --exists "python-2.7"
 case $? in
 	127)
-		failures="pkgconfig.sh python.sh"
+		failures="python.sh"
 		;;
 	0)
 		if [ -n "$PKG_CONFIG_SYSROOT_DIR" ]; then
 			#XXX cross-compiling
-			tests="pkgconfig.sh python.sh"
+			tests="python.sh"
 		fi
 		;;
 	*)
