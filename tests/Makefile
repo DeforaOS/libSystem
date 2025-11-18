@@ -1,4 +1,4 @@
-TARGETS	= $(OBJDIR)array$(EXEEXT) $(OBJDIR)buffer$(EXEEXT) $(OBJDIR)clint.log $(OBJDIR)config$(EXEEXT) $(OBJDIR)coverage.log $(OBJDIR)error$(EXEEXT) $(OBJDIR)event$(EXEEXT) $(OBJDIR)fixme.log $(OBJDIR)includes$(EXEEXT) $(OBJDIR)parser$(EXEEXT) $(OBJDIR)pkgconfig.log $(OBJDIR)pylint.log $(OBJDIR)string$(EXEEXT) $(OBJDIR)variable$(EXEEXT) $(OBJDIR)tests.log
+TARGETS	= $(OBJDIR)array$(EXEEXT) $(OBJDIR)buffer$(EXEEXT) $(OBJDIR)clint.log $(OBJDIR)config$(EXEEXT) $(OBJDIR)coverage.log $(OBJDIR)error$(EXEEXT) $(OBJDIR)event$(EXEEXT) $(OBJDIR)fixme.log $(OBJDIR)includes$(EXEEXT) $(OBJDIR)parser$(EXEEXT) $(OBJDIR)pclint.log $(OBJDIR)pkgconfig.log $(OBJDIR)pylint.log $(OBJDIR)string$(EXEEXT) $(OBJDIR)variable$(EXEEXT) $(OBJDIR)tests.log
 OBJDIR	=
 PREFIX	= /usr/local
 DESTDIR	=
@@ -78,6 +78,9 @@ parser_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 $(OBJDIR)parser$(EXEEXT): $(parser_OBJS)
 	$(CC) -o $(OBJDIR)parser$(EXEEXT) $(parser_OBJS) $(parser_LDFLAGS)
 
+$(OBJDIR)pclint.log: $(OBJDIR)../data/libSystem.pc pclint.sh
+	./pclint.sh -P "$(PREFIX)" -- "$(OBJDIR)pclint.log"
+
 $(OBJDIR)pkgconfig.log: $(OBJDIR)../data/libSystem.pc pkgconfig.sh
 	./pkgconfig.sh -P "$(PREFIX)" -- "$(OBJDIR)pkgconfig.log"
 
@@ -133,6 +136,7 @@ clean:
 	./clint.sh -c -P "$(PREFIX)" -O CPPFLAGS="-I$(DESTDIR)$(PREFIX)/include -I../include `pkg-config --cflags python-2.7`" -- "$(OBJDIR)clint.log"
 	./coverage.sh -c -P "$(PREFIX)" -- "$(OBJDIR)coverage.log"
 	./fixme.sh -c -P "$(PREFIX)" -- "$(OBJDIR)fixme.log"
+	./pclint.sh -c -P "$(PREFIX)" -- "$(OBJDIR)pclint.log"
 	./pkgconfig.sh -c -P "$(PREFIX)" -- "$(OBJDIR)pkgconfig.log"
 	./pylint.sh -c -P "$(PREFIX)" -- "$(OBJDIR)pylint.log"
 	./tests.sh -c -P "$(PREFIX)" -- "$(OBJDIR)tests.log"

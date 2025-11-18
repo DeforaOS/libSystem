@@ -27,7 +27,7 @@ subdirs:
 		else $(MAKE); fi) || exit; done
 
 tests: all
-	cd tests && (if [ -n "$(OBJDIR)" ]; then $(MAKE) OBJDIR="$(OBJDIR)tests/" "$(OBJDIR)tests/clint.log" "$(OBJDIR)tests/fixme.log" "$(OBJDIR)tests/pkgconfig.log" "$(OBJDIR)tests/pylint.log" "$(OBJDIR)tests/tests.log"; else $(MAKE) clint.log fixme.log pkgconfig.log pylint.log tests.log; fi)
+	cd tests && (if [ -n "$(OBJDIR)" ]; then $(MAKE) OBJDIR="$(OBJDIR)tests/" "$(OBJDIR)tests/clint.log" "$(OBJDIR)tests/fixme.log" "$(OBJDIR)tests/pclint.log" "$(OBJDIR)tests/pkgconfig.log" "$(OBJDIR)tests/pylint.log" "$(OBJDIR)tests/tests.log"; else $(MAKE) clint.log fixme.log pclint.log pkgconfig.log pylint.log tests.log; fi)
 
 clean:
 	@for i in $(SUBDIRS); do (cd "$$i" && \
@@ -119,6 +119,7 @@ dist:
 		$(PACKAGE)-$(VERSION)/tests/config-noeol.conf \
 		$(PACKAGE)-$(VERSION)/tests/coverage.sh \
 		$(PACKAGE)-$(VERSION)/tests/fixme.sh \
+		$(PACKAGE)-$(VERSION)/tests/pclint.sh \
 		$(PACKAGE)-$(VERSION)/tests/pkgconfig.sh \
 		$(PACKAGE)-$(VERSION)/tests/pylint.sh \
 		$(PACKAGE)-$(VERSION)/tests/python.sh \
