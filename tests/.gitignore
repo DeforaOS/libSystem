@@ -8,6 +8,7 @@
 /includes
 /parser
 /pkgconfig.log
+/pclint.log
 /pylint.log
 /string
 /tests.log
