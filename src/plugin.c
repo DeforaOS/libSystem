@@ -115,14 +115,23 @@ void plugin_delete(Plugin * plugin)
 }
 
 
+/* accessors */
+/* plugin_get_export */
+PluginExport plugin_get_export(Plugin * plugin, String const * name)
+{
+	/* FIXME deprecate plugin_get_export() or plugin_lookup()? */
+	return plugin_lookup(plugin, name);
+}
+
+
 /* useful */
 /* plugin_lookup */
-void * plugin_lookup(Plugin * plugin, String const * symbol)
+PluginExport plugin_lookup(Plugin * plugin, String const * symbol)
 {
 #ifdef __WIN32__
 	return GetProcAddress(plugin, symbol);
 #else
-	void * ret;
+	PluginExport ret;
 
 	if((ret = dlsym(plugin, symbol)) == NULL)
 		error_set_code(1, "%s", dlerror());
