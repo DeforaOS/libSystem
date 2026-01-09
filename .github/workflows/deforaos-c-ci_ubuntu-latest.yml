@@ -10,9 +10,16 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v4
+    - name: install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          docbook-xsl \
+          gtk-doc-tools \
+          libxml2-utils \
+          xsltproc
     - name: make
       run: make
     - name: make tests
