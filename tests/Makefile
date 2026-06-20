@@ -144,7 +144,7 @@ clean:
 distclean: clean
 	$(RM) -- $(TARGETS)
 
-install: all
+install:
 
 uninstall:
 

@@ -14,7 +14,7 @@ clean:
 
 distclean: clean
 
-install: all
+install:
 	$(MKDIR) $(DESTDIR)$(INCLUDEDIR)/System
 	$(INSTALL) -m 0644 array.h $(DESTDIR)$(INCLUDEDIR)/System/array.h
 	$(MKDIR) $(DESTDIR)$(INCLUDEDIR)/System

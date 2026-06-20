@@ -89,7 +89,7 @@ clean:
 distclean: clean
 	$(RM) -- $(TARGETS)
 
-install: all
+install: $(OBJDIR)libSystem.a $(OBJDIR)libSystem.so.1.0 $(OBJDIR)libSystem.so.1 $(OBJDIR)libSystem$(SOEXT)
 	$(MKDIR) $(DESTDIR)$(LIBDIR)
 	$(INSTALL) -m 0644 $(OBJDIR)libSystem.a $(DESTDIR)$(LIBDIR)/libSystem.a
 	$(INSTALL) -m 0755 $(OBJDIR)libSystem.so.1.0 $(DESTDIR)$(LIBDIR)/libSystem.so.1.0

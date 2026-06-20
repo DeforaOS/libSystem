@@ -19,7 +19,7 @@ clean:
 distclean: clean
 	$(RM) -- $(TARGETS)
 
-install: all
+install: $(OBJDIR)libSystem.pc
 	./pkgconfig.sh -P "$(DESTDIR)$(PREFIX)" -i -- "$(OBJDIR)libSystem.pc"
 
 uninstall:
