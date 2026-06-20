@@ -48,6 +48,7 @@ static int _test7(String const * string, size_t length,
 		String const * expected);
 static int _test8(String const * string, String const * expected);
 static int _test9(String const * string, String const * expected);
+static int _test10(void);
 
 
 /* functions */
@@ -233,6 +234,28 @@ static int _test9(String const * string, String const * expected)
 }
 
 
+/* test10 */
+static int _test10(void)
+{
+	int ret = 0;
+	String * s;
+
+	/* string_append */
+	printf("%s: Testing %s\n", PROGNAME, "string_append()");
+	if((s = string_new_append("a", "b", "c", NULL)) == NULL)
+		return 2;
+	if(string_compare(s, "abc") != 0)
+		ret = 2;
+	string_delete(s);
+	if((s = string_new_append(NULL, "abc", NULL)) == NULL)
+		return 2;
+	if(string_compare(s, "abc") == 0)
+		ret = 2;
+	string_delete(s);
+	return ret;
+}
+
+
 /* main */
 int main(int argc, char * argv[])
 {
@@ -315,5 +338,7 @@ int main(int argc, char * argv[])
 	/* test9 */
 	ret |= _test9("abcABC", "ABCABC");
 	ret |= _test9("abcABC123", "ABCABC123");
+	/* test10 */
+	ret |= _test10();
 	return ret;
 }
