@@ -46,6 +46,8 @@ static int _test5(String const * string, String const * key, ssize_t expected);
 static int _test6(String const * string, String const * key, ssize_t expected);
 static int _test7(String const * string, size_t length,
 		String const * expected);
+static int _test8(String const * string, String const * expected);
+static int _test9(String const * string, String const * expected);
 
 
 /* functions */
