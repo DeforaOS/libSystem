@@ -79,8 +79,7 @@ String * string_new_appendv(String const * string, va_list ap)
 	if(string == NULL)
 		return string_new("");
 	ret = string_new(string);
-	for(string = va_arg(ap, String *); string != NULL;
-			string = va_arg(ap, String *))
+	while((string = va_arg(ap, String *)) != NULL)
 		if(string_append(&ret, string) != 0)
 		{
 			string_delete(ret);
